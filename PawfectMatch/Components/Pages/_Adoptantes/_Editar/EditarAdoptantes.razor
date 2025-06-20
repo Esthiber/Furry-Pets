@@ -1,0 +1,69 @@
+﻿@page "/Editar/Adoptantes/{id:int}"
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using PawfectMatch.Models
+@attribute [Authorize(Roles = "Admin")]
+
+@inject AdoptantesService adoptantesService
+@inject NavigationManager navManager
+
+<h3 class="text-xl font-semibold mb-4">Editar Adoptante</h3>
+
+@if (adoptante is null)
+{
+    <p>Cargando datos del adoptante...</p>
+}
+else
+{
+    <EditForm Model="@adoptante" OnValidSubmit="ActualizarAdoptante">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label>Nombre completo:</label>
+            <InputText @bind-Value="adoptante.Nombre" class="form-control" />
+            <ValidationMessage For="@(() => adoptante.Nombre)" />
+        </div>
+
+        <div class="mb-3">
+            <label>Ocupación:</label>
+            <InputText @bind-Value="adoptante.Ocupacion" class="form-control" />
+            <ValidationMessage For="@(() => adoptante.Ocupacion)" />
+        </div>
+
+        <button type="submit" class="btn btn-success">Actualizar</button>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <div class="alert alert-info mt-3">@mensaje</div>
+    }
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Adoptantes? adoptante;
+    private string? mensaje;
+
+    protected override async Task OnInitializedAsync()
+    {
+        adoptante = await adoptantesService.SearchByIdAsync(id);
+        if (adoptante == null)
+        {
+            mensaje = "No se encontró el adoptante.";
+        }
+    }
+
+    private async Task ActualizarAdoptante()
+    {
+        if (adoptante is not null)
+        {
+            bool actualizado = await adoptantesService.UpdateAsync(adoptante);
+            mensaje = actualizado
+                ? "Adoptante actualizado correctamente."
+                : "Error al actualizar el adoptante.";
+        }
+    }
+}

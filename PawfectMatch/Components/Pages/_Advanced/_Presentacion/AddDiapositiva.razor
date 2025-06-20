@@ -1,0 +1,96 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using PawfectMatch.Models._Presentacion
+@using Microsoft.AspNetCore.Components.Web
+
+<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);" @onclick="CerrarModal">
+    <div class="modal-dialog" role="document" @onclick:stopPropagation="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Servicios</h5>
+                <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3 mb-3">
+                    <label>Imagen URL:</label>
+                    <InputText class="form-control" @bind-Value="nuevaDiapositiva.ImageUrl" />
+
+                    <label for="chk-isTituloLeft">Titulos Izquierdos:</label>
+                    <InputCheckbox id="chk-isTituloLeft" class="form-check-input" @bind-Value="nuevaDiapositiva.IsTituloLeftActive"></InputCheckbox>
+
+                    @if (nuevaDiapositiva.IsTituloLeftActive)
+                    {
+                        <label>Título Izquierdo:</label>
+                        <InputText class="form-control" @bind-Value="nuevaDiapositiva.Titulo_Left" />
+
+                        <label>Subtítulo Izquierdo:</label>
+                        <InputText class="form-control" @bind-Value="nuevaDiapositiva.SubTitulo_Left" />
+                    }
+
+                    <label for="chk-isTituloRight">Titulos Derechos:</label>
+                    <InputCheckbox id="chk-isTituloRight" class="form-check-input" @bind-Value="nuevaDiapositiva.IsTituloRightActive"></InputCheckbox>
+
+                    @if (nuevaDiapositiva.IsTituloRightActive)
+                    {
+                        <label>Título Derecho:</label>
+                        <InputText class="form-control" @bind-Value="nuevaDiapositiva.Titulo_Right" />
+
+                        <label>Subtítulo Derecho:</label>
+                        <InputText class="form-control" @bind-Value="nuevaDiapositiva.SubTitulo_Right" />
+                    }
+
+                    <label for="chk-isButtonLeft">Boton Izquierdo:</label>
+                    <InputCheckbox id="chk-isButtonLeft" class="form-check-input" @bind-Value="nuevaDiapositiva.IsButtonLeftActive"></InputCheckbox>
+
+                    @if (nuevaDiapositiva.IsButtonLeftActive)
+                    {
+                        <label>Boton Izquierdo Texto</label>
+                        <InputText class="form-control" @bind-Value="nuevaDiapositiva.TextButton_Left"></InputText>
+                        <label>Boton Izquierdo Link</label>
+                        <InputText class="form-control" @bind-Value="nuevaDiapositiva.LinkButton_Left"></InputText>
+                    }      
+                    
+                     <label for="chk-isButtonRight">Boton Derecho:</label>
+                    <InputCheckbox id="chk-isButtonRight" class="form-check-input" @bind-Value="nuevaDiapositiva.IsButtonRightActive"></InputCheckbox>
+
+                    @if (nuevaDiapositiva.IsButtonRightActive)
+                    {
+                        <label>Boton Derecho Texto</label>
+                        <InputText class="form-control" @bind-Value="nuevaDiapositiva.TextButton_Right"></InputText>
+                        <label>Boton Derecho Link</label>
+                        <InputText class="form-control" @bind-Value="nuevaDiapositiva.LinkButton_Right"></InputText>
+                    }       
+
+                    <label>Orden:</label>
+                    <InputNumber class="form-control" @bind-Value="nuevaDiapositiva.Orden" />
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                <button class="btn btn-primary" @onclick="Confirmar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback<Diapositivas> OnConfirmar { get; set; }
+    [Parameter] public EventCallback OnCancelar { get; set; }
+    [Parameter] public bool Mostrar { get; set; }
+
+    private Diapositivas nuevaDiapositiva = new()
+        {
+            ImageUrl = "https://placehold.co/1400x720/5E3023/C08552?text=Cute+\nDog+And+Cat+\n_Pawfect+Match_&font=roboto"
+        };
+
+    private async Task Confirmar()
+    {
+        await OnConfirmar.InvokeAsync(nuevaDiapositiva);
+        nuevaDiapositiva = new(); // Limpiar para el siguiente uso
+    }
+
+    private async Task CerrarModal()
+    {
+        await OnCancelar.InvokeAsync();
+    }
+}

@@ -1,0 +1,33 @@
+/* Figma Styles of your File */
+:root {
+  /* Colors */
+  --firstcolor: #f3e9dc;
+  --secondcolor: #c08552;
+  --thirdcolor: #5e3023;
+  --fourthcolor: #895737;
+  --fifthcolor: #dab49d;
+
+  /* Fonts */
+  --titulo-1-font-family: Jaro-Regular, sans-serif;
+  --titulo-1-font-size: 48px;
+  --titulo-1-line-height: normal;
+  --titulo-1-font-weight: 400;
+  --titulo-1-font-style: normal;
+  --titulo-2-font-family: JockeyOne-Regular, sans-serif;
+  --titulo-2-font-size: 32px;
+  --titulo-2-line-height: normal;
+  --titulo-2-font-weight: 400;
+  --titulo-2-font-style: normal;
+  --parrafo-1-font-family: GfsDidot-Regular, sans-serif;
+  --parrafo-1-font-size: 20px;
+  --parrafo-1-line-height: normal;
+  --parrafo-1-font-weight: 400;
+  --parrafo-1-font-style: normal;
+
+  --single-line-body-base-font-family: "Inter-Regular", sans-serif;
+  --single-line-body-base-font-size: 16px;
+  --single-line-body-base-line-height: 100%;
+  --single-line-body-base-font-weight: 400;
+
+  /* Effects */
+}

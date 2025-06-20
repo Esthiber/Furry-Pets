@@ -1,0 +1,432 @@
+﻿@page "/Details/Solicitudes/{id:int}"
+
+@inject SolicitudesAdopcionesService solicitudesService
+@inject HistorialAdopcionesService historialService
+@inject MascotasService mascotasService
+@inject CitasService citasService
+@inject NavigationManager NavigationManager
+@inject SolicitudesServiciosService solicitudesServiciosService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IToastService ToastService
+
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+<div class="solicitud-detail-container">
+    @if (isLoading)
+    {
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Cargando detalles de la solicitud...</p>
+        </div>
+    }
+    else if (!tieneAcceso)
+    {
+        <div class="unauthorized-container">
+            <div class="unauthorized-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2>Acceso Restringido</h2>
+            <p>No tienes permiso para ver esta solicitud de adopción.</p>
+            <button class="btn-secondary" @onclick="Volver">Volver</button>
+        </div>
+    }
+    else if (solicitud is null)
+    {
+        <div class="not-found-container">
+            <div class="not-found-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h2>Solicitud No Encontrada</h2>
+            <p>La solicitud que estás buscando no existe o ha sido eliminada.</p>
+            <button class="btn-secondary" @onclick="Volver">Volver</button>
+        </div>
+    }
+    else
+    {
+        <div class="solicitud-header">
+            <div class="solicitud-title">
+                <h1>Detalle de Solicitud de Adopción</h1>
+                <div class="solicitud-badges">
+                    <span class="badge badge-id">ID: @solicitud.SolicitudAdopcionId</span>
+                    <span class="badge @GetEstadoClass(solicitud.EstadoSolicitudId)">
+                        @solicitud.EstadoSolicitud?.Nombre
+                    </span>
+                </div>
+            </div>
+            <div class="solicitud-actions">
+                <button class="btn-secondary" @onclick="Volver">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </button>
+            </div>
+        </div>
+
+        <div class="solicitud-date">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Fecha de solicitud: @solicitud.Fecha.ToString("dd/MM/yyyy HH:mm")</span>
+        </div>
+
+        <div class="solicitud-content">
+            <!-- Información de la mascota -->
+            <div class="solicitud-section mascota-section">
+                <h2 class="section-title">
+                    <i class="fas fa-paw"></i>
+                    Mascota a Adoptar
+                </h2>
+
+                <div class="mascota-card">
+                    <div class="mascota-image">
+                        <img src="@solicitud.Mascota.FotoUrl" alt="@solicitud.Mascota.Nombre" />
+                    </div>
+                    <div class="mascota-details">
+                        <h3 class="mascota-name">@solicitud.Mascota.Nombre</h3>
+                        <div class="mascota-info">
+                            <div class="info-item">
+                                <span class="info-label">Categoría</span>
+                                <span class="info-value">@solicitud.Mascota.Categoria?.Nombre</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Tamaño</span>
+                                <span class="info-value">@solicitud.Mascota.RelacionSize?.Size</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Edad</span>
+                                <span class="info-value">@CalculateAge(solicitud.Mascota.FechaNacimiento)</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Estado</span>
+                                <span class="info-value">@solicitud.Mascota.Estado?.Nombre</span>
+                            </div>
+                        </div>
+                        <p class="mascota-description">@solicitud.Mascota.Descripcion</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del adoptante -->
+            <div class="solicitud-section adoptante-section">
+                <h2 class="section-title">
+                    <i class="fas fa-user"></i>
+                    Información del Adoptante
+                </h2>
+
+                <div class="adoptante-card">
+                    <div class="adoptante-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="adoptante-details">
+                        <h3 class="adoptante-name">@solicitud.Adoptante.Nombre</h3>
+                        <div class="adoptante-info">
+                            <div class="info-item">
+                                <span class="info-label">Ocupación</span>
+                                <span class="info-value">@solicitud.Adoptante.Ocupacion</span>
+                            </div>
+                            @if (esAdmin)
+                            {
+                                <div class="info-item">
+                                    <span class="info-label">Usuario</span>
+                                    <span class="info-value">@email</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Servicios solicitados -->
+            <div class="solicitud-section servicios-section">
+                <h2 class="section-title">
+                    <i class="fas fa-concierge-bell"></i>
+                    Servicios Solicitados
+                </h2>
+
+                @if (listaServicios.Count > 0)
+                {
+                    <div class="servicios-list">
+                        <div class="servicios-header">
+                            <span>Servicio</span>
+                            <span>Costo</span>
+                        </div>
+
+                        @foreach (var servicio in listaServicios)
+                        {
+                            <div class="servicio-item">
+                                <span class="servicio-nombre">@servicio.Servicio?.Nombre</span>
+                                <span class="servicio-costo">$@servicio.Servicio?.Costo.ToString("0.00")</span>
+                            </div>
+                        }
+
+                        <div class="servicios-total">
+                            <span>Total</span>
+                            <span>$@listaServicios.Sum(ss => ss.Servicio?.Costo)</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p class="no-servicios">No se han solicitado servicios adicionales.</p>
+                }
+            </div>
+
+            <!-- Citas programadas -->
+            @if (listaCitas.Count > 0)
+            {
+                <div class="solicitud-section citas-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-calendar-check"></i>
+                        Citas Programadas
+                    </h2>
+
+                    <div class="citas-list">
+                        @foreach (var cita in listaCitas)
+                        {
+                            <div class="cita-item">
+                                <div class="cita-fecha">
+                                    <i class="fas fa-calendar-day"></i>
+                                    <span>@cita.FechaHora.ToString("dd/MM/yyyy")</span>
+                                </div>
+                                <div class="cita-hora">
+                                    <i class="fas fa-clock"></i>
+                                    <span>@cita.FechaHora.ToString("HH:mm")</span>
+                                </div>
+                                <div class="cita-estado">
+                                    <span class="badge @GetCitaEstadoClass(1)">
+                                        @* @cita.EstadoCita?.Nombre *@ 
+                                                                Pendiente
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Programar cita (solo si la solicitud está aceptada y no hay citas) -->
+            @if (solicitud.EstadoSolicitudId == 2 && listaCitas.Count == 0)
+            {
+                <div class="solicitud-section crear-cita-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-calendar-plus"></i>
+                        Programar Cita
+                    </h2>
+
+                    @if (solicitud.Mascota is not null)
+                    {
+                        <div class="crear-cita-container">
+                            <CrearCitas Mascota="solicitud.Mascota" Adoptante="solicitud.Adoptante" OnCitaCreada="RefreshCitas" />
+                        </div>
+                    }
+                </div>
+            }
+
+            <!-- Acciones de administrador -->
+            @if (esAdmin && solicitud.EstadoSolicitudId == 1)
+            {
+                <div class="solicitud-section admin-actions-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-cogs"></i>
+                        Acciones Administrativas
+                    </h2>
+
+                    <div class="admin-actions">
+                        <button class="btn-success" @onclick="AceptarSolicitud">
+                            <i class="fas fa-check"></i> Aprobar Solicitud
+                        </button>
+                        <button class="btn-danger" @onclick="RechazarSolicitud">
+                            <i class="fas fa-times"></i> Rechazar Solicitud
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+
+    }
+</div>
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private SolicitudesAdopciones? solicitud { get; set; }
+    private List<Citas> listaCitas { get; set; } = new();
+    private List<SolicitudesServicios> listaServicios { get; set; } = new();
+
+    private bool isLoading = true;
+    private bool tieneAcceso = false;
+    private bool esAdmin = false;
+    private string? userId;
+    private string? email;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Verificar si el usuario es administrador o el creador de la solicitud
+            if (authenticationState != null)
+            {
+                var authState = await authenticationState;
+                userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                esAdmin = authState.User.IsInRole("Admin");
+
+            }
+
+            // Cargar la solicitud
+            solicitud = await solicitudesService.SearchByIdAsync(id);
+
+            email = solicitud.Adoptante.User?.Email;
+
+            if (solicitud != null && solicitud.SolicitudAdopcionId > 0)
+            {
+                // Verificar acceso: el usuario debe ser admin o el creador de la solicitud
+                tieneAcceso = esAdmin || (userId != null && solicitud.Adoptante.UsuarioId == userId);
+
+                if (tieneAcceso)
+                {
+                    // Cargar datos relacionados
+                    listaCitas = await citasService.ListAsync(c => c.MascotaId == solicitud.MascotaId && c.AdoptanteId == solicitud.AdoptanteId);
+                    listaServicios = await solicitudesServiciosService.ListAsync(ss => ss.SolicitudAdopcionId == solicitud.SolicitudAdopcionId);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Error al cargar los datos: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task AceptarSolicitud()
+    {
+        if (solicitud is null) return;
+
+        try
+        {
+            bool exito = await solicitudesService.AceptarSolicitud(solicitud.SolicitudAdopcionId);
+
+            solicitud.Mascota.EstadoId = 2;
+            bool exitoMascota = await mascotasService.UpdateAsync(solicitud.Mascota);
+
+            // Crear registro en historial de adopciones
+            var historialAdopciones = new HistorialAdopciones
+                {
+                    AdoptanteId = solicitud.AdoptanteId,
+                    MascotaId = solicitud.MascotaId,
+                    FechaAdopcion = DateTime.Now,
+                    Notas = "Adopción aprobada desde el sistema"
+                };
+
+            bool exitoHistorial = await historialService.InsertAsync(historialAdopciones);
+
+            if (exito && exitoMascota && exitoHistorial)
+            {
+                ToastService.ShowSuccess("Solicitud aprobada correctamente");
+                NavigationManager.NavigateTo($"{Urls.Solicitudes.Index}", forceLoad: true);
+            }
+            else
+            {
+                ToastService.ShowError("Error al aprobar la solicitud");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Error: {ex.Message}");
+        }
+    }
+
+    private async Task RechazarSolicitud()
+    {
+        if (solicitud is null) return;
+
+        try
+        {
+            bool exito = await solicitudesService.RechazarSolicitud(solicitud.SolicitudAdopcionId);
+
+            if (exito)
+            {
+                ToastService.ShowSuccess("Solicitud rechazada correctamente");
+                NavigationManager.NavigateTo($"{Urls.Solicitudes.Index}", forceLoad: true);
+            }
+            else
+            {
+                ToastService.ShowError("Error al rechazar la solicitud");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Error: {ex.Message}");
+        }
+    }
+
+    private async Task RefreshCitas()
+    {
+        if (solicitud != null)
+        {
+            listaCitas = await citasService.ListAsync(c => c.MascotaId == solicitud.MascotaId && c.AdoptanteId == solicitud.AdoptanteId);
+        }
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo(Urls.Solicitudes.Index);
+    }
+
+    private string GetEstadoClass(int estadoId)
+    {
+        return estadoId switch
+        {
+            1 => "badge-pending",
+            2 => "badge-approved",
+            3 => "badge-rejected",
+            _ => "badge-default"
+        };
+    }
+
+    private string GetCitaEstadoClass(int estadoId)
+    {
+        return estadoId switch
+        {
+            1 => "badge-pending",
+            2 => "badge-completed",
+            3 => "badge-cancelled",
+            _ => "badge-default"
+        };
+    }
+
+    private string CalculateAge(DateOnly birthDate)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var age = today.Year - birthDate.Year;
+
+        // Ajustar la edad si aún no ha pasado el cumpleaños este año
+        if (birthDate.Month > today.Month || (birthDate.Month == today.Month && birthDate.Day > today.Day))
+        {
+            age--;
+        }
+
+        if (age < 1)
+        {
+            // Calcular meses
+            var months = (today.Month - birthDate.Month) + 12 * (today.Year - birthDate.Year);
+            if (today.Day < birthDate.Day)
+            {
+                months--;
+            }
+
+            if (months < 1)
+            {
+                // Calcular días
+                var days = (today.DayNumber - birthDate.DayNumber);
+                return $"{days} {(days == 1 ? "día" : "días")}";
+            }
+
+            return $"{months} {(months == 1 ? "mes" : "meses")}";
+        }
+
+        return $"{age} {(age == 1 ? "año" : "años")}";
+    }
+}

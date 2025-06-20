@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PawfectMatch", "PawfectMatch\PawfectMatch.csproj", "{08209384-31A6-4919-8913-55FDC19CA551}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PawfectMatch.Tests", "PawfectMatch.Tests\PawfectMatch.Tests.csproj", "{0B858571-2821-461C-A606-3A551A07D4C6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{08209384-31A6-4919-8913-55FDC19CA551}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08209384-31A6-4919-8913-55FDC19CA551}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08209384-31A6-4919-8913-55FDC19CA551}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08209384-31A6-4919-8913-55FDC19CA551}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B858571-2821-461C-A606-3A551A07D4C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B858571-2821-461C-A606-3A551A07D4C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B858571-2821-461C-A606-3A551A07D4C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B858571-2821-461C-A606-3A551A07D4C6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3218C2D0-BE4F-42E7-8765-3A7CF213A906}
+	EndGlobalSection
+EndGlobal

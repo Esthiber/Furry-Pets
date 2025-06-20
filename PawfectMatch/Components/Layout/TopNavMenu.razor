@@ -1,0 +1,182 @@
+﻿@inject NavigationManager NavigationManager
+@inject MascotasService mascotasService
+@inject AuthenticationStateProvider AuthStateProvider
+@rendermode InteractiveServer
+
+<header class="main-header">
+    <div class="header-container">
+        <!-- Logo -->
+        <div class="logo-container">
+            <NavLink href="" Match="NavLinkMatch.All">
+                <img src="@Assets["img/logo/logo0.png"]" alt="Pawfect Match Logo" />
+            </NavLink>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="main-nav">
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <NavLink href="@Urls.Mascotas.Index" ActiveClass="active">
+                        <i class="bi bi-heart"></i>
+                        <span>Mascotas</span>
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink href="@Urls.General.Nosotros" ActiveClass="active">
+                        <i class="bi bi-info-circle"></i>
+                        <span>Nosotros</span>
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink href="/Citas" ActiveClass="active">
+                        <i class="bi bi-calendar-heart"></i>
+                        <span>Citas</span>
+                    </NavLink>
+                </li>
+                @* <li class="nav-item"> *@
+                @*     <NavLink href="/Contacto" ActiveClass="active"> *@
+                @*         <i class="bi bi-chat-dots"></i> *@
+                @*         <span>Contacto</span> *@
+                @*     </NavLink> *@
+                @* </li> *@
+            </ul>
+        </nav>
+
+        <!-- Action Buttons -->
+        <div class="nav-actions">
+            <button class="discover-btn" @onclick="GoToRandomMascota">
+                <i class="bi bi-shuffle"></i>
+                <span>¡Descubrir!</span>
+            </button>
+
+            <div class="user-menu-container">
+                <button class="user-btn" @onclick="ToggleUserMenu">
+                    <AuthorizeView>
+                        <Authorized>
+                            <div class="user-avatar">
+                                @context.User.Identity?.Name?.Substring(0, 1).ToUpper()
+                            </div>
+                        </Authorized>
+                        <NotAuthorized>
+                            <i class="bi bi-person-circle"></i>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" @onclick="ToggleMobileMenu">
+                <i class="bi @(mobileMenuOpen ? "bi-x-lg" : "bi-list")"></i>
+            </button>
+        </div>
+    </div>
+
+    @if (showUserMenu)
+    {
+        <div class="user-dropdown">
+            <UserMenu OnClose="CloseUserMenu" />
+        </div>
+    }
+
+    <!-- Mobile Navigation Menu -->
+    @if (mobileMenuOpen)
+    {
+        <div class="mobile-nav">
+            <ul class="mobile-nav-links">
+                <li class="mobile-nav-item">
+                    <NavLink href="@Urls.Mascotas.Index" ActiveClass="active" @onclick="CloseMobileMenu">
+                        <i class="bi bi-heart"></i>
+                        <span>Mascotas</span>
+                    </NavLink>
+                </li>
+                <li class="mobile-nav-item">
+                    <NavLink href="@Urls.General.Nosotros" ActiveClass="active" @onclick="CloseMobileMenu">
+                        <i class="bi bi-info-circle"></i>
+                        <span>Nosotros</span>
+                    </NavLink>
+                </li>
+                <li class="mobile-nav-item">
+                    <NavLink href="/Citas" ActiveClass="active" @onclick="CloseMobileMenu">
+                        <i class="bi bi-calendar-heart"></i>
+                        <span>Citas</span>
+                    </NavLink>
+                </li>
+                <li class="mobile-nav-item">
+                    <NavLink href="/Contacto" ActiveClass="active" @onclick="CloseMobileMenu">
+                        <i class="bi bi-chat-dots"></i>
+                        <span>Contacto</span>
+                    </NavLink>
+                </li>
+                <li class="mobile-nav-item">
+                    <button class="mobile-discover-btn" @onclick="GoToRandomMascota">
+                        <i class="bi bi-shuffle"></i>
+                        <span>¡Descubrir!</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    }
+</header>
+
+@code {
+    private bool showUserMenu = false;
+    private bool mobileMenuOpen = false;
+
+    private void ToggleUserMenu()
+    {
+        showUserMenu = !showUserMenu;
+        if (showUserMenu && mobileMenuOpen)
+        {
+            mobileMenuOpen = false;
+        }
+    }
+
+    private void CloseUserMenu()
+    {
+        showUserMenu = false;
+    }
+
+    private void ToggleMobileMenu()
+    {
+        mobileMenuOpen = !mobileMenuOpen;
+        if (mobileMenuOpen && showUserMenu)
+        {
+            showUserMenu = false;
+        }
+    }
+
+    private void CloseMobileMenu()
+    {
+        mobileMenuOpen = false;
+    }
+
+    private async Task<Mascotas?> RandomMascota()
+    {
+        var mascotas = await mascotasService.ListAsync(m => true) ?? new();
+
+        var randomMascota = mascotas
+            .Where(m => m.EstadoId == 1)
+            .OrderBy(_ => Guid.NewGuid())
+            .FirstOrDefault();
+
+        return randomMascota;
+    }
+
+    private async Task GoToRandomMascota()
+    {
+        var m = await RandomMascota() ?? new();
+
+        if (m.MascotaId > 0)
+        {
+            NavigationManager.NavigateTo($"{Urls.Mascotas.Detalle}{m.MascotaId}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo(Urls.Mascotas.Index);
+        }
+
+        // Cerrar menús si están abiertos
+        mobileMenuOpen = false;
+        showUserMenu = false;
+    }
+}

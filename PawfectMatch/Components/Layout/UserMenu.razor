@@ -1,0 +1,159 @@
+﻿@inject NavigationManager navigationManager
+@implements IDisposable
+@rendermode InteractiveServer
+
+<div class="menu-overlay @(isVisible ? "visible" : "")" @onclick="CerrarModal">
+    <div class="pawfect-menu" @onclick:stopPropagation="true">
+        <div class="menu-header">
+            <div class="logo-container">
+                <img src="@Assets["img/logo/logo0.png"]" alt="Pawfect Match" class="menu-logo" />
+                <h3>Pawfect Match</h3>
+            </div>
+            <button type="button" class="close-button" @onclick="CerrarModal">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div class="menu-user-section">
+            <AuthorizeView>
+                <Authorized>
+                    <div class="user-welcome">
+                        <div class="user-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="user-info">
+                            <span class="welcome-text">¡Hola!</span>
+                            <span class="user-name">@context.User.Identity?.Name</span>
+                        </div>
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <div class="guest-banner">
+                        <i class="bi bi-heart"></i>
+                        <span>Encuentra a tu compañero perfecto</span>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+
+        <div class="menu-content">
+            <div class="menu-section">
+                <h5 class="section-title">Navegación Principal</h5>
+                <NavLink href="@Urls.General.Home" class="menu-item" @onclick="CerrarModal">
+                    <i class="bi bi-house-door"></i>
+                    <span>Inicio</span>
+                </NavLink>
+                <NavLink href="@Urls.General.Mascotas" class="menu-item" @onclick="CerrarModal">
+                    <i class="bi bi-heart"></i>
+                    <span>Adoptar Mascota</span>
+                </NavLink>
+                <NavLink href="@Urls.General.Nosotros" class="menu-item" @onclick="CerrarModal">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Sobre Nosotros</span>
+                </NavLink>
+            </div>
+
+            <AuthorizeView>
+                <Authorized>
+                    <div class="menu-section">
+                        <h5 class="section-title">Mi Cuenta</h5>
+                        <NavLink href="@Urls.Account.Manage" class="menu-item" @onclick="CerrarModal">
+                            <i class="bi bi-person"></i>
+                            <span>Mi Perfil</span>
+                        </NavLink>
+                        <NavLink href="@Urls.Solicitudes.Index" class="menu-item" @onclick="CerrarModal">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <span>Mis Solicitudes</span>
+                        </NavLink>
+                        <NavLink href="@Urls.Citas.Index" class="menu-item" @onclick="CerrarModal">
+                            <i class="bi bi-calendar-check"></i>
+                            <span>Mis Citas</span>
+                        </NavLink>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+
+            <AuthorizeView Roles="Admin">
+                <div class="menu-section admin-section">
+                    <h5 class="section-title">Administración</h5>
+                    <NavLink href="@Urls.General.HistorialAdopciones" class="menu-item" @onclick="CerrarModal">
+                        <i class="bi bi-journal-check"></i>
+                        <span>Historial de Adopciones</span>
+                    </NavLink>
+                    <NavLink href="@Urls.Advanced.Index" class="menu-item" @onclick="CerrarModal">
+                        <i class="bi bi-gear"></i>
+                        <span>Panel de Control</span>
+                    </NavLink>
+                </div>
+            </AuthorizeView>
+
+            <AuthorizeView>
+                <NotAuthorized>
+                    <div class="menu-section auth-section">
+                        <NavLink href="@Urls.Account.Login" class="menu-item login-btn" @onclick="CerrarModal">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>Iniciar Sesión</span>
+                        </NavLink>
+                        <NavLink href="@Urls.Account.Register" class="menu-item register-btn" @onclick="CerrarModal">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Registrarse</span>
+                        </NavLink>
+                    </div>
+                </NotAuthorized>
+                <Authorized>
+                    <div class="menu-section logout-section">
+                        <form action="Account/Logout" method="post">
+                            <AntiforgeryToken />
+                            <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                            <button type="submit" class="menu-item logout-btn" @onclick="CerrarModal">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Cerrar Sesión</span>
+                            </button>
+                        </form>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+        </div>
+
+        <div class="menu-footer">
+            <div class="paw-print-container">
+                <div class="paw-print"></div>
+                <div class="paw-print"></div>
+                <div class="paw-print"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+   
+</style>
+
+@code {
+    private string? currentUrl;
+    private bool isVisible = true;
+
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    public async Task CerrarModal()
+    {
+        await OnClose.InvokeAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        currentUrl = navigationManager.ToBaseRelativePath(navigationManager.Uri);
+        navigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = navigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        navigationManager.LocationChanged -= OnLocationChanged;
+    }
+}
