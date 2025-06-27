@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PawfectMatch.Components;
 using PawfectMatch.Components.Account;
 using PawfectMatch.Data;
+using PawfectMatch.Models;
 using PawfectMatch.Services;
 using PawfectMatch.Services._Mascotas;
 using PawfectMatch.Services._Presentacion;
@@ -48,6 +49,10 @@ builder.Services.AddScoped<PresentacionesService>();
 builder.Services.AddScoped<ServiciosService>();
 builder.Services.AddScoped<SolicitudesServiciosService>();
 builder.Services.AddScoped<SugerenciasService>();
+builder.Services.AddScoped<CarritoService>();
+builder.Services.AddScoped<ProductoService>();
+builder.Services.AddScoped<ProveedoresService>();
+builder.Services.AddScoped<CarritoService>();
 
 builder.Services.AddBlazorBootstrap();
 builder.Services.AddBlazoredToast();
