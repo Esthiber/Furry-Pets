@@ -47,6 +47,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
 
     public DbSet<Servicios> Servicios { get; set; }
     public DbSet<SolicitudesServicios> SolicitudesServicios { get; set; }
+    public DbSet<Productos> Productos { get; set; }
+    public DbSet<Carrito> Carrito { get; set; }
+    public DbSet<Proveedores> Proveedores { get; set; }
     #endregion
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
