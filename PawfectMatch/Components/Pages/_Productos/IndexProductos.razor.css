@@ -1,0 +1,43 @@
+﻿.caja-wrapper {
+    background-color: #f4f4f4;
+    padding: 20px;
+    min-height: 100vh;
+    font-family: sans-serif;
+}
+
+.caja-header {
+    background-color: #dcdcdc;
+    border-radius: 10px;
+}
+
+.empresa-logo img {
+    max-height: 50px;
+}
+
+.orden-box {
+    flex: 1;
+    min-width: 300px;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.productos-grid {
+    flex: 2;
+    padding-left: 10px;
+}
+
+.producto-card {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+    .producto-card:hover {
+        transform: scale(1.02);
+        cursor: pointer;
+    }

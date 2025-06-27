@@ -1,0 +1,164 @@
+﻿@page "/Producto/Index"
+@using System.Linq.Expressions
+@using PawfectMatch.Models
+@inject ProductoService productoService
+@inject CarritoService carritoService
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager navigationManager
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Caja de Ventas</PageTitle>
+
+<div class="caja-wrapper">
+    <!-- Header -->
+    <header class="caja-header d-flex justify-content-between align-items-center p-3">
+        <div class="empresa-logo">
+            <img src="/logo0.png" alt="Logo Empresa" height="40" />
+        </div>
+        <h2 class="empresa-nombre">SoulveTruck</h2>
+        <div class="nombre-cajero">Cajero: @nombreUsuario</div>
+    </header>
+
+    <div class="caja-body d-flex">
+        <!-- Panel izquierdo: Orden actual -->
+        <div class="orden-box me-3">
+            <h5>Orden actual</h5>
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cant.</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in carrito)
+                    {
+                        <tr>
+                            <td>@item.Producto.Nombre</td>
+                            <td>
+                                <input type="number" class="form-control form-control-sm" style="width: 60px"
+                                       @bind="item.Cantidad" @bind:event="oninput" min="1"
+                                       @onchange="async () => await ActualizarCantidad(item)" />
+                            </td>
+                            <td>@(item.Cantidad* item.Producto.Precio):$</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" @onclick="() => Eliminar(item.CarritoId)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="resumen-box mt-3">
+                <p><strong>Subtotal:</strong> @GetSubtotal().ToString("C")</p>
+                <button class="btn btn-success w-100" @onclick="ComprarTodo">Comprar</button>
+            </div>
+        </div>
+
+        <!-- Panel derecho: Productos -->
+        <div class="productos-grid">
+            <div class="row row-cols-2 row-cols-md-4 g-2">
+                @foreach (var producto in productos)
+                {
+                    <div class="col">
+                        <div class="producto-card card h-100 p-2">
+                            <img src="@producto.ImagenURL" alt="@producto.Nombre"
+                                 class="img-fluid rounded mb-2" style="height: 100px; object-fit: cover;" />
+                            <div>
+                                <h6 class="text-truncate">@producto.Nombre</h6>
+                                <p class="mb-1"><strong>@producto.Precio:$</strong></p>
+                                <button class="btn btn-outline-primary btn-sm w-100"
+                                        @onclick="() => Agregar(producto)">
+                                    Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (mostrarAlerta)
+{
+    <div class="alert alert-success position-fixed top-0 end-0 m-3 shadow" role="alert" style="z-index: 1050; transition: opacity 0.5s ease-in-out; opacity: 1;">
+        @mensajeAlerta
+    </div>
+}
+
+@code {
+    private List<PawfectMatch.Models.Productos> productos = new List<PawfectMatch.Models.Productos>();
+    private List<PawfectMatch.Models.Carrito> carrito = new List<PawfectMatch.Models.Carrito>();
+    // private List<Carrito> carrito = new();
+    private string nombreUsuario = "";
+    private double GetSubtotal() => carrito.Sum(i => i.Cantidad * i.Producto.Precio);
+    public double Precio { get; set; }
+    private string CriterioBusqueda = "Todos";
+    private string TextoBusqueda = string.Empty;
+    private int totalProductos = 0;
+    private bool isLoading = true;
+    private string errorMessage = string.Empty;
+    private string mensajeAlerta = string.Empty;
+    private bool mostrarAlerta = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        productos = await productoService.ListarProducto();
+        carrito = await carritoService.ObtenerCarritoAsync();
+
+        var auth = await AuthProvider.GetAuthenticationStateAsync();
+        nombreUsuario = auth.User.Identity?.Name ?? "Desconocido";
+    }
+
+    private async Task Agregar(Productos producto)
+    {
+        await productoService.AgregarAlCarrito(producto.ProductoId, 1);
+        carrito = await carritoService.ObtenerCarritoAsync();
+    }
+
+    private async Task Eliminar(int id)
+    {
+        await carritoService.EliminarDelCarrito(id);
+        carrito = await carritoService.ObtenerCarritoAsync();
+    }
+
+    private async Task ActualizarCantidad(PawfectMatch.Models.Carrito item)
+    {
+        await carritoService.ActualizarCantidad(item.CarritoId, item.Cantidad);
+        carrito = await carritoService.ObtenerCarritoAsync();
+    }
+
+    private async Task ComprarTodo()
+    {
+        await carritoService.ComprarCarrito();
+        carrito.Clear();
+    }
+
+    private async Task MostrarAlertaTemporal(string mensaje, int duracion = 1000)
+    {
+        mensajeAlerta = mensaje;
+        mostrarAlerta = true;
+        StateHasChanged();
+
+        await Task.Delay(duracion);
+
+        mostrarAlerta = false;
+        StateHasChanged();
+    }
+
+   
+    private void AjustarCantidad(PawfectMatch.Models.Productos producto, int cambio)
+    {
+        var nuevaCantidad = producto.CantidadSeleccionada + cambio;
+        producto.CantidadSeleccionada = Math.Clamp(nuevaCantidad, 1, producto.Stock);
+    }
+
+    
+
+}
