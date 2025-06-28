@@ -8,9 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DAL\**" />
     <Compile Remove="wwwroot\lib\bootstrap\dist\bootstrap-icons-1.11.3\**" />
+    <Content Remove="DAL\**" />
     <Content Remove="wwwroot\lib\bootstrap\dist\bootstrap-icons-1.11.3\**" />
+    <EmbeddedResource Remove="DAL\**" />
     <EmbeddedResource Remove="wwwroot\lib\bootstrap\dist\bootstrap-icons-1.11.3\**" />
+    <None Remove="DAL\**" />
     <None Remove="wwwroot\lib\bootstrap\dist\bootstrap-icons-1.11.3\**" />
   </ItemGroup>
 
@@ -31,9 +35,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Pages\_Citas\_Editar\" />
-    <Folder Include="Components\Pages\_Solicitudes\_Editar\" />
-    <Folder Include="DAL\" />
+    <Folder Include="Components\Pages\Adopciones\_Adoptantes\_Eliminar\" />
+    <Folder Include="Components\Pages\Adopciones\_Citas\_Editar\" />
+    <Folder Include="Components\Pages\Adopciones\_Citas\_Eliminar\" />
+    <Folder Include="Components\Pages\Adopciones\_Mascotas\_Eliminar\" />
+    <Folder Include="Components\Pages\Adopciones\_Servicios\_Editar\" />
+    <Folder Include="Components\Pages\Adopciones\_Servicios\_Crear\" />
+    <Folder Include="Components\Pages\Adopciones\_Servicios\_Eliminar\" />
+    <Folder Include="Components\Pages\Adopciones\_Solicitudes\_Editar\" />
+    <Folder Include="Components\Pages\Adopciones\_Solicitudes\_Eliminar\" />
+    <Folder Include="Components\Pages\Adopciones\_Sugerencias\_Eliminar\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 

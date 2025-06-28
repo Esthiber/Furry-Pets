@@ -1,0 +1,115 @@
+﻿@page "/Sugerencias/Crear"
+@using PawfectMatch.Models.Adopciones
+@using PawfectMatch.Services.Adopciones
+
+@inject SugerenciasService sugerenciasService
+@inject AuthenticationStateProvider authProvider
+
+@rendermode InteractiveServer
+
+<link rel="stylesheet" href="@Assets["Sugerencias.css"]" />
+
+<div class="sugerencias-container">
+    @if (!guardado)
+    {
+        <div class="sugerencias-form-container">
+            <h2 class="sugerencias-title">Comparte tu sugerencia</h2>
+            <p class="sugerencias-subtitle">Tus ideas nos ayudan a mejorar nuestro servicio para ti y tu mascota</p>
+
+            <EditForm Model="@sugerencia" OnValidSubmit="GuardarSugerencia" class="sugerencias-form">
+                <DataAnnotationsValidator />
+
+                <AuthorizeView>
+                    <Authorized Context="another_name">
+                        <div class="form-group">
+                            <label class="form-label">Tu correo electrónico</label>
+                            <InputText @bind-Value="sugerencia.UserMail" class="form-input" readonly />
+                        </div>
+                    </Authorized>
+                    <NotAuthorized Context="another_name">
+                        <div class="login-prompt">
+                            <p>Para enviar una sugerencia, necesitas iniciar sesión</p>
+                            <a class="login-button" href="@Urls.Account.Login">
+                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                            </a>
+                        </div>
+                    </NotAuthorized>
+                </AuthorizeView>
+
+                <AuthorizeView>
+                    <Authorized Context="another_name">
+                        <div class="form-group">
+                            <label for="desc" class="form-label">¿Qué podemos mejorar?</label>
+                            <InputTextArea @bind-Value="sugerencia.Descripcion" class="form-textarea" id="desc"
+                                           placeholder="Cuéntanos tu idea o sugerencia..." rows="5" />
+                            <ValidationMessage For="@(() => sugerencia.Descripcion)" class="validation-message" />
+                        </div>
+
+                        <button type="submit" class="submit-button">
+                            <span>Enviar sugerencia</span>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </Authorized>
+                </AuthorizeView>
+            </EditForm>
+        </div>
+    }
+    else
+    {
+        <div class="success-container">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="success-title">¡Gracias por tu sugerencia!</h2>
+            <p class="success-message">
+                Valoramos mucho tu aporte para hacer de Pawfect Match un mejor lugar para ti y tu mascota.
+                Tu sugerencia ha sido recibida y será revisada por nuestro equipo.
+            </p>
+            <button @onclick="NuevaSugerencia" class="new-suggestion-button">
+                <i class="fas fa-plus"></i>
+                <span>Enviar otra sugerencia</span>
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    private Sugerencias sugerencia = new();
+    private bool guardado = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            sugerencia.UserMail = user.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
+        }
+    }
+
+    private async Task GuardarSugerencia()
+    {
+        guardado = await sugerenciasService.InsertAsync(sugerencia);
+    }
+
+    private void NuevaSugerencia()
+    {
+        guardado = false;
+        sugerencia = new Sugerencias();
+
+        // Recuperar el email del usuario actual
+        _ = SetUserEmail();
+    }
+
+    private async Task SetUserEmail()
+    {
+        var authState = await authProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            sugerencia.UserMail = user.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
+        }
+    }
+}

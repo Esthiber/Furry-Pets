@@ -1,5 +1,5 @@
-﻿using PawfectMatch.Components.Pages._Mascotas;
-using PawfectMatch.Models._Mascotas;
+﻿using PawfectMatch.Components.Pages.Adopciones._Mascotas;
+using PawfectMatch.Models.Adopciones._Mascotas;
 
 namespace PawfectMatch
 {

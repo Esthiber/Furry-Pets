@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PawfectMatch.Data;
 using PawfectMatch.Models._Presentacion;
+using PawfectMatch.Models.Adopciones._Presentacion;
 using PawfectMatch.Services._Presentacion;
 using System;
 using System.Collections.Generic;

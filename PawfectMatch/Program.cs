@@ -6,10 +6,11 @@ using PawfectMatch.Components;
 using PawfectMatch.Components.Account;
 using PawfectMatch.Data;
 using PawfectMatch.Models;
-using PawfectMatch.Services;
 using PawfectMatch.Services._Mascotas;
 using PawfectMatch.Services._Presentacion;
 using PawfectMatch.Services._Solicitudes;
+using PawfectMatch.Services.Adopciones;
+using PawfectMatch.Services.Veterinaria;
 
 var builder = WebApplication.CreateBuilder(args);
 

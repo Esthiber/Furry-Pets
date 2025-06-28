@@ -1,0 +1,442 @@
+﻿@page "/Citas"
+@attribute [Authorize]
+@inject CitasService citasService
+@inject AdoptantesService adoptantesService
+@inject MascotasService mascotasService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider authProvider
+@using System.Security.Claims
+@using PawfectMatch.Models.Adopciones
+@using PawfectMatch.Models.Adopciones._Adoptantes
+@using PawfectMatch.Services.Adopciones
+@rendermode InteractiveServer
+
+<link rel="stylesheet" href="@Assets["Citas.css"]" />
+
+<PageTitle>Citas | Pawfect Match</PageTitle>
+
+<div class="citas-page">
+    <div class="header-section">
+        <div class="title-area">
+            <h3>@(esAdmin ? "Todas las Citas" : "Mis Citas")</h3>
+            <p class="subtitle">
+                @if (esAdmin)
+                {
+                    <span>Gestiona todas las citas programadas en el sistema</span>
+                }
+                else
+                {
+                    <span>Gestiona tus citas para conocer a tus futuras mascotas</span>
+                }
+            </p>
+        </div>
+        
+        @if (esAdmin)
+        {
+            <div class="admin-filters">
+                <div class="search-input">
+                    <i class="bi bi-search"></i>
+                    <input type="text" 
+                           placeholder="Buscar por nombre de mascota o adoptante..." 
+                           @bind="searchTerm" 
+                           @bind:event="oninput" 
+                           @onkeyup="ApplyFilters" />
+                </div>
+                <select class="form-select" @bind="filtroAdoptante">
+                    <option value="">Todos los adoptantes</option>
+                    @foreach (var adoptante in listaAdoptantes)
+                    {
+                        <option value="@adoptante.AdoptanteId">@adoptante.Nombre</option>
+                    }
+                </select>
+                <button class="btn btn-outline-secondary" @onclick="LimpiarFiltros">
+                    <i class="bi bi-x-circle"></i> Limpiar
+                </button>
+            </div>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="alert-container">
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>@error</span>
+            </div>
+        </div>
+    }
+    else if (isLoading)
+    {
+        <div class="loading-container">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p>Cargando citas...</p>
+        </div>
+    }
+    else if (citasFiltradas.Count == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="bi bi-calendar-x"></i>
+            </div>
+            @if (esAdmin && hayFiltrosActivos)
+            {
+                <h4>No hay citas que coincidan con los filtros</h4>
+                <p>Prueba con otros criterios de búsqueda o limpia los filtros.</p>
+                <button class="btn btn-primary" @onclick="LimpiarFiltros">
+                    <i class="bi bi-arrow-repeat"></i> Limpiar Filtros
+                </button>
+            }
+            else if (esAdmin)
+            {
+                <h4>No hay citas programadas en el sistema</h4>
+                <p>Las citas aparecerán aquí cuando los usuarios las programen.</p>
+            }
+            else
+            {
+                <h4>No tienes citas agendadas</h4>
+                <p>Programa una cita para conocer a tu futura mascota en persona.</p>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="citas-container">
+            <div class="citas-tabs">
+                <button class="tab-btn @(activeTab == "proximas" ? "active" : "")" @onclick="@(() => CambiarTab("proximas"))">
+                    <i class="bi bi-calendar-check"></i> Próximas
+                    <span class="badge">@citasProximas.Count</span>
+                </button>
+                <button class="tab-btn @(activeTab == "pasadas" ? "active" : "")" @onclick="@(() => CambiarTab("pasadas"))">
+                    <i class="bi bi-calendar-event"></i> Pasadas
+                    <span class="badge">@citasPasadas.Count</span>
+                </button>
+                @if (esAdmin)
+                {
+                    <button class="tab-btn @(activeTab == "todas" ? "active" : "")" @onclick="@(() => CambiarTab("todas"))">
+                        <i class="bi bi-calendar3"></i> Todas
+                        <span class="badge">@citasFiltradas.Count</span>
+                    </button>
+                }
+            </div>
+
+            @if ((activeTab == "proximas" && !citasProximas.Any()) || 
+                 (activeTab == "pasadas" && !citasPasadas.Any()) ||
+                 (activeTab == "todas" && !citasFiltradas.Any()))
+            {
+                <div class="tab-empty-state">
+                    <i class="bi @GetTabIcon()"></i>
+                    <p>No hay citas @GetTabEmptyMessage() en este momento.</p>
+                </div>
+            }
+            else
+            {
+                <div class="citas-grid">
+                    @foreach (var cita in GetCitasForActiveTab())
+                    {
+                        <div class="cita-card">
+                            <div class="cita-fecha">
+                                <div class="fecha-dia">@cita.FechaHora.Day</div>
+                                <div class="fecha-mes">@GetMonthName(cita.FechaHora.Month)</div>
+                            </div>
+                            <div class="cita-info">
+                                <div class="cita-hora">
+                                    <i class="bi bi-clock"></i> @cita.FechaHora.ToString("hh:mm tt")
+                                </div>
+                                <div class="cita-mascota">
+                                    <img src="@cita.Mascota.FotoUrl" alt="@cita.Mascota.Nombre" />
+                                    <div>
+                                        <h5>@cita.Mascota.Nombre</h5>
+                                        <p>@cita.Mascota.Categoria.Nombre</p>
+                                    </div>
+                                </div>
+                                @if (esAdmin)
+                                {
+                                    <div class="cita-adoptante">
+                                        <i class="bi bi-person"></i>
+                                        <span>@cita.Adoptante.Nombre</span>
+                                    </div>
+                                }
+                                <div class="cita-tiempo">
+                                    @if (cita.FechaHora > DateTime.Now)
+                                    {
+                                        <span class="tiempo-falta">@GetTimeUntil(cita.FechaHora)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="tiempo-pasado">@GetTimeAgo(cita.FechaHora)</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="cita-actions">
+                                <button class="btn btn-outline-primary" @onclick="() => VerDetalles(cita.CitaId)">
+                                    <i class="bi bi-eye"></i> Ver Detalles
+                                </button>
+                                @if (cita.FechaHora > DateTime.Now)
+                                {
+                                    <button class="btn btn-outline-danger" @onclick="() => CancelarCita(cita.CitaId)">
+                                        <i class="bi bi-x-circle"></i> Cancelar
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<Citas> todasLasCitas = new();
+    private List<Citas> citasFiltradas = new();
+    private List<Citas> citasProximas = new();
+    private List<Citas> citasPasadas = new();
+    private List<Adoptantes> listaAdoptantes = new();
+    private string? error;
+    private string activeTab = "proximas";
+    private bool isLoading = true;
+    private bool esAdmin = false;
+    private string? userId;
+    
+    // Filtros para administradores
+    private string searchTerm = "";
+    private string filtroAdoptante = "";
+    private bool hayFiltrosActivos => !string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(filtroAdoptante);
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await authProvider.GetAuthenticationStateAsync();
+            userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            esAdmin = authState.User.IsInRole("Admin");
+
+            if (userId is null)
+            {
+                error = "No se pudo identificar al usuario.";
+                isLoading = false;
+                return;
+            }
+
+            if (esAdmin)
+            {
+                // Administrador: cargar todas las citas
+                todasLasCitas = await citasService.ListAsync(c => true);
+                
+                // Cargar lista de adoptantes para el filtro
+                listaAdoptantes = await adoptantesService.ListAsync(a => true);
+            }
+            else
+            {
+                // Usuario normal: cargar solo sus citas
+                var adoptante = (await adoptantesService.ListAsync(a => a.UsuarioId == userId)).FirstOrDefault();
+
+                if (adoptante is null)
+                {
+                    error = "No se encontró un adoptante vinculado al usuario.";
+                    isLoading = false;
+                    return;
+                }
+
+                todasLasCitas = await citasService.ListAsync(c => c.AdoptanteId == adoptante.AdoptanteId);
+            }
+
+            // Aplicar filtros iniciales
+            ApplyFilters();
+        }
+        catch (Exception ex)
+        {
+            error = $"Error al cargar las citas: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ApplyFilters()
+    {
+        // Aplicar filtros si es administrador
+        if (esAdmin)
+        {
+            citasFiltradas = todasLasCitas;
+
+            // Filtrar por término de búsqueda
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                citasFiltradas = citasFiltradas
+                    .Where(c => 
+                        c.Mascota.Nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                        c.Adoptante.Nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            // Filtrar por adoptante
+            if (!string.IsNullOrEmpty(filtroAdoptante) && int.TryParse(filtroAdoptante, out int adoptanteId))
+            {
+                citasFiltradas = citasFiltradas
+                    .Where(c => c.AdoptanteId == adoptanteId)
+                    .ToList();
+            }
+        }
+        else
+        {
+            // Para usuarios normales, no hay filtros adicionales
+            citasFiltradas = todasLasCitas;
+        }
+
+        // Ordenar por fecha
+        citasFiltradas = citasFiltradas.OrderBy(c => c.FechaHora).ToList();
+
+        // Separar citas próximas y pasadas
+        var ahora = DateTime.Now;
+        citasProximas = citasFiltradas.Where(c => c.FechaHora > ahora).OrderBy(c => c.FechaHora).ToList();
+        citasPasadas = citasFiltradas.Where(c => c.FechaHora <= ahora).OrderByDescending(c => c.FechaHora).ToList();
+    }
+
+    private void LimpiarFiltros()
+    {
+        searchTerm = "";
+        filtroAdoptante = "";
+        ApplyFilters();
+    }
+
+    private void CambiarTab(string tab)
+    {
+        activeTab = tab;
+    }
+
+    private List<Citas> GetCitasForActiveTab()
+    {
+        return activeTab switch
+        {
+            "proximas" => citasProximas,
+            "pasadas" => citasPasadas,
+            "todas" => citasFiltradas,
+            _ => citasProximas
+        };
+    }
+
+    private string GetTabIcon()
+    {
+        return activeTab switch
+        {
+            "proximas" => "bi-calendar-plus",
+            "pasadas" => "bi-calendar-check",
+            "todas" => "bi-calendar3",
+            _ => "bi-calendar"
+        };
+    }
+
+    private string GetTabEmptyMessage()
+    {
+        return activeTab switch
+        {
+            "proximas" => "próximas",
+            "pasadas" => "pasadas",
+            "todas" => "disponibles",
+            _ => ""
+        };
+    }
+
+    private string GetMonthName(int month)
+    {
+        return month switch
+        {
+            1 => "Ene",
+            2 => "Feb",
+            3 => "Mar",
+            4 => "Abr",
+            5 => "May",
+            6 => "Jun",
+            7 => "Jul",
+            8 => "Ago",
+            9 => "Sep",
+            10 => "Oct",
+            11 => "Nov",
+            12 => "Dic",
+            _ => ""
+        };
+    }
+
+    private string GetTimeUntil(DateTime fecha)
+    {
+        var ahora = DateTime.Now;
+        var diferencia = fecha - ahora;
+
+        if (diferencia.TotalDays < 1)
+        {
+            if (diferencia.TotalHours < 1)
+                return $"En {Math.Floor(diferencia.TotalMinutes)} minutos";
+            else
+                return $"En {Math.Floor(diferencia.TotalHours)} horas";
+        }
+        else if (diferencia.TotalDays < 7)
+        {
+            return $"En {Math.Floor(diferencia.TotalDays)} días";
+        }
+        else if (diferencia.TotalDays < 30)
+        {
+            return $"En {Math.Floor(diferencia.TotalDays / 7)} semanas";
+        }
+        else
+        {
+            return $"En {Math.Floor(diferencia.TotalDays / 30)} meses";
+        }
+    }
+
+    private string GetTimeAgo(DateTime fecha)
+    {
+        var ahora = DateTime.Now;
+        var diferencia = ahora - fecha;
+
+        if (diferencia.TotalDays < 1)
+        {
+            if (diferencia.TotalHours < 1)
+                return $"Hace {Math.Floor(diferencia.TotalMinutes)} minutos";
+            else
+                return $"Hace {Math.Floor(diferencia.TotalHours)} horas";
+        }
+        else if (diferencia.TotalDays < 7)
+        {
+            return $"Hace {Math.Floor(diferencia.TotalDays)} días";
+        }
+        else if (diferencia.TotalDays < 30)
+        {
+            return $"Hace {Math.Floor(diferencia.TotalDays / 7)} semanas";
+        }
+        else
+        {
+            return $"Hace {Math.Floor(diferencia.TotalDays / 30)} meses";
+        }
+    }
+
+    private void VerDetalles(int citaId)
+    {
+        NavigationManager.NavigateTo($"/Citas/{citaId}");
+    }
+
+    private async Task CancelarCita(int citaId)
+    {
+        try
+        {
+            bool result = await citasService.DeleteAsync(citaId);
+            if (result)
+            {
+                // Recargar las citas
+                isLoading = true;
+                await OnInitializedAsync();
+            }
+            else
+            {
+                error = "No se pudo cancelar la cita.";
+            }
+        }
+        catch (Exception ex)
+        {
+            error = $"Error al cancelar la cita: {ex.Message}";
+        }
+    }
+}

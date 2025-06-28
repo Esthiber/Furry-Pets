@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using PawfectMatch.Models._Mascotas;
-using PawfectMatch.Models._Solicitudes;
 using PawfectMatch.Models;
 using System.Reflection.Emit;
-using PawfectMatch.Models._Presentacion;
-using PawfectMatch.Models._Servicios;
+using PawfectMatch.Models.Adopciones._Presentacion;
+using PawfectMatch.Models.Adopciones._Mascotas;
+using PawfectMatch.Models.Adopciones._Solicitudes;
+using PawfectMatch.Models.Adopciones._Servicios;
+using PawfectMatch.Models.Adopciones;
+using PawfectMatch.Models.Adopciones._Adoptantes;
 
 namespace PawfectMatch.Data;
 

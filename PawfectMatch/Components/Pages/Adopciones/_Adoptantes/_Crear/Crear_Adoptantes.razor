@@ -1,0 +1,74 @@
+﻿@page "/Crear/Adoptantes"
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using PawfectMatch.Models.Adopciones
+@using PawfectMatch.Models.Adopciones._Adoptantes
+@using PawfectMatch.Services.Adopciones
+@attribute [Authorize]
+
+@inject AdoptantesService adoptantesService
+@inject AuthenticationStateProvider authenticationStateProvider
+
+@rendermode InteractiveServer
+
+<h3 class="text-xl font-semibold mb-4">Registro de Adoptante</h3>
+
+<EditForm Model="@adoptante" OnValidSubmit="GuardarAdoptante">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Nombre completo:</label>
+        <InputText @bind-Value="adoptante.Nombre" class="form-control" />
+        <ValidationMessage For="@(() => adoptante.Nombre)" />
+    </div>
+
+    <div class="mb-3">
+        <label>Ocupación:</label>
+        <InputText @bind-Value="adoptante.Ocupacion" class="form-control" />
+        <ValidationMessage For="@(() => adoptante.Ocupacion)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+@if (mensajeExito != null)
+{
+    <div class="alert alert-success mt-3">@mensajeExito</div>
+}
+
+@code {
+    private Adoptantes adoptante = new();
+    private string? mensajeExito;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            adoptante.UsuarioId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+        }
+    }
+
+    private async Task GuardarAdoptante()
+    {
+        if (!string.IsNullOrWhiteSpace(adoptante.UsuarioId))
+        {
+            bool guardado = await adoptantesService.InsertAsync(adoptante);
+            if (guardado)
+            {
+                mensajeExito = "Adoptante registrado con éxito.";
+                adoptante = new();
+            }
+            else
+            {
+                mensajeExito = "Hubo un error al guardar.";
+            }
+        }
+    }
+}

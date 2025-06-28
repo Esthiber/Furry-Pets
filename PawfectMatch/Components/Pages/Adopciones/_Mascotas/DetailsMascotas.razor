@@ -1,0 +1,203 @@
+﻿@page "/mascotas/{id:int}"
+@using Blazored.Toast.Services
+@using PawfectMatch.Models.Adopciones._Mascotas
+
+@inject MascotasService mascotasService
+@inject RazasService razasService
+@inject NavigationManager NavigationManager
+@inject IToastService ToastService
+
+@rendermode InteractiveServer
+
+<div class="mascota-detail-container">
+    @if (mascota is null)
+    {
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Cargando detalles de la mascota...</p>
+        </div>
+    }
+    else
+    {
+        <div class="mascota-detail-header">
+            <div class="mascota-detail-title">
+                <h1>@mascota.Nombre</h1>
+                <div class="mascota-badges">
+                    <span class="badge badge-categoria">@mascota.Categoria.Nombre</span>
+                    <span class="badge badge-estado">@mascota.Estado.Nombre</span>
+                </div>
+            </div>
+            <div class="mascota-detail-actions">
+                <button class="btn-secondary" @onclick="Volver">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </button>
+                @if (mascota.Estado.Nombre.ToLower() != "adoptado")
+                {
+                    <a class="btn-adopt" href="@Urls.Solicitudes.Crear/@id">
+                        <i class="fas fa-heart"></i> ¡Adóptame!
+                    </a>
+                }
+                @if (IsAdmin)
+                {
+                    <a class="btn-edit" href="@($"/mascotas/editar/{id}")">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                }
+            </div>
+        </div>
+
+        <div class="mascota-detail-content">
+            <div class="mascota-detail-image">
+                <img src="@mascota.FotoUrl" alt="Foto de @mascota.Nombre" />
+                <div class="mascota-age">
+                    @CalculateAge(mascota.FechaNacimiento)
+                </div>
+            </div>
+
+            <div class="mascota-detail-info">
+                <div class="info-section">
+                    <h2 class="section-title">Acerca de @mascota.Nombre</h2>
+                    <p class="mascota-description">@mascota.Descripcion</p>
+                </div>
+
+                <div class="info-section">
+                    <h2 class="section-title">Características</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Categoría</span>
+                            <span class="info-value">@mascota.Categoria.Nombre</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Raza</span>
+                            <span class="info-value">@raza</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Sexo</span>
+                            <span class="info-value">@(mascota.Sexo?.Nombre ?? "No especificado")</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Tamaño</span>
+                            <span class="info-value">@mascota.Tamano pulgadas</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Relación de Tamaño</span>
+                            <span class="info-value">@mascota.RelacionSize.Size</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Fecha de Nacimiento</span>
+                            <span class="info-value">@mascota.FechaNacimiento.ToShortDateString()</span>
+                        </div>
+                    </div>
+                </div>
+
+                @if (mascota.Estado.Nombre.ToLower() != "adoptado")
+                {
+                    <div class="adoption-cta">
+                        <h2 class="section-title">¿Quieres darle un hogar a @mascota.Nombre?</h2>
+                        <p>Completa una solicitud de adopción y pronto podrás tener a @mascota.Nombre en tu hogar.</p>
+                        <a class="btn-adopt-large" href="@Urls.Solicitudes.Crear/@id">
+                            <i class="fas fa-heart"></i> Iniciar proceso de adopción
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="adoption-status">
+                        <h2 class="section-title">Estado de Adopción</h2>
+                        <div class="adopted-message">
+                            <i class="fas fa-home"></i>
+                            <p>¡@mascota.Nombre ya ha encontrado un hogar feliz!</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private Mascotas? mascota { get; set; }
+    private string? raza { get; set; }
+    private bool IsAdmin { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            mascota = await mascotasService.SearchByIdAsync(id);
+
+            raza = await getRaza(mascota.RazaId);
+
+            if (mascota is null || mascota.MascotaId == 0)
+            {
+                // Mascota no encontrada
+                ToastService.ShowError("Mascota no encontrada");
+                NavigationManager.NavigateTo("/404", true);
+                return;
+            }
+
+            // Verificar si el usuario es administrador
+            if (authenticationState != null)
+            {
+                var authState = await authenticationState;
+                IsAdmin = authState.User.IsInRole("Admin");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Error al cargar la mascota: {ex.Message}");
+            NavigationManager.NavigateTo("/mascotas");
+        }
+
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo(Urls.Mascotas.Index);
+    }
+
+    private string CalculateAge(DateOnly birthDate)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var age = today.Year - birthDate.Year;
+
+        // Ajustar la edad si aún no ha pasado el cumpleaños este año
+        if (birthDate.Month > today.Month || (birthDate.Month == today.Month && birthDate.Day > today.Day))
+        {
+            age--;
+        }
+
+        if (age < 1)
+        {
+            // Calcular meses
+            var months = (today.Month - birthDate.Month) + 12 * (today.Year - birthDate.Year);
+            if (today.Day < birthDate.Day)
+            {
+                months--;
+            }
+
+            if (months < 1)
+            {
+                // Calcular días
+                var days = (today.DayNumber - birthDate.DayNumber);
+                return $"{days} {(days == 1 ? "día" : "días")}";
+            }
+
+            return $"{months} {(months == 1 ? "mes" : "meses")}";
+        }
+
+        return $"{age} {(age == 1 ? "año" : "años")}";
+    }
+
+    private async Task<string> getRaza(int id)
+    {
+        var r = await razasService.SearchByIdAsync(id);
+        return r.Nombre;
+    }
+}

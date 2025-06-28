@@ -1,4 +1,6 @@
 ﻿@page "/Advanced"
+@using PawfectMatch.Models.Adopciones._Solicitudes
+@using PawfectMatch.Services.Adopciones
 @attribute [Authorize(Roles = "Admin")]
 @inject MascotasService mascotasService
 @inject SolicitudesAdopcionesService solicitudesService

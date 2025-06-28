@@ -1,0 +1,335 @@
+﻿@page "/historial"
+@using PawfectMatch.Models.Adopciones._Solicitudes
+@attribute [Authorize(Roles = "Admin")]
+@inject HistorialAdopcionesService HistorialService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Historial de Adopciones | Pawfect Match</PageTitle>
+
+<div class="historial-page">
+    <div class="header-section">
+        <h3>Historial de Adopciones</h3>
+        <p class="subtitle">Registro completo de todas las adopciones realizadas</p>
+    </div>
+
+    @if (historial == null)
+    {
+        <div class="loading-container">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p>Cargando historial de adopciones...</p>
+        </div>
+    }
+    else if (!historial.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="bi bi-clipboard-x"></i>
+            </div>
+            <h4>No hay adopciones registradas</h4>
+            <p>Cuando se realicen adopciones, aparecerán en esta lista.</p>
+            <button class="btn btn-primary" @onclick="@(() => NavigationManager.NavigateTo(Urls.Mascotas.Index))">
+                <i class="bi bi-arrow-left"></i> Volver a Mascotas
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="filter-section">
+            <div class="search-input-group">
+                <i class="bi bi-search"></i>
+                <input type="text"
+                       class="form-control"
+                       placeholder="Buscar por nombre de mascota o adoptante..."
+                       @bind="searchTerm"
+                       @bind:event="oninput"
+                       @onkeyup="ApplyFilters" />
+                @if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    <button class="btn-clear" @onclick="ClearSearch">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                }
+            </div>
+
+            <div class="date-filter">
+                <div class="date-range">
+                    <div class="date-input-group">
+                        <label>Desde:</label>
+                        <input type="date" class="form-control" @bind="startDate" @bind:event="onchange" />
+                    </div>
+                    <div class="date-input-group">
+                        <label>Hasta:</label>
+                        <input type="date" class="form-control" @bind="endDate" @bind:event="onchange" />
+                    </div>
+                </div>
+
+                @if (IsFiltered)
+                {
+                    <button class="btn btn-outline-secondary btn-sm" @onclick="ClearFilters">
+                        <i class="bi bi-x-circle"></i> Limpiar filtros
+                    </button>
+                }
+            </div>
+        </div>
+
+        <div class="results-info">
+            <span>Mostrando @filteredHistorial.Count de @historial.Count adopciones</span>
+            <button class="btn btn-outline-primary btn-sm" @onclick="ExportToCsv">
+                <i class="bi bi-download"></i> Exportar
+            </button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="historial-table">
+                <thead>
+                    <tr>
+                        <th @onclick="@(() => SortBy(" adoptante"))">
+                            Adoptante
+                            <i class="@GetSortIcon("adoptante")"></i>
+                        </th>
+                        <th @onclick="@(() => SortBy(" mascota"))">
+                            Mascota
+                            <i class="@GetSortIcon("mascota")"></i>
+                        </th>
+                        <th @onclick="@(() => SortBy(" fecha"))">
+                            Fecha de Adopción
+                            <i class="@GetSortIcon("fecha")"></i>
+                        </th>
+                        <th>Notas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in filteredHistorial ?? new())
+                    {
+                        <tr>
+                            <td>
+                                <div class="adoptante-info">
+                                    <div class="avatar">
+                                        @item.Adoptante.Nombre[0]
+                                    </div>
+                                    <div>
+                                        <div class="nombre">@item.Adoptante.Nombre</div>
+                                        <div class="email">@item.Adoptante.Ocupacion</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="mascota-info">
+                                    <img src="@item.Mascota.FotoUrl" alt="@item.Mascota.Nombre" />
+                                    <div>
+                                        <div class="nombre">@item.Mascota.Nombre</div>
+                                        <div class="raza">@item.Mascota.Categoria.Nombre</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fecha-adopcion">
+                                    <div class="fecha">@item.FechaAdopcion.ToString("dd/MM/yyyy")</div>
+                                    <div class="tiempo">@GetTimeAgo(item.FechaAdopcion)</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="notas-container">
+                                    @if (string.IsNullOrEmpty(item.Notas))
+                                    {
+                                        <span class="no-notas">Sin notas</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="notas">@item.Notas</span>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-sm btn-outline-primary" title="Ver detalles" @onclick="@(() =>{ VerDetalles(item.HistorialAdopcioneId);})">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+
+                                    @* <button class="btn btn-sm btn-outline-secondary" title="Editar notas" @onclick="() => EditarNotas(item.HistorialAdopcioneId)"> *@
+                                    @*     <i class="bi bi-pencil"></i> *@
+                                    @* </button> *@
+
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    private List<HistorialAdopciones>? historial { get; set; } = new();
+    private List<HistorialAdopciones> filteredHistorial { get; set; } = new();
+
+    // Filtros
+    private string searchTerm = string.Empty;
+    private DateTime? startDate = null;
+    private DateTime? endDate = null;
+
+    // Ordenamiento
+    private string sortColumn = "fecha";
+    private bool sortAscending = false;
+
+    private bool IsFiltered =>
+        !string.IsNullOrEmpty(searchTerm) ||
+        startDate != null ||
+        endDate != null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        historial = await HistorialService.ListAsync(_ => true);
+
+        if (historial != null)
+        {
+            // Ordenar por fecha de adopción descendente por defecto
+            filteredHistorial = historial
+                .OrderByDescending(h => h.FechaAdopcion)
+                .ToList();
+        }
+    }
+
+    private void ApplyFilters()
+    {
+        if (historial == null) return;
+
+        filteredHistorial = historial.ToList();
+
+        // Filtrar por termino de busqueda adoptante o nombre de mascota
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            filteredHistorial = filteredHistorial
+                .Where(h =>
+                    h.Adoptante.Nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    h.Mascota.Nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+
+        // Filtrar por fecha de inicio
+        if (startDate != null)
+        {
+            var startDateOnly = DateOnly.FromDateTime(startDate.Value);
+            filteredHistorial = filteredHistorial
+                .Where(h => h.FechaAdopcion >= startDate.Value)
+                .ToList();
+        }
+
+        // Filtrar por fecha de fin
+        if (endDate != null)
+        {
+            var endDateOnly = DateOnly.FromDateTime(endDate.Value);
+            filteredHistorial = filteredHistorial
+                .Where(h => h.FechaAdopcion <= endDate.Value)
+                .ToList();
+        }
+
+        // Aplicar ordenamiento
+        ApplySorting();
+    }
+
+    private void ClearSearch()
+    {
+        searchTerm = string.Empty;
+        ApplyFilters();
+    }
+
+    private void ClearFilters()
+    {
+        searchTerm = string.Empty;
+        startDate = null;
+        endDate = null;
+
+        if (historial != null)
+        {
+            filteredHistorial = historial.ToList();
+            ApplySorting();
+        }
+    }
+
+    private void SortBy(string column)
+    {
+        if (sortColumn == column)
+        {
+            // Cambiar dirección si es la misma columna
+            sortAscending = !sortAscending;
+        }
+        else
+        {
+            // Nueva columna, ordenar ascendente por defecto
+            sortColumn = column;
+            sortAscending = true;
+        }
+
+        ApplySorting();
+    }
+
+    private void ApplySorting()
+    {
+        if (filteredHistorial == null) return;
+
+        filteredHistorial = sortColumn switch
+        {
+            "adoptante" => sortAscending
+                ? filteredHistorial.OrderBy(h => h.Adoptante.Nombre).ToList()
+                : filteredHistorial.OrderByDescending(h => h.Adoptante.Nombre).ToList(),
+
+            "mascota" => sortAscending
+                ? filteredHistorial.OrderBy(h => h.Mascota.Nombre).ToList()
+                : filteredHistorial.OrderByDescending(h => h.Mascota.Nombre).ToList(),
+
+            "fecha" => sortAscending
+                ? filteredHistorial.OrderBy(h => h.FechaAdopcion).ToList()
+                : filteredHistorial.OrderByDescending(h => h.FechaAdopcion).ToList(),
+
+            _ => filteredHistorial
+        };
+    }
+
+    private string GetSortIcon(string column)
+    {
+        if (sortColumn != column)
+            return "bi bi-arrow-down-up text-muted";
+
+        return sortAscending
+            ? "bi bi-sort-down-alt"
+            : "bi bi-sort-down";
+    }
+
+    private string GetTimeAgo(DateTime dateO)
+    {
+        var date = DateOnly.FromDateTime(dateO);
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var days = today.DayNumber - date.DayNumber;
+
+        return days switch
+        {
+            0 => "Hoy",
+            1 => "Ayer",
+            < 7 => $"Hace {days} días",
+            < 30 => $"Hace {days / 7} semanas",
+            < 365 => $"Hace {days / 30} meses",
+            _ => $"Hace {days / 365} años"
+        };
+    }
+
+    private void VerDetalles(int id)
+    {
+        NavigationManager.NavigateTo($"{Urls.Historial.Details}{id}");
+    }
+
+    private void EditarNotas(int id)
+    {
+        // debe de abrir un modal para editar las notas.
+    }
+
+    private void ExportToCsv()
+    {
+        // exportar a un txt con formato csv, o en su defecto literalmente un csv.
+    }
+}
