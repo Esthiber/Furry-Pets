@@ -1,7 +1,5 @@
-﻿@page "/Details/Solicitudes/{id:int}"
+﻿@* @page "/Details/Solicitudes/{id:int}"
 @using PawfectMatch.Models.Adopciones
-@using PawfectMatch.Models.Adopciones._Servicios
-@using PawfectMatch.Models.Adopciones._Solicitudes
 @using PawfectMatch.Services.Adopciones
 
 @inject SolicitudesAdopcionesService solicitudesService
@@ -53,7 +51,7 @@
                 <h1>Detalle de Solicitud de Adopción</h1>
                 <div class="solicitud-badges">
                     <span class="badge badge-id">ID: @solicitud.SolicitudAdopcionId</span>
-                    <span class="badge @GetEstadoClass(solicitud.EstadoSolicitudId)">
+                    <span class="badge @GetEstadoClass(solicitud.EstadoSolicitudID)">
                         @solicitud.EstadoSolicitud?.Nombre
                     </span>
                 </div>
@@ -195,7 +193,7 @@
                                 </div>
                                 <div class="cita-estado">
                                     <span class="badge @GetCitaEstadoClass(1)">
-                                        @* @cita.EstadoCita?.Nombre *@ 
+                                        @cita.EstadoCita?.Nombre
                                                                 Pendiente
                                     </span>
                                 </div>
@@ -206,7 +204,7 @@
             }
 
             <!-- Programar cita (solo si la solicitud está aceptada y no hay citas) -->
-            @if (solicitud.EstadoSolicitudId == 2 && listaCitas.Count == 0)
+            @if (solicitud.EstadoSolicitudID == 2 && listaCitas.Count == 0)
             {
                 <div class="solicitud-section crear-cita-section">
                     <h2 class="section-title">
@@ -224,7 +222,7 @@
             }
 
             <!-- Acciones de administrador -->
-            @if (esAdmin && solicitud.EstadoSolicitudId == 1)
+            @if (esAdmin && solicitud.EstadoSolicitudID == 1)
             {
                 <div class="solicitud-section admin-actions-section">
                     <h2 class="section-title">
@@ -433,4 +431,4 @@
 
         return $"{age} {(age == 1 ? "año" : "años")}";
     }
-}
+} *@

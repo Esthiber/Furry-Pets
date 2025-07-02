@@ -1,5 +1,4 @@
-﻿@page "/Advanced"
-@using PawfectMatch.Models.Adopciones._Solicitudes
+﻿@* @page "/Advanced"
 @using PawfectMatch.Services.Adopciones
 @attribute [Authorize(Roles = "Admin")]
 @inject MascotasService mascotasService
@@ -106,7 +105,7 @@
                         </div>
                     </div>
 
-                    @* <div class="admin-card" @onclick="@(() => NavigateTo(Urls.Categorias.Index))"> *@
+                    <div class="admin-card" @onclick="@(() => NavigateTo(Urls.Categorias.Index))"> *@
                     @*     <div class="card-icon"> *@
                     @*         <i class="bi bi-tags"></i> *@
                     @*     </div> *@
@@ -130,7 +129,7 @@
                     @*     <div class="card-action"> *@
                     @*         <i class="bi bi-chevron-right"></i> *@
                     @*     </div> *@
-                    @* </div> *@
+                    @* </div>
                 </div>
             </div>
 
@@ -233,7 +232,7 @@
                     <i class="bi bi-plus-circle"></i>
                     <span>Nueva Mascota</span>
                 </button>
-                @* <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Account.Index))"> *@
+                <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Account.Index))"> *@
                 @*     <i class="bi bi-person-gear"></i> *@
                 @*     <span>Gestionar Usuarios</span> *@
                 @* </button> *@
@@ -244,7 +243,7 @@
                 @* <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Configuracion.Reportes))"> *@
                 @*     <i class="bi bi-bar-chart"></i> *@
                 @*     <span>Reportes</span> *@
-                @* </button> *@
+                @* </button>
                 <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Sugerencias.Index))">
                     <i class="bi bi-envelope-paper-heart"></i>
                     <span>Sugerencias</span>
@@ -333,4 +332,4 @@
     {
         // Implementar exportación de datos
     }
-}
+} *@

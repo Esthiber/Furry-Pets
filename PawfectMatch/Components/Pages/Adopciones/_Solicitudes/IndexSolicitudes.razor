@@ -1,5 +1,4 @@
-﻿@page "/solicitudes"
-@using PawfectMatch.Models.Adopciones._Solicitudes
+﻿@* @page "/solicitudes"
 @using PawfectMatch.Services.Adopciones
 @attribute [Authorize]
 @inject SolicitudesAdopcionesService solicitudesAdopcionesService
@@ -29,15 +28,15 @@
         </div>
         <div class="stats-area">
             <div class="stat-card">
-                <div class="stat-value">@(solicitudes?.Count(s => s.EstadoSolicitudId == 1) ?? 0)</div>
+                <div class="stat-value">@(solicitudes?.Count(s => s.EstadoSolicitudID == 1) ?? 0)</div>
                 <div class="stat-label">Pendientes</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">@(solicitudes?.Count(s => s.EstadoSolicitudId == 2) ?? 0)</div>
+                <div class="stat-value">@(solicitudes?.Count(s => s.EstadoSolicitudID == 2) ?? 0)</div>
                 <div class="stat-label">Aprobadas</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">@(solicitudes?.Count(s => s.EstadoSolicitudId == 3) ?? 0)</div>
+                <div class="stat-value">@(solicitudes?.Count(s => s.EstadoSolicitudID == 3) ?? 0)</div>
                 <div class="stat-label">Rechazadas</div>
             </div>
         </div>
@@ -127,9 +126,9 @@
         <div class="solicitudes-grid">
             @foreach (var solicitud in solicitudesFiltradas)
             {
-                <div class="solicitud-card @GetEstadoClass(solicitud.EstadoSolicitudId)">
+                <div class="solicitud-card @GetEstadoClass(solicitud.EstadoSolicitudID)">
                     <div class="card-header">
-                        <div class="estado-badge @GetEstadoClass(solicitud.EstadoSolicitudId)">
+                        <div class="estado-badge @GetEstadoClass(solicitud.EstadoSolicitudID)">
                             @solicitud.EstadoSolicitud.Nombre
                         </div>
                         <div class="fecha">
@@ -162,7 +161,7 @@
                             <i class="bi bi-eye"></i> Ver Detalles
                         </a>
 
-                        @if (esAdmin && solicitud.EstadoSolicitudId == 1)
+                        @if (esAdmin && solicitud.EstadoSolicitudID == 1)
                         {
                             <div class="action-buttons">
                                 <button class="btn btn-success" @onclick="() => AprobarSolicitud(solicitud.SolicitudAdopcionId)">
@@ -237,7 +236,7 @@
             if (solicitudes != null)
             {
                 solicitudesFiltradas = solicitudes
-                    .OrderByDescending(s => s.EstadoSolicitudId == 1)
+                    .OrderByDescending(s => s.EstadoSolicitudID == 1)
                     .ThenByDescending(s => s.Fecha)
                     .ToList();
             }
@@ -274,7 +273,7 @@
         if (estadoFiltro != 0)
         {
             solicitudesFiltradas = solicitudesFiltradas
-                .Where(s => s.EstadoSolicitudId == estadoFiltro)
+                .Where(s => s.EstadoSolicitudID == estadoFiltro)
                 .ToList();
         }
 
@@ -288,7 +287,7 @@
 
         // Ordenar: pendientes primero, luego por fecha descendente
         solicitudesFiltradas = solicitudesFiltradas
-            .OrderByDescending(s => s.EstadoSolicitudId == 1)
+            .OrderByDescending(s => s.EstadoSolicitudID == 1)
             .ThenByDescending(s => s.Fecha)
             .ToList();
     }
@@ -308,7 +307,7 @@
         if (solicitudes != null)
         {
             solicitudesFiltradas = solicitudes
-                .OrderByDescending(s => s.EstadoSolicitudId == 1)
+                .OrderByDescending(s => s.EstadoSolicitudID == 1)
                 .ThenByDescending(s => s.Fecha)
                 .ToList();
         }
@@ -392,4 +391,4 @@
             ApplyFilters();
         }
     }
-}
+} *@

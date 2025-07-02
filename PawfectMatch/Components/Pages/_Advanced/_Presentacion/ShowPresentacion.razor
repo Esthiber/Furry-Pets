@@ -1,4 +1,4 @@
-﻿@rendermode InteractiveServer
+﻿@* @rendermode InteractiveServer
 
 @inject PresentacionesService presentacionesService
 @implements IDisposable
@@ -38,7 +38,7 @@ else
 
     </div>
 
-    @*Titulo izquierda*@
+    Titulo izquierda
     <div class="hero-overlay">
         <div class="hero-content">
             @if (@Diapositivas[activeIndex].IsTituloLeftActive)
@@ -59,7 +59,7 @@ else
             }
         </div>
     </div>
-    @*Titulo derecha*@
+    @*Titulo derecha
     <div class="hero-overlay-right">
         <div class="hero-content">
             @if (@Diapositivas[activeIndex].IsTituloRightActive)
@@ -144,4 +144,4 @@ else
         slideTimer?.Dispose();
     }
 
-}
+} *@

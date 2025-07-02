@@ -1,5 +1,4 @@
-﻿@page "/historial/{id:int}"
-@using PawfectMatch.Models.Adopciones._Solicitudes
+﻿@* @page "/historial/{id:int}"
 @attribute [Authorize]
 @inject RazasService razasService
 @inject HistorialAdopcionesService historialService
@@ -28,7 +27,7 @@
             <button class="btn-secondary" @onclick="Volver">Volver</button>
         </div>
     }
-    else if (historial == null || historial.HistorialAdopcioneId == 0)
+    else if (historial == null || historial.HistorialAdopcionesID == 0)
     {
         <div class="not-found-container">
             <div class="not-found-icon">
@@ -304,4 +303,4 @@
         var r = await razasService.SearchByIdAsync(id);
         return r.Nombre;
     }
-}
+} *@

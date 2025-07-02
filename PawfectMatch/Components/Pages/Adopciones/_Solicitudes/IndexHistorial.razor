@@ -1,5 +1,4 @@
-﻿@page "/historial"
-@using PawfectMatch.Models.Adopciones._Solicitudes
+﻿@* @page "/historial"
 @attribute [Authorize(Roles = "Admin")]
 @inject HistorialAdopcionesService HistorialService
 @inject NavigationManager NavigationManager
@@ -150,9 +149,9 @@
                                         <i class="bi bi-eye"></i>
                                     </button>
 
-                                    @* <button class="btn btn-sm btn-outline-secondary" title="Editar notas" @onclick="() => EditarNotas(item.HistorialAdopcioneId)"> *@
+                                    <button class="btn btn-sm btn-outline-secondary" title="Editar notas" @onclick="() => EditarNotas(item.HistorialAdopcioneId)"> *@
                                     @*     <i class="bi bi-pencil"></i> *@
-                                    @* </button> *@
+                                    @* </button>
 
                                 </div>
                             </td>
@@ -332,4 +331,4 @@
     {
         // exportar a un txt con formato csv, o en su defecto literalmente un csv.
     }
-}
+} *@

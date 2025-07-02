@@ -1,8 +1,6 @@
-﻿@page "/Mascotas"
-@using PawfectMatch.Models.Adopciones._Mascotas
+﻿@* @page "/Mascotas"
 
-@inject MascotasService mascotasService
-@inject RelacionSizesService relacionSizesService
+
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -49,7 +47,7 @@
                         <option value="0">Todos los tamaños</option>
                         @foreach (var tamano in relacionesTamano)
                         {
-                            <option value="@tamano.RelacionSizeId">@tamano.Size</option>
+                            <option value="@tamano.RelacionSizeID">@tamano.Size</option>
                         }
                     </InputSelect>
                 </div>
@@ -188,7 +186,7 @@
         if (tamanoFiltro != 0)
         {
             mascotasFiltradas = mascotasFiltradas
-                .Where(m => m.RelacionSizeId == tamanoFiltro)
+                .Where(m => m.RelacionSizeID == tamanoFiltro)
                 .ToList();
         }
     }
@@ -227,4 +225,4 @@
     {
         navigationManager.NavigateTo(Urls.Mascotas.Crear);
     }
-}
+} *@

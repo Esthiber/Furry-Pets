@@ -1,9 +1,5 @@
-﻿@page "/solicitudes/crear/{id:int}"
+﻿@* @page "/solicitudes/crear/{id:int}"
 @using PawfectMatch.Models.Adopciones
-@using PawfectMatch.Models.Adopciones._Adoptantes
-@using PawfectMatch.Models.Adopciones._Mascotas
-@using PawfectMatch.Models.Adopciones._Servicios
-@using PawfectMatch.Models.Adopciones._Solicitudes
 @using PawfectMatch.Services.Adopciones
 
 @inject SolicitudesAdopcionesService solicitudesAdopcionesService
@@ -216,7 +212,7 @@
             solicitud = new()
                 {
                     Fecha = DateTime.Now,
-                    EstadoSolicitudId = 1 // Estado inicial (pendiente)
+                    EstadoSolicitudID = 1 // Estado inicial (pendiente)
                 };
 
             var authState = await authProvider.GetAuthenticationStateAsync();
@@ -340,7 +336,7 @@
                 mensajeExito = "¡Tu solicitud de adopción ha sido enviada con éxito! Pronto nos pondremos en contacto contigo.";
                 ToastService.ShowSuccess(mensajeExito);
 
-                solicitud = new() { Fecha = DateTime.Now, EstadoSolicitudId = 1 };
+                solicitud = new() { Fecha = DateTime.Now, EstadoSolicitudID = 1 };
                 serviciosSeleccionados.Clear();
 
                 await Task.Delay(3000);
@@ -464,4 +460,4 @@
 
         return $"{age} {(age == 1 ? "año" : "años")}";
     }
-}
+} *@

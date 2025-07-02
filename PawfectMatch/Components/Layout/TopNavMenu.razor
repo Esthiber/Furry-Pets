@@ -1,6 +1,5 @@
-﻿@using PawfectMatch.Models.Adopciones._Mascotas
+﻿
 @inject NavigationManager NavigationManager
-@inject MascotasService mascotasService
 @inject AuthenticationStateProvider AuthStateProvider
 @rendermode InteractiveServer
 
@@ -51,10 +50,10 @@
 
         <!-- Action Buttons -->
         <div class="nav-actions">
-            <button class="discover-btn" @onclick="GoToRandomMascota">
+            @* <button class="discover-btn" @onclick="GoToRandomMascota">
                 <i class="bi bi-shuffle"></i>
                 <span>¡Descubrir!</span>
-            </button>
+            </button> *@
 
             <div class="user-menu-container">
                 <button class="user-btn" @onclick="ToggleUserMenu">
@@ -115,10 +114,10 @@
                     </NavLink>
                 </li>
                 <li class="mobile-nav-item">
-                    <button class="mobile-discover-btn" @onclick="GoToRandomMascota">
+                    @* <button class="mobile-discover-btn" @onclick="GoToRandomMascota">
                         <i class="bi bi-shuffle"></i>
                         <span>¡Descubrir!</span>
-                    </button>
+                    </button> *@
                 </li>
             </ul>
         </div>
@@ -157,33 +156,33 @@
         mobileMenuOpen = false;
     }
 
-    private async Task<Mascotas?> RandomMascota()
-    {
-        var mascotas = await mascotasService.ListAsync(m => true) ?? new();
+    // private async Task<Mascotas?> RandomMascota()
+    // {
+    //     var mascotas = await mascotasService.ListAsync(m => true) ?? new();
 
-        var randomMascota = mascotas
-            .Where(m => m.EstadoId == 1)
-            .OrderBy(_ => Guid.NewGuid())
-            .FirstOrDefault();
+    //     var randomMascota = mascotas
+    //         .Where(m => m.EstadoId == 1)
+    //         .OrderBy(_ => Guid.NewGuid())
+    //         .FirstOrDefault();
 
-        return randomMascota;
-    }
+    //     return randomMascota;
+    // }
 
-    private async Task GoToRandomMascota()
-    {
-        var m = await RandomMascota() ?? new();
+    // private async Task GoToRandomMascota()
+    // {
+    //     var m = await RandomMascota() ?? new();
 
-        if (m.MascotaId > 0)
-        {
-            NavigationManager.NavigateTo($"{Urls.Mascotas.Detalle}{m.MascotaId}");
-        }
-        else
-        {
-            NavigationManager.NavigateTo(Urls.Mascotas.Index);
-        }
+    //     if (m.MascotaId > 0)
+    //     {
+    //         NavigationManager.NavigateTo($"{Urls.Mascotas.Detalle}{m.MascotaId}");
+    //     }
+    //     else
+    //     {
+    //         NavigationManager.NavigateTo(Urls.Mascotas.Index);
+    //     }
 
-        // Cerrar menús si están abiertos
-        mobileMenuOpen = false;
-        showUserMenu = false;
-    }
+    //     Cerrar menús si están abiertos
+    //     mobileMenuOpen = false;
+    //     showUserMenu = false;
+    // }
 }

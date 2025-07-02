@@ -1,11 +1,11 @@
-﻿@page "/Editar/Adoptantes/{id:int}"
+﻿@* @page "/Editar/Adoptantes/{id:int}"
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using PawfectMatch.Models
 @using PawfectMatch.Models.Adopciones
-@using PawfectMatch.Models.Adopciones._Adoptantes
+
 @using PawfectMatch.Services.Adopciones
 @attribute [Authorize(Roles = "Admin")]
 
@@ -69,4 +69,4 @@ else
                 : "Error al actualizar el adoptante.";
         }
     }
-}
+} *@

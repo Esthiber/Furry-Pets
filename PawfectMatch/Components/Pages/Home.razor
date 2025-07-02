@@ -1,6 +1,5 @@
 ﻿@page "/"
-@using PawfectMatch.Models.Adopciones._Mascotas
-@inject MascotasService mascotasService
+
 @inject NavigationManager NavigationManager
 
 <PageTitle>Pawfect Match | Encuentra a tu compañero perfecto</PageTitle>
@@ -13,20 +12,7 @@
     </section>
 
     <!-- Seccion de Estadisticas -->
-    <section class="stats-section">
-        <div class="stat-item">
-            <div class="stat-value">@(mascotas?.Count(m => m.EstadoId == 1) ?? 0)</div>
-            <div class="stat-label">Mascotas Disponibles</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value">@(mascotas?.Count(m => m.EstadoId == 2) ?? 0)</div>
-            <div class="stat-label">Adopciones Exitosas</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value">@(familiasFelices)</div>
-            <div class="stat-label">Familias Felices</div>
-        </div>
-    </section>
+      
 
     <!-- Seccion de Mascotas Destacadas -->
     <section class="featured-section">
@@ -35,44 +21,7 @@
             <p>Conoce a algunas de nuestras adorables mascotas en busca de un hogar</p>
         </div>
 
-        @if (mascotasDestacadas == null || !mascotasDestacadas.Any())
-        {
-            <div class="loading-container">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Cargando...</span>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="featured-pets">
-                @foreach (var mascota in mascotasDestacadas)
-                {
-                    <div class="featured-pet-card" @onclick="() => VerDetalleMascota(mascota.MascotaId)">
-                        <div class="pet-image">
-                            <img src="@mascota.FotoUrl" alt="@mascota.Nombre" />
-                            <div class="pet-badge">@mascota.Categoria.Nombre</div>
-                        </div>
-                        <div class="pet-info">
-                            <h3>@mascota.Nombre</h3>
-                            <div class="pet-details">
-                                <span><i class="bi bi-gender-@(mascota.Sexo.Nombre.ToLower() == "macho" ? "male" : "female")"></i> @mascota.Sexo.Nombre</span>
-                                <span><i class="bi bi-calendar-heart"></i> @CalcularEdad(mascota.FechaNacimiento)</span>
-                            </div>
-                            <p class="pet-description">@(mascota.Descripcion.Length > 100 ? mascota.Descripcion.Substring(0, 100) + "..." : mascota.Descripcion)</p>
-                            <a class="btn btn-outline-primary" href="@Urls.Mascotas.Detalle @mascota.MascotaId">Conocer más</a>
-                        </div>
-                    </div>
-                }
-                <div class="featured-more">
-                    <div class="more-content">
-                        <h3>¿Quieres ver más?</h3>
-                        <p>Tenemos muchas más mascotas esperando encontrar un hogar</p>
-                        <button class="btn btn-primary" @onclick="ExplorarMascotas">Ver todas las mascotas</button>
-                    </div>
-                </div>
-            </div>
-        }
+     
     </section>
 
     <!-- Seccion de Proceso de Adopcion -->
@@ -156,8 +105,6 @@
 </div>
 
 @code {
-    private List<Mascotas>? mascotas;
-    private List<Mascotas>? mascotasDestacadas;
     private int familiasFelices = 120; // <-- hacemos a muchas familias felices. =}
 
     // Gente random que da testimonios
@@ -186,18 +133,7 @@
         }
     };
 
-    protected override async Task OnInitializedAsync()
-    {
-        mascotas = await mascotasService.ListAsync(m => true) ?? new();
-
-        // Obtener mascotas destacadas (disponibles, limitadas a 5)
-        // Osea literalmente las destacadas o Qseyo.
-        mascotasDestacadas = mascotas
-            .Where(m => m.EstadoId == 1)
-            .OrderBy(_ => Guid.NewGuid()) // para Orden aleatorio
-            .Take(5)
-            .ToList();
-    }
+   
 
     private string CalcularEdad(DateOnly fechaNacimiento)
     {

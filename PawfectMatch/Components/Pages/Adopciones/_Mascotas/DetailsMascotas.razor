@@ -1,6 +1,6 @@
-﻿@page "/mascotas/{id:int}"
+﻿@* @page "/mascotas/{id:int}"
 @using Blazored.Toast.Services
-@using PawfectMatch.Models.Adopciones._Mascotas
+
 
 @inject MascotasService mascotasService
 @inject RazasService razasService
@@ -132,7 +132,7 @@
         {
             mascota = await mascotasService.SearchByIdAsync(id);
 
-            raza = await getRaza(mascota.RazaId);
+            raza = await getRaza(mascota.RazasID);
 
             if (mascota is null || mascota.MascotaId == 0)
             {
@@ -200,4 +200,4 @@
         var r = await razasService.SearchByIdAsync(id);
         return r.Nombre;
     }
-}
+} *@
