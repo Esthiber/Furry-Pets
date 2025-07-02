@@ -6,11 +6,6 @@ using PawfectMatch.Components;
 using PawfectMatch.Components.Account;
 using PawfectMatch.Data;
 using PawfectMatch.Models;
-using PawfectMatch.Services._Mascotas;
-using PawfectMatch.Services._Presentacion;
-using PawfectMatch.Services._Solicitudes;
-using PawfectMatch.Services.Adopciones;
-using PawfectMatch.Services.Veterinaria;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,25 +30,8 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // Estos servicios. 
-builder.Services.AddScoped<RazasService>();
-builder.Services.AddScoped<CategoriasServices>();
-builder.Services.AddScoped<MascotasService>();
-builder.Services.AddScoped<HistorialAdopcionesService>();
-builder.Services.AddScoped<SolicitudesAdopcionesService>();
-builder.Services.AddScoped<AdoptantesService>();
-builder.Services.AddScoped<CitasService>();
-builder.Services.AddScoped<EstadosService>();
-builder.Services.AddScoped<SexosService>();
-builder.Services.AddScoped<EstadosSolicitudesService>();
-builder.Services.AddScoped<RelacionSizesService>();
-builder.Services.AddScoped<PresentacionesService>();
-builder.Services.AddScoped<ServiciosService>();
-builder.Services.AddScoped<SolicitudesServiciosService>();
-builder.Services.AddScoped<SugerenciasService>();
-builder.Services.AddScoped<CarritoService>();
-builder.Services.AddScoped<ProductoService>();
-builder.Services.AddScoped<ProveedoresService>();
-builder.Services.AddScoped<CarritoService>();
+// builder.Services.AddScoped<PersonasService>();
+
 
 builder.Services.AddBlazorBootstrap();
 builder.Services.AddBlazoredToast();

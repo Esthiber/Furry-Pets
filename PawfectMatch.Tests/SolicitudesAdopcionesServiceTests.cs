@@ -72,6 +72,7 @@ namespace PawfectMatch.Tests
                 FechaNacimiento = DateOnly.FromDateTime(DateTime.Now.AddYears(-1)),
                 FotoUrl = "https://ejemplo.com/felix.jpg"
             };
+          
             await mascotaService.InsertAsync(mascota);
 
             // Insertar usuario adoptante y entidad adoptante
