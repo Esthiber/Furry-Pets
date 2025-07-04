@@ -1,8 +1,7 @@
-﻿@* @page "/mascotas/{id:int}"
+﻿@page "/mascotas/{id:int}"
 @using Blazored.Toast.Services
 
-
-@inject MascotasService mascotasService
+@inject MascotasAdopcionService mascotasService
 @inject RazasService razasService
 @inject NavigationManager NavigationManager
 @inject IToastService ToastService
@@ -23,15 +22,15 @@
             <div class="mascota-detail-title">
                 <h1>@mascota.Nombre</h1>
                 <div class="mascota-badges">
-                    <span class="badge badge-categoria">@mascota.Categoria.Nombre</span>
-                    <span class="badge badge-estado">@mascota.Estado.Nombre</span>
+                    <span class="badge badge-categoria">@mascota.Razas?.Especie?.Nombre</span>
+                    <span class="badge badge-estado">@mascota.Estado?.Nombre</span>
                 </div>
             </div>
             <div class="mascota-detail-actions">
                 <button class="btn-secondary" @onclick="Volver">
                     <i class="fas fa-arrow-left"></i> Volver
                 </button>
-                @if (mascota.Estado.Nombre.ToLower() != "adoptado")
+                @if (mascota.Estado?.Nombre.ToLower() != "adoptado")
                 {
                     <a class="btn-adopt" href="@Urls.Solicitudes.Crear/@id">
                         <i class="fas fa-heart"></i> ¡Adóptame!
@@ -48,7 +47,7 @@
 
         <div class="mascota-detail-content">
             <div class="mascota-detail-image">
-                <img src="@mascota.FotoUrl" alt="Foto de @mascota.Nombre" />
+                <img src="@mascota.FotoURL" alt="Foto de @mascota.Nombre" />
                 <div class="mascota-age">
                     @CalculateAge(mascota.FechaNacimiento)
                 </div>
@@ -64,8 +63,8 @@
                     <h2 class="section-title">Características</h2>
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="info-label">Categoría</span>
-                            <span class="info-value">@mascota.Categoria.Nombre</span>
+                            <span class="info-label">Especie</span>
+                            <span class="info-value">@mascota.Razas?.Especie?.Nombre</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Raza</span>
@@ -73,24 +72,24 @@
                         </div>
                         <div class="info-item">
                             <span class="info-label">Sexo</span>
-                            <span class="info-value">@(mascota.Sexo?.Nombre ?? "No especificado")</span>
+                            <span class="info-value">@(mascota.Sexo)</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Tamaño</span>
-                            <span class="info-value">@mascota.Tamano pulgadas</span>
+                            <span class="info-value">@mascota.Tamanio pulgadas</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Relación de Tamaño</span>
-                            <span class="info-value">@mascota.RelacionSize.Size</span>
+                            <span class="info-value">@mascota.RelacionSize?.Nombre</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Fecha de Nacimiento</span>
-                            <span class="info-value">@mascota.FechaNacimiento.ToShortDateString()</span>
+                            <span class="info-value">@mascota.FechaNacimiento?.ToShortDateString()</span>
                         </div>
                     </div>
                 </div>
 
-                @if (mascota.Estado.Nombre.ToLower() != "adoptado")
+                @if (mascota.Estado?.Nombre.ToLower() != "adoptado")
                 {
                     <div class="adoption-cta">
                         <h2 class="section-title">¿Quieres darle un hogar a @mascota.Nombre?</h2>
@@ -122,7 +121,7 @@
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
 
-    private Mascotas? mascota { get; set; }
+    private MascotasAdopcion? mascota { get; set; }
     private string? raza { get; set; }
     private bool IsAdmin { get; set; } = false;
 
@@ -134,7 +133,7 @@
 
             raza = await getRaza(mascota.RazasID);
 
-            if (mascota is null || mascota.MascotaId == 0)
+            if (mascota is null || mascota.MascotasAdopcionID == 0)
             {
                 // Mascota no encontrada
                 ToastService.ShowError("Mascota no encontrada");
@@ -159,16 +158,16 @@
 
     private void Volver()
     {
-        NavigationManager.NavigateTo(Urls.Mascotas.Index);
+        NavigationManager.NavigateTo("/adopciones");
     }
 
-    private string CalculateAge(DateOnly birthDate)
+    private string CalculateAge(DateOnly? birthDate)
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
-        var age = today.Year - birthDate.Year;
+        var age = today.Year - birthDate?.Year;
 
         // Ajustar la edad si aún no ha pasado el cumpleaños este año
-        if (birthDate.Month > today.Month || (birthDate.Month == today.Month && birthDate.Day > today.Day))
+        if (birthDate.Value.Month > today.Month || (birthDate.Value.Month == today.Month && birthDate.Value.Day > today.Day))
         {
             age--;
         }
@@ -176,8 +175,8 @@
         if (age < 1)
         {
             // Calcular meses
-            var months = (today.Month - birthDate.Month) + 12 * (today.Year - birthDate.Year);
-            if (today.Day < birthDate.Day)
+            var months = (today.Month - birthDate.Value.Month) + 12 * (today.Year - birthDate.Value.Year);
+            if (today.Day < birthDate.Value.Day)
             {
                 months--;
             }
@@ -185,7 +184,7 @@
             if (months < 1)
             {
                 // Calcular días
-                var days = (today.DayNumber - birthDate.DayNumber);
+                var days = (today.DayNumber - birthDate.Value.DayNumber);
                 return $"{days} {(days == 1 ? "día" : "días")}";
             }
 
@@ -200,4 +199,4 @@
         var r = await razasService.SearchByIdAsync(id);
         return r.Nombre;
     }
-} *@
+} 
