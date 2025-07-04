@@ -136,6 +136,20 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         modelBuilder.Entity<ConfiguracionEmpresa>();// Solo un registro, no soft delete
 
         // Relaciones y restricciones adicionales si las hay:
+
+        // HistorialAdopciones
+        modelBuilder.Entity<HistorialAdopciones>()
+            .HasOne(r => r.MascotaAdopcion)
+            .WithMany()
+            .HasForeignKey(r => r.MascotasAdopcionID)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<HistorialAdopciones>()
+           .HasOne(r => r.SolicitudAdopcion)
+           .WithMany()
+           .HasForeignKey(r => r.SolicitudesAdopcionesID)
+           .OnDelete(DeleteBehavior.Restrict);
+
         //modelBuilder.Entity<Productos>()
         //    .HasOne(p => p.CategoriaProducto)
         //    .WithMany()
@@ -430,6 +444,315 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             new EstadosCitas { EstadosCitasID = 2, Nombre = "Confirmada", IsDeleted = false },
             new EstadosCitas { EstadosCitasID = 3, Nombre = "Cancelada", IsDeleted = false }
         );
+
+        modelBuilder.Entity<MascotasAdopcion>().HasData(
+    new MascotasAdopcion
+    {
+        MascotasAdopcionID = 1,
+        RazasID = 1,
+        RelacionSizeID = 1,
+        Tamanio = 1,
+        Nombre = "Luna",
+        FechaNacimiento = new DateOnly(2023, 5, 10),
+        Descripcion = "Cachorrita juguetona y muy cariñosa con niños.",
+        FotoURL = "https://images.unsplash.com/photo-1583511655826-05700d52f4ae",
+        EstadoID = 2,
+        Sexo = 'f',
+        IsDeleted = false
+    },
+    new MascotasAdopcion
+    {
+        MascotasAdopcionID = 2,
+        RazasID = 2,
+        RelacionSizeID = 2,
+        Tamanio = 2,
+        Nombre = "Rocky",
+        FechaNacimiento = new DateOnly(2022, 11, 15),
+        Descripcion = "Perro guardián y muy leal. Ideal para casas grandes.",
+        FotoURL = "https://images.unsplash.com/photo-1601758123927-196f76f75097",
+        EstadoID = 2,
+        Sexo = 'm',
+        IsDeleted = false
+    },
+    new MascotasAdopcion
+    {
+        MascotasAdopcionID = 3,
+        RazasID = 3,
+        RelacionSizeID = 1,
+        Tamanio = 3,
+        Nombre = "Mia",
+        FechaNacimiento = new DateOnly(2024, 2, 1),
+        Descripcion = "Gatita rescatada muy tranquila y sociable.",
+        FotoURL = "https://images.unsplash.com/photo-1592194996308-7b43878e84a6",
+        EstadoID = 2,
+        Sexo = 'f',
+        IsDeleted = false
+    },
+    new MascotasAdopcion
+    {
+        MascotasAdopcionID = 4,
+        RazasID = 2,
+        RelacionSizeID = 3,
+        Tamanio = 5,
+        Nombre = "Zeus",
+        FechaNacimiento = new DateOnly(2021, 8, 20),
+        Descripcion = "Perro fuerte, entrenado y excelente para seguridad.",
+        FotoURL = "https://images.unsplash.com/photo-1583511655826-05700d52f4ae",
+        EstadoID = 2,
+        Sexo = 'm',
+        IsDeleted = false
+    },
+    new MascotasAdopcion
+    {
+        MascotasAdopcionID = 5,
+        RazasID = 1,
+        RelacionSizeID = 2,
+        Tamanio = 5,
+        Nombre = "Nala",
+        FechaNacimiento = new DateOnly(2023, 1, 30),
+        Descripcion = "Muy energética y necesita mucho ejercicio diario.",
+        FotoURL = "https://images.unsplash.com/photo-1601758003122-58eacb8e3ed1",
+        EstadoID = 2,
+        Sexo = 'f',
+        IsDeleted = false
+    },
+    new MascotasAdopcion
+    {
+        MascotasAdopcionID = 6,
+        RazasID = 3,
+        RelacionSizeID = 1,
+        Tamanio = 2,
+        Nombre = "Simba",
+        FechaNacimiento = new DateOnly(2024, 4, 15),
+        Descripcion = "Gatito curioso y muy juguetón.",
+        FotoURL = "https://images.unsplash.com/photo-1592194996308-7b43878e84a6",
+        EstadoID = 2,
+        Sexo = 'm',
+        IsDeleted = false
+    },
+    new MascotasAdopcion
+    {
+        MascotasAdopcionID = 7,
+        RazasID = 2,
+        RelacionSizeID = 3,
+        Tamanio = 4,
+        Nombre = "Thor",
+        FechaNacimiento = new DateOnly(2022, 6, 18),
+        Descripcion = "Gran danés amoroso y obediente.",
+        FotoURL = "https://images.unsplash.com/photo-1583511655826-05700d52f4ae",
+        EstadoID = 2,
+        Sexo = 'm',
+        IsDeleted = false
+    },
+    new MascotasAdopcion
+    {
+        MascotasAdopcionID = 8,
+        RazasID = 3,
+        RelacionSizeID = 1,
+        Tamanio = 5,
+        Nombre = "Lili",
+        FechaNacimiento = new DateOnly(2023, 7, 9),
+        Descripcion = "Gatita blanca, ideal para compañía.",
+        FotoURL = "https://images.unsplash.com/photo-1580377969203-4ec1eac6d5fe",
+        EstadoID = 2,
+        Sexo = 'f',
+        IsDeleted = false
+    },
+    new MascotasAdopcion
+    {
+        MascotasAdopcionID = 9,
+        RazasID = 1,
+        RelacionSizeID = 2,
+        Tamanio = 5,
+        Nombre = "Max",
+        FechaNacimiento = new DateOnly(2021, 9, 12),
+        Descripcion = "Obediente y perfecto para familias con niños.",
+        FotoURL = "https://images.unsplash.com/photo-1558788353-f76d92427f16",
+        EstadoID = 2,
+        Sexo = 'm',
+        IsDeleted = false
+    },
+    new MascotasAdopcion
+    {
+        MascotasAdopcionID = 10,
+        RazasID = 3,
+        RelacionSizeID = 1,
+        Tamanio = 4,
+        Nombre = "Cleo",
+        FechaNacimiento = new DateOnly(2024, 3, 22),
+        Descripcion = "Gatita siamesa muy elegante.",
+        FotoURL = "https://images.unsplash.com/photo-1574158622682-e40e69881006",
+        EstadoID = 2,
+        Sexo = 'f',
+        IsDeleted = false
+    }
+);
+
+        // Productos
+        modelBuilder.Entity<Productos>().HasData(
+    new Productos
+    {
+        ProductosID = 1,
+        CategoriasProductosID = 1,
+        ProveedoresID = 1,
+        Nombre = "Croquetas Premium",
+        Descripcion = "Croquetas nutritivas para perros adultos.",
+        Costo = 10.00m,
+        Precio = 18.99m,
+        Stock = 50,
+        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        IsDeleted = false
+    },
+    new Productos
+    {
+        ProductosID = 2,
+        CategoriasProductosID = 1,
+        ProveedoresID = 1,
+        Nombre = "Comida Húmeda para Gato",
+        Descripcion = "Lata de comida gourmet para gatos exigentes.",
+        Costo = 2.50m,
+        Precio = 4.99m,
+        Stock = 100,
+        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        IsDeleted = false
+    },
+    new Productos
+    {
+        ProductosID = 3,
+        CategoriasProductosID = 2,
+        ProveedoresID = 1,
+        Nombre = "Collar con GPS",
+        Descripcion = "Collar rastreador para mascotas medianas.",
+        Costo = 15.00m,
+        Precio = 29.99m,
+        Stock = 25,
+        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        IsDeleted = false
+    },
+    new Productos
+    {
+        ProductosID = 4,
+        CategoriasProductosID = 2,
+        ProveedoresID = 1,
+        Nombre = "Cama para Mascotas",
+        Descripcion = "Cama acolchonada ideal para gatos y perros pequeños.",
+        Costo = 12.00m,
+        Precio = 24.99m,
+        Stock = 30,
+        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        IsDeleted = false
+    },
+    new Productos
+    {
+        ProductosID = 5,
+        CategoriasProductosID = 1,
+        ProveedoresID = 1,
+        Nombre = "Snack Natural",
+        Descripcion = "Galletas orgánicas para entrenamiento.",
+        Costo = 3.00m,
+        Precio = 6.50m,
+        Stock = 80,
+        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        IsDeleted = false
+    },
+    new Productos
+    {
+        ProductosID = 6,
+        CategoriasProductosID = 2,
+        ProveedoresID = 1,
+        Nombre = "Juguete Pelota Sonora",
+        Descripcion = "Pelota para perros que emite sonidos al morderla.",
+        Costo = 1.80m,
+        Precio = 4.00m,
+        Stock = 60,
+        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        IsDeleted = false
+    },
+    new Productos
+    {
+        ProductosID = 7,
+        CategoriasProductosID = 1,
+        ProveedoresID = 1,
+        Nombre = "Leche para Cachorros",
+        Descripcion = "Suplemento lácteo para crías sin madre.",
+        Costo = 5.00m,
+        Precio = 9.99m,
+        Stock = 45,
+        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        IsDeleted = false
+    },
+    new Productos
+    {
+        ProductosID = 8,
+        CategoriasProductosID = 2,
+        ProveedoresID = 1,
+        Nombre = "Correa Retráctil",
+        Descripcion = "Correa extensible hasta 5 metros.",
+        Costo = 6.00m,
+        Precio = 12.99m,
+        Stock = 40,
+        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        IsDeleted = false
+    },
+    new Productos
+    {
+        ProductosID = 9,
+        CategoriasProductosID = 2,
+        ProveedoresID = 1,
+        Nombre = "Rascador para Gato",
+        Descripcion = "Rascador vertical de sisal natural.",
+        Costo = 8.00m,
+        Precio = 15.50m,
+        Stock = 20,
+        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        IsDeleted = false
+    },
+    new Productos
+    {
+        ProductosID = 10,
+        CategoriasProductosID = 1,
+        ProveedoresID = 1,
+        Nombre = "Vitaminas para Mascotas",
+        Descripcion = "Complemento vitamínico para perros y gatos.",
+        Costo = 4.00m,
+        Precio = 8.50m,
+        Stock = 70,
+        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        IsDeleted = false
+    }
+);
+
+        modelBuilder.Entity<Proveedores>().HasData(
+    new Proveedores
+    {
+        ProveedoresID = 1,
+        Nombre = "Distribuidora PetZone",
+        RNC = "132456789",
+        Telefono = "809-888-5555",
+        Email = "ventas@petzone.com",
+        IsDeleted = false
+    },
+    new Proveedores
+    {
+        ProveedoresID = 2,
+        Nombre = "PetPlus Suplidores",
+        RNC = "101112233",
+        Telefono = "809-777-4444",
+        Email = "contacto@petplus.com",
+        IsDeleted = false
+    },
+    new Proveedores
+    {
+        ProveedoresID = 3,
+        Nombre = "Mascotienda SRL",
+        RNC = "110220330",
+        Telefono = "809-666-3333",
+        Email = "info@mascotienda.com",
+        IsDeleted = false
+    }
+);
+
+
 
         // Configuraci�n de empresa: Solo se admite un registro
         modelBuilder.Entity<ConfiguracionEmpresa>().HasData(
