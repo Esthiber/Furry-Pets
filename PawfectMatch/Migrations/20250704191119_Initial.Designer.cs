@@ -12,7 +12,7 @@ using PawfectMatch.Data;
 namespace PawfectMatch.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250702193257_Initial")]
+    [Migration("20250704191119_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -221,6 +221,138 @@ namespace PawfectMatch.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("PawfectMatch.Models.Adopciones.Sugerencias", b =>
+                {
+                    b.Property<int>("SugerenciaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SugerenciaId"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserMail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SugerenciaId");
+
+                    b.ToTable("Sugerencias");
+                });
+
+            modelBuilder.Entity("PawfectMatch.Models.Adopciones._Presentacion.Diapositivas", b =>
+                {
+                    b.Property<int>("DiapositivaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DiapositivaId"));
+
+                    b.Property<string>("Animacion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsButtonLeftActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsButtonRightActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTituloLeftActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTituloRightActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LinkButton_Left")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LinkButton_Right")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Orden")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SubTitulo_Left")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubTitulo_Right")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TextButton_Left")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TextButton_Right")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Titulo_Left")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Titulo_Right")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DiapositivaId");
+
+                    b.ToTable("Diapositivas");
+                });
+
+            modelBuilder.Entity("PawfectMatch.Models.Adopciones._Presentacion.Presentaciones", b =>
+                {
+                    b.Property<int>("PresentacionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PresentacionId"));
+
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EsActiva")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PresentacionId");
+
+                    b.ToTable("Presentaciones");
+                });
+
+            modelBuilder.Entity("PawfectMatch.Models.Adopciones._Presentacion.PresentacionesDiapositivas", b =>
+                {
+                    b.Property<int>("PresentacionDiapositivaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PresentacionDiapositivaId"));
+
+                    b.Property<int>("DiapositivaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Orden")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PresentacionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PresentacionDiapositivaId");
+
+                    b.HasIndex("DiapositivaId");
+
+                    b.HasIndex("PresentacionId");
+
+                    b.ToTable("PresentacionesDiapositivas");
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.AdoptantesDetalles", b =>
@@ -526,7 +658,7 @@ namespace PawfectMatch.Migrations
                         {
                             EstadoSolicitudID = 2,
                             IsDeleted = false,
-                            Nombre = "En Revisión"
+                            Nombre = "En Revisi�n"
                         },
                         new
                         {
@@ -715,11 +847,16 @@ namespace PawfectMatch.Migrations
                     b.Property<int>("SolicitudesAdopcionesID")
                         .HasColumnType("int");
 
+                    b.Property<int?>("SolicitudesAdopcionesID1")
+                        .HasColumnType("int");
+
                     b.HasKey("HistorialAdopcionesID");
 
                     b.HasIndex("MascotasAdopcionID");
 
                     b.HasIndex("SolicitudesAdopcionesID");
+
+                    b.HasIndex("SolicitudesAdopcionesID1");
 
                     b.ToTable("HistorialAdopciones");
                 });
@@ -822,6 +959,148 @@ namespace PawfectMatch.Migrations
                     b.HasIndex("RelacionSizeID");
 
                     b.ToTable("MascotasAdopcion");
+
+                    b.HasData(
+                        new
+                        {
+                            MascotasAdopcionID = 1,
+                            Descripcion = "Cachorrita juguetona y muy cariñosa con niños.",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2023, 5, 10),
+                            FotoURL = "https://images.unsplash.com/photo-1583511655826-05700d52f4ae",
+                            IsDeleted = false,
+                            Nombre = "Luna",
+                            RazasID = 1,
+                            RelacionSizeID = 1,
+                            Sexo = "f",
+                            Tamanio = 1
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 2,
+                            Descripcion = "Perro guardián y muy leal. Ideal para casas grandes.",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2022, 11, 15),
+                            FotoURL = "https://images.unsplash.com/photo-1601758123927-196f76f75097",
+                            IsDeleted = false,
+                            Nombre = "Rocky",
+                            RazasID = 2,
+                            RelacionSizeID = 2,
+                            Sexo = "m",
+                            Tamanio = 2
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 3,
+                            Descripcion = "Gatita rescatada muy tranquila y sociable.",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2024, 2, 1),
+                            FotoURL = "https://images.unsplash.com/photo-1592194996308-7b43878e84a6",
+                            IsDeleted = false,
+                            Nombre = "Mia",
+                            RazasID = 3,
+                            RelacionSizeID = 1,
+                            Sexo = "f",
+                            Tamanio = 3
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 4,
+                            Descripcion = "Perro fuerte, entrenado y excelente para seguridad.",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2021, 8, 20),
+                            FotoURL = "https://images.unsplash.com/photo-1583511655826-05700d52f4ae",
+                            IsDeleted = false,
+                            Nombre = "Zeus",
+                            RazasID = 2,
+                            RelacionSizeID = 3,
+                            Sexo = "m",
+                            Tamanio = 5
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 5,
+                            Descripcion = "Muy energética y necesita mucho ejercicio diario.",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2023, 1, 30),
+                            FotoURL = "https://images.unsplash.com/photo-1601758003122-58eacb8e3ed1",
+                            IsDeleted = false,
+                            Nombre = "Nala",
+                            RazasID = 1,
+                            RelacionSizeID = 2,
+                            Sexo = "f",
+                            Tamanio = 5
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 6,
+                            Descripcion = "Gatito curioso y muy juguetón.",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2024, 4, 15),
+                            FotoURL = "https://images.unsplash.com/photo-1592194996308-7b43878e84a6",
+                            IsDeleted = false,
+                            Nombre = "Simba",
+                            RazasID = 3,
+                            RelacionSizeID = 1,
+                            Sexo = "m",
+                            Tamanio = 2
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 7,
+                            Descripcion = "Gran danés amoroso y obediente.",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2022, 6, 18),
+                            FotoURL = "https://images.unsplash.com/photo-1583511655826-05700d52f4ae",
+                            IsDeleted = false,
+                            Nombre = "Thor",
+                            RazasID = 2,
+                            RelacionSizeID = 3,
+                            Sexo = "m",
+                            Tamanio = 4
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 8,
+                            Descripcion = "Gatita blanca, ideal para compañía.",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2023, 7, 9),
+                            FotoURL = "https://images.unsplash.com/photo-1580377969203-4ec1eac6d5fe",
+                            IsDeleted = false,
+                            Nombre = "Lili",
+                            RazasID = 3,
+                            RelacionSizeID = 1,
+                            Sexo = "f",
+                            Tamanio = 5
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 9,
+                            Descripcion = "Obediente y perfecto para familias con niños.",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2021, 9, 12),
+                            FotoURL = "https://images.unsplash.com/photo-1558788353-f76d92427f16",
+                            IsDeleted = false,
+                            Nombre = "Max",
+                            RazasID = 1,
+                            RelacionSizeID = 2,
+                            Sexo = "m",
+                            Tamanio = 5
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 10,
+                            Descripcion = "Gatita siamesa muy elegante.",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2024, 3, 22),
+                            FotoURL = "https://images.unsplash.com/photo-1574158622682-e40e69881006",
+                            IsDeleted = false,
+                            Nombre = "Cleo",
+                            RazasID = 3,
+                            RelacionSizeID = 1,
+                            Sexo = "f",
+                            Tamanio = 4
+                        });
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.MascotasPersonas", b =>
@@ -1029,6 +1308,138 @@ namespace PawfectMatch.Migrations
                     b.HasIndex("ProveedoresID");
 
                     b.ToTable("Productos");
+
+                    b.HasData(
+                        new
+                        {
+                            ProductosID = 1,
+                            CategoriasProductosID = 1,
+                            Costo = 10.00m,
+                            Descripcion = "Croquetas nutritivas para perros adultos.",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            IsDeleted = false,
+                            Nombre = "Croquetas Premium",
+                            Precio = 18.99m,
+                            ProveedoresID = 1,
+                            Stock = 50
+                        },
+                        new
+                        {
+                            ProductosID = 2,
+                            CategoriasProductosID = 1,
+                            Costo = 2.50m,
+                            Descripcion = "Lata de comida gourmet para gatos exigentes.",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            IsDeleted = false,
+                            Nombre = "Comida Húmeda para Gato",
+                            Precio = 4.99m,
+                            ProveedoresID = 1,
+                            Stock = 100
+                        },
+                        new
+                        {
+                            ProductosID = 3,
+                            CategoriasProductosID = 2,
+                            Costo = 15.00m,
+                            Descripcion = "Collar rastreador para mascotas medianas.",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            IsDeleted = false,
+                            Nombre = "Collar con GPS",
+                            Precio = 29.99m,
+                            ProveedoresID = 1,
+                            Stock = 25
+                        },
+                        new
+                        {
+                            ProductosID = 4,
+                            CategoriasProductosID = 2,
+                            Costo = 12.00m,
+                            Descripcion = "Cama acolchonada ideal para gatos y perros pequeños.",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            IsDeleted = false,
+                            Nombre = "Cama para Mascotas",
+                            Precio = 24.99m,
+                            ProveedoresID = 1,
+                            Stock = 30
+                        },
+                        new
+                        {
+                            ProductosID = 5,
+                            CategoriasProductosID = 1,
+                            Costo = 3.00m,
+                            Descripcion = "Galletas orgánicas para entrenamiento.",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            IsDeleted = false,
+                            Nombre = "Snack Natural",
+                            Precio = 6.50m,
+                            ProveedoresID = 1,
+                            Stock = 80
+                        },
+                        new
+                        {
+                            ProductosID = 6,
+                            CategoriasProductosID = 2,
+                            Costo = 1.80m,
+                            Descripcion = "Pelota para perros que emite sonidos al morderla.",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            IsDeleted = false,
+                            Nombre = "Juguete Pelota Sonora",
+                            Precio = 4.00m,
+                            ProveedoresID = 1,
+                            Stock = 60
+                        },
+                        new
+                        {
+                            ProductosID = 7,
+                            CategoriasProductosID = 1,
+                            Costo = 5.00m,
+                            Descripcion = "Suplemento lácteo para crías sin madre.",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            IsDeleted = false,
+                            Nombre = "Leche para Cachorros",
+                            Precio = 9.99m,
+                            ProveedoresID = 1,
+                            Stock = 45
+                        },
+                        new
+                        {
+                            ProductosID = 8,
+                            CategoriasProductosID = 2,
+                            Costo = 6.00m,
+                            Descripcion = "Correa extensible hasta 5 metros.",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            IsDeleted = false,
+                            Nombre = "Correa Retráctil",
+                            Precio = 12.99m,
+                            ProveedoresID = 1,
+                            Stock = 40
+                        },
+                        new
+                        {
+                            ProductosID = 9,
+                            CategoriasProductosID = 2,
+                            Costo = 8.00m,
+                            Descripcion = "Rascador vertical de sisal natural.",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            IsDeleted = false,
+                            Nombre = "Rascador para Gato",
+                            Precio = 15.50m,
+                            ProveedoresID = 1,
+                            Stock = 20
+                        },
+                        new
+                        {
+                            ProductosID = 10,
+                            CategoriasProductosID = 1,
+                            Costo = 4.00m,
+                            Descripcion = "Complemento vitamínico para perros y gatos.",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            IsDeleted = false,
+                            Nombre = "Vitaminas para Mascotas",
+                            Precio = 8.50m,
+                            ProveedoresID = 1,
+                            Stock = 70
+                        });
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.Proveedores", b =>
@@ -1063,6 +1474,35 @@ namespace PawfectMatch.Migrations
                     b.HasKey("ProveedoresID");
 
                     b.ToTable("Proveedores");
+
+                    b.HasData(
+                        new
+                        {
+                            ProveedoresID = 1,
+                            Email = "ventas@petzone.com",
+                            IsDeleted = false,
+                            Nombre = "Distribuidora PetZone",
+                            RNC = "132456789",
+                            Telefono = "809-888-5555"
+                        },
+                        new
+                        {
+                            ProveedoresID = 2,
+                            Email = "contacto@petplus.com",
+                            IsDeleted = false,
+                            Nombre = "PetPlus Suplidores",
+                            RNC = "101112233",
+                            Telefono = "809-777-4444"
+                        },
+                        new
+                        {
+                            ProveedoresID = 3,
+                            Email = "info@mascotienda.com",
+                            IsDeleted = false,
+                            Nombre = "Mascotienda SRL",
+                            RNC = "110220330",
+                            Telefono = "809-666-3333"
+                        });
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.Razas", b =>
@@ -1139,7 +1579,7 @@ namespace PawfectMatch.Migrations
                         {
                             RelacionSizeID = 1,
                             IsDeleted = false,
-                            Nombre = "Pequeño"
+                            Nombre = "Peque�o"
                         },
                         new
                         {
@@ -1361,7 +1801,7 @@ namespace PawfectMatch.Migrations
                         {
                             TiposServiciosID = 2,
                             IsDeleted = false,
-                            Nombre = "Vacunación"
+                            Nombre = "Vacunaci�n"
                         });
                 });
 
@@ -1414,6 +1854,25 @@ namespace PawfectMatch.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PawfectMatch.Models.Adopciones._Presentacion.PresentacionesDiapositivas", b =>
+                {
+                    b.HasOne("PawfectMatch.Models.Adopciones._Presentacion.Diapositivas", "Diapositiva")
+                        .WithMany()
+                        .HasForeignKey("DiapositivaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PawfectMatch.Models.Adopciones._Presentacion.Presentaciones", "Presentacion")
+                        .WithMany("PresentacionesDiapositivas")
+                        .HasForeignKey("PresentacionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Diapositiva");
+
+                    b.Navigation("Presentacion");
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.AdoptantesDetalles", b =>
@@ -1503,14 +1962,18 @@ namespace PawfectMatch.Migrations
                     b.HasOne("PawfectMatch.Models.MascotasAdopcion", "MascotaAdopcion")
                         .WithMany()
                         .HasForeignKey("MascotasAdopcionID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("PawfectMatch.Models.SolicitudesAdopciones", "SolicitudAdopcion")
-                        .WithMany("Historiales")
+                        .WithMany()
                         .HasForeignKey("SolicitudesAdopcionesID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("PawfectMatch.Models.SolicitudesAdopciones", null)
+                        .WithMany("Historiales")
+                        .HasForeignKey("SolicitudesAdopcionesID1");
 
                     b.Navigation("MascotaAdopcion");
 
@@ -1699,6 +2162,11 @@ namespace PawfectMatch.Migrations
                     b.Navigation("MascotaAdopcion");
 
                     b.Navigation("Persona");
+                });
+
+            modelBuilder.Entity("PawfectMatch.Models.Adopciones._Presentacion.Presentaciones", b =>
+                {
+                    b.Navigation("PresentacionesDiapositivas");
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.Especies", b =>

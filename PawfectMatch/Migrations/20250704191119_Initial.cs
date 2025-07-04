@@ -83,6 +83,33 @@ namespace PawfectMatch.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Diapositivas",
+                columns: table => new
+                {
+                    DiapositivaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IsTituloLeftActive = table.Column<bool>(type: "bit", nullable: false),
+                    Titulo_Left = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubTitulo_Left = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsTituloRightActive = table.Column<bool>(type: "bit", nullable: false),
+                    Titulo_Right = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubTitulo_Right = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsButtonLeftActive = table.Column<bool>(type: "bit", nullable: false),
+                    TextButton_Left = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LinkButton_Left = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsButtonRightActive = table.Column<bool>(type: "bit", nullable: false),
+                    TextButton_Right = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LinkButton_Right = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Orden = table.Column<int>(type: "int", nullable: false),
+                    Animacion = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Diapositivas", x => x.DiapositivaId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Especies",
                 columns: table => new
                 {
@@ -189,6 +216,22 @@ namespace PawfectMatch.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Presentaciones",
+                columns: table => new
+                {
+                    PresentacionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Titulo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EsActiva = table.Column<bool>(type: "bit", nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Presentaciones", x => x.PresentacionId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Proveedores",
                 columns: table => new
                 {
@@ -217,6 +260,20 @@ namespace PawfectMatch.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RelacionSize", x => x.RelacionSizeID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sugerencias",
+                columns: table => new
+                {
+                    SugerenciaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserMail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sugerencias", x => x.SugerenciaId);
                 });
 
             migrationBuilder.CreateTable(
@@ -434,6 +491,33 @@ namespace PawfectMatch.Migrations
                         column: x => x.PersonasID,
                         principalTable: "Personas",
                         principalColumn: "PersonasID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PresentacionesDiapositivas",
+                columns: table => new
+                {
+                    PresentacionDiapositivaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PresentacionId = table.Column<int>(type: "int", nullable: false),
+                    DiapositivaId = table.Column<int>(type: "int", nullable: false),
+                    Orden = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PresentacionesDiapositivas", x => x.PresentacionDiapositivaId);
+                    table.ForeignKey(
+                        name: "FK_PresentacionesDiapositivas_Diapositivas_DiapositivaId",
+                        column: x => x.DiapositivaId,
+                        principalTable: "Diapositivas",
+                        principalColumn: "DiapositivaId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PresentacionesDiapositivas_Presentaciones_PresentacionId",
+                        column: x => x.PresentacionId,
+                        principalTable: "Presentaciones",
+                        principalColumn: "PresentacionId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -808,7 +892,8 @@ namespace PawfectMatch.Migrations
                     MascotasAdopcionID = table.Column<int>(type: "int", nullable: false),
                     FechaAdopcion = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Notas = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    SolicitudesAdopcionesID1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -818,13 +903,18 @@ namespace PawfectMatch.Migrations
                         column: x => x.MascotasAdopcionID,
                         principalTable: "MascotasAdopcion",
                         principalColumn: "MascotasAdopcionID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_HistorialAdopciones_SolicitudesAdopciones_SolicitudesAdopcionesID",
                         column: x => x.SolicitudesAdopcionesID,
                         principalTable: "SolicitudesAdopciones",
                         principalColumn: "SolicitudesAdopcionesID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_HistorialAdopciones_SolicitudesAdopciones_SolicitudesAdopcionesID1",
+                        column: x => x.SolicitudesAdopcionesID1,
+                        principalTable: "SolicitudesAdopciones",
+                        principalColumn: "SolicitudesAdopcionesID");
                 });
 
             migrationBuilder.InsertData(
@@ -865,7 +955,7 @@ namespace PawfectMatch.Migrations
                 values: new object[,]
                 {
                     { 1, false, "Aprobada" },
-                    { 2, false, "En Revisión" },
+                    { 2, false, "En Revisi�n" },
                     { 3, false, "Rechazada" },
                     { 4, false, "En Espera" }
                 });
@@ -900,11 +990,21 @@ namespace PawfectMatch.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Proveedores",
+                columns: new[] { "ProveedoresID", "Email", "IsDeleted", "Nombre", "RNC", "Telefono" },
+                values: new object[,]
+                {
+                    { 1, "ventas@petzone.com", false, "Distribuidora PetZone", "132456789", "809-888-5555" },
+                    { 2, "contacto@petplus.com", false, "PetPlus Suplidores", "101112233", "809-777-4444" },
+                    { 3, "info@mascotienda.com", false, "Mascotienda SRL", "110220330", "809-666-3333" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "RelacionSize",
                 columns: new[] { "RelacionSizeID", "IsDeleted", "Nombre" },
                 values: new object[,]
                 {
-                    { 1, false, "Pequeño" },
+                    { 1, false, "Peque�o" },
                     { 2, false, "Mediano" },
                     { 3, false, "Grande" }
                 });
@@ -933,7 +1033,24 @@ namespace PawfectMatch.Migrations
                 values: new object[,]
                 {
                     { 1, false, "Consulta Veterinaria" },
-                    { 2, false, "Vacunación" }
+                    { 2, false, "Vacunaci�n" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Productos",
+                columns: new[] { "ProductosID", "CategoriasProductosID", "Costo", "Descripcion", "ImagenUrl", "IsDeleted", "Nombre", "Precio", "ProveedoresID", "Stock" },
+                values: new object[,]
+                {
+                    { 1, 1, 10.00m, "Croquetas nutritivas para perros adultos.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Croquetas Premium", 18.99m, 1, 50 },
+                    { 2, 1, 2.50m, "Lata de comida gourmet para gatos exigentes.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Comida Húmeda para Gato", 4.99m, 1, 100 },
+                    { 3, 2, 15.00m, "Collar rastreador para mascotas medianas.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Collar con GPS", 29.99m, 1, 25 },
+                    { 4, 2, 12.00m, "Cama acolchonada ideal para gatos y perros pequeños.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Cama para Mascotas", 24.99m, 1, 30 },
+                    { 5, 1, 3.00m, "Galletas orgánicas para entrenamiento.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Snack Natural", 6.50m, 1, 80 },
+                    { 6, 2, 1.80m, "Pelota para perros que emite sonidos al morderla.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Juguete Pelota Sonora", 4.00m, 1, 60 },
+                    { 7, 1, 5.00m, "Suplemento lácteo para crías sin madre.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Leche para Cachorros", 9.99m, 1, 45 },
+                    { 8, 2, 6.00m, "Correa extensible hasta 5 metros.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Correa Retráctil", 12.99m, 1, 40 },
+                    { 9, 2, 8.00m, "Rascador vertical de sisal natural.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Rascador para Gato", 15.50m, 1, 20 },
+                    { 10, 1, 4.00m, "Complemento vitamínico para perros y gatos.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Vitaminas para Mascotas", 8.50m, 1, 70 }
                 });
 
             migrationBuilder.InsertData(
@@ -944,6 +1061,23 @@ namespace PawfectMatch.Migrations
                     { 1, 2, false, "Chihuahua" },
                     { 2, 2, false, "Bulldog" },
                     { 3, 1, false, "Gato Naranja" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "MascotasAdopcion",
+                columns: new[] { "MascotasAdopcionID", "Descripcion", "EspeciesID", "EstadoID", "FechaNacimiento", "FotoURL", "IsDeleted", "Nombre", "RazasID", "RelacionSizeID", "Sexo", "Tamanio" },
+                values: new object[,]
+                {
+                    { 1, "Cachorrita juguetona y muy cariñosa con niños.", null, 2, new DateOnly(2023, 5, 10), "https://images.unsplash.com/photo-1583511655826-05700d52f4ae", false, "Luna", 1, 1, "f", 1 },
+                    { 2, "Perro guardián y muy leal. Ideal para casas grandes.", null, 2, new DateOnly(2022, 11, 15), "https://images.unsplash.com/photo-1601758123927-196f76f75097", false, "Rocky", 2, 2, "m", 2 },
+                    { 3, "Gatita rescatada muy tranquila y sociable.", null, 2, new DateOnly(2024, 2, 1), "https://images.unsplash.com/photo-1592194996308-7b43878e84a6", false, "Mia", 3, 1, "f", 3 },
+                    { 4, "Perro fuerte, entrenado y excelente para seguridad.", null, 2, new DateOnly(2021, 8, 20), "https://images.unsplash.com/photo-1583511655826-05700d52f4ae", false, "Zeus", 2, 3, "m", 5 },
+                    { 5, "Muy energética y necesita mucho ejercicio diario.", null, 2, new DateOnly(2023, 1, 30), "https://images.unsplash.com/photo-1601758003122-58eacb8e3ed1", false, "Nala", 1, 2, "f", 5 },
+                    { 6, "Gatito curioso y muy juguetón.", null, 2, new DateOnly(2024, 4, 15), "https://images.unsplash.com/photo-1592194996308-7b43878e84a6", false, "Simba", 3, 1, "m", 2 },
+                    { 7, "Gran danés amoroso y obediente.", null, 2, new DateOnly(2022, 6, 18), "https://images.unsplash.com/photo-1583511655826-05700d52f4ae", false, "Thor", 2, 3, "m", 4 },
+                    { 8, "Gatita blanca, ideal para compañía.", null, 2, new DateOnly(2023, 7, 9), "https://images.unsplash.com/photo-1580377969203-4ec1eac6d5fe", false, "Lili", 3, 1, "f", 5 },
+                    { 9, "Obediente y perfecto para familias con niños.", null, 2, new DateOnly(2021, 9, 12), "https://images.unsplash.com/photo-1558788353-f76d92427f16", false, "Max", 1, 2, "m", 5 },
+                    { 10, "Gatita siamesa muy elegante.", null, 2, new DateOnly(2024, 3, 22), "https://images.unsplash.com/photo-1574158622682-e40e69881006", false, "Cleo", 3, 1, "f", 4 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -1041,6 +1175,11 @@ namespace PawfectMatch.Migrations
                 column: "SolicitudesAdopcionesID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_HistorialAdopciones_SolicitudesAdopcionesID1",
+                table: "HistorialAdopciones",
+                column: "SolicitudesAdopcionesID1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HistoriasClinicas_MascotasPersonasID",
                 table: "HistoriasClinicas",
                 column: "MascotasPersonasID");
@@ -1094,6 +1233,16 @@ namespace PawfectMatch.Migrations
                 name: "IX_PersonasRoles_PersonasID",
                 table: "PersonasRoles",
                 column: "PersonasID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PresentacionesDiapositivas_DiapositivaId",
+                table: "PresentacionesDiapositivas",
+                column: "DiapositivaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PresentacionesDiapositivas_PresentacionId",
+                table: "PresentacionesDiapositivas",
+                column: "PresentacionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Productos_CategoriasProductosID",
@@ -1189,6 +1338,9 @@ namespace PawfectMatch.Migrations
                 name: "PersonasRoles");
 
             migrationBuilder.DropTable(
+                name: "PresentacionesDiapositivas");
+
+            migrationBuilder.DropTable(
                 name: "Productos");
 
             migrationBuilder.DropTable(
@@ -1196,6 +1348,9 @@ namespace PawfectMatch.Migrations
 
             migrationBuilder.DropTable(
                 name: "Servicios");
+
+            migrationBuilder.DropTable(
+                name: "Sugerencias");
 
             migrationBuilder.DropTable(
                 name: "TipoViviendas");
@@ -1220,6 +1375,12 @@ namespace PawfectMatch.Migrations
 
             migrationBuilder.DropTable(
                 name: "Facturas");
+
+            migrationBuilder.DropTable(
+                name: "Diapositivas");
+
+            migrationBuilder.DropTable(
+                name: "Presentaciones");
 
             migrationBuilder.DropTable(
                 name: "CategoriasProductos");
