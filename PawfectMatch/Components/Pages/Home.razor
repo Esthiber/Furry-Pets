@@ -2,183 +2,37 @@
 
 @inject NavigationManager NavigationManager
 
-<PageTitle>Pawfect Match | Encuentra a tu compañero perfecto</PageTitle>
+<PageTitle>Furry-Pets | Adop-Veterinaria</PageTitle>
 
-<div class="home-page">
-    <!-- Hero Section con Presentacion -->
-    <section class="hero-section">
-        <ShowPresentacion />
-
-    </section>
-
-    <!-- Seccion de Estadisticas -->
-      
-
-    <!-- Seccion de Mascotas Destacadas -->
-    <section class="featured-section">
-        <div class="section-header">
-            <h2>Mascotas Destacadas</h2>
-            <p>Conoce a algunas de nuestras adorables mascotas en busca de un hogar</p>
-        </div>
-
-     
-    </section>
-
-    <!-- Seccion de Proceso de Adopcion -->
-    <section class="process-section">
-        <div class="section-header">
-            <h2>Como Adoptar</h2>
-            <p>Sigue estos simples pasos para encontrar a tu compañero perfecto</p>
-        </div>
-
-        <div class="adoption-process">
-            <div class="process-step">
-                <div class="step-icon">
-                    <i class="bi bi-search-heart"></i>
-                </div>
-                <h3>Explora</h3>
-                <p>Navega por nuestro catálogo de mascotas disponibles para adopcion</p>
-            </div>
-            <div class="process-step">
-                <div class="step-icon">
-                    <i class="bi bi-file-earmark-text"></i>
-                </div>
-                <h3>Solicita</h3>
-                <p>Completa un formulario de solicitud para la mascota que te interese</p>
-            </div>
-            <div class="process-step">
-                <div class="step-icon">
-                    <i class="bi bi-calendar-check"></i>
-                </div>
-                <h3>Conoce</h3>
-                <p>Agenda una cita para conocer a tu futura mascota en persona</p>
-            </div>
-            <div class="process-step">
-                <div class="step-icon">
-                    <i class="bi bi-house-heart"></i>
-                </div>
-                <h3>Adopta</h3>
-                <p>Completa el proceso de adopcion y lleva a tu nuevo amigo a casa</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Seccion de Testimonios -->
-    <section id="testimonials-section" class="testimonials-section">
-        <div class="section-header light">
-            <h2>Historias de Éxito</h2>
-            <p>Familias que encontraron a su compañero perfecto</p>
-        </div>
-
-        <div class="testimonials-slider">
-            @foreach (var testimonio in testimonios)
-            {
-                <div class="testimonial-card">
-                    <div class="testimonial-image">
-                        <img src="@testimonio.ImageUrl" alt="@testimonio.Nombre y @testimonio.NombreMascota" />
-                    </div>
-                    <div class="testimonial-content">
-                        <div class="quote-icon">
-                            <i class="bi bi-quote"></i>
-                        </div>
-                        <p class="testimonial-text">@testimonio.Texto</p>
-                        <div class="testimonial-author">
-                            <h4>@testimonio.Nombre</h4>
-                            <p>y @testimonio.NombreMascota</p>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </section>
-
-    <!-- Seccion de Llamada a la Accion -->
-    <section class="cta-section">
-        <div class="cta-content">
-            <h2>¿Listo para encontrar a tu compañero perfecto?</h2>
-            <p>Explora nuestras mascotas disponibles y comienza tu viaje de adopcion hoy mismo</p>
-            <a class="btn btn-primary btn-lg" href="@Urls.Mascotas.Index">
-                Encontrar mi mascota
-            </a>
-        </div>
-    </section>
+<!--Div card que es  un boton que manda a la pagina de adopciones-->
+<div class="card text-center home-card" @onclick="() => { gotoAdopciones(); }">
+    <div class="card-body">
+        <h5 class="card-title">Adopta una mascota</h5>
+        <p class="card-text">Descubre nuestras adorables mascotas en adopción.</p>
+        <button class="btn btn-primary">Ver Adopciones</button>
+    </div>
 </div>
 
+<!--Div card que es un boton que manda a la pagina de veterinaria-->
+<div class="card text-center home-card" @onclick="() => { gotoVeterinaria(); }">
+    <div class="card-body">
+        <h5 class="card-title">Veterinaria</h5>
+        <p class="card-text">Consulta a nuestros veterinarios expertos.</p>
+        <button class="btn btn-primary">Ver Veterinaria</button>
+    </div>
+</div>
+
+
+
+
 @code {
-    private int familiasFelices = 120; // <-- hacemos a muchas familias felices. =}
-
-    // Gente random que da testimonios
-    private List<Testimonio> testimonios = new List<Testimonio>
+    void gotoVeterinaria()
     {
-        new Testimonio
-        {
-            Nombre = "Maria Rodriguez",
-            NombreMascota = "Luna",
-            Texto = "Adoptar a Luna fue la mejor decision que tomamos como familia. El proceso fue sencillo y el equipo de Pawfect Match nos brindo todo el apoyo necesario.",
-            ImageUrl = "https://media.istockphoto.com/id/1463789525/photo/portrait-happy-african-american-child-holding-pet-dog-on-wall-background.jpg?s=612x612&w=0&k=20&c=WV8l-xTcrLJBTCkGZ7FHPRNFVbZSlQnCvd5f3sG4gB0="
-        },
-        new Testimonio
-        {
-            Nombre = "Carlos Mendoza",
-            NombreMascota = "Max",
-            Texto = "Max llego a nuestras vidas gracias a Pawfect Match y no podriamos estar más felices. Se ha adaptado perfectamente a nuestro hogar y es parte fundamental de nuestra familia.",
-            ImageUrl = "https://people.com/thmb/oni3ZYC5MJBRdc_dI65sgjnex0s=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():focal(999x0:1001x2)/dog-hug-2f174202e9cf4b36bc6c81b196a6d7bd.jpg"
-        },
-        new Testimonio
-        {
-            Nombre = "Familia Lopez",
-            NombreMascota = "Coco",
-            Texto = "Estamos eternamente agradecidos con el equipo de Pawfect Match por ayudarnos a encontrar a Coco. Ha traido tanta alegria a nuestra familia que no podemos imaginar la vida sin él.",
-            ImageUrl = "https://bowwowinsurance.com.au/wp-content/uploads/2018/10/shutterstock_255793984-ed-Happy-family-with-their-dog-in-the-park-on-a-sunny-day-1-1024x682.jpeg"
-        }
-    };
-
-   
-
-    private string CalcularEdad(DateOnly fechaNacimiento)
-    {
-        var hoy = DateOnly.FromDateTime(DateTime.Today);
-        int años = hoy.Year - fechaNacimiento.Year;
-
-        if (fechaNacimiento.AddYears(años) > hoy)
-        {
-            años--;
-        }
-
-        if (años < 1)
-        {
-            int meses = (hoy.Month - fechaNacimiento.Month) + 12 * (hoy.Year - fechaNacimiento.Year);
-            if (hoy.Day < fechaNacimiento.Day)
-            {
-                meses--;
-            }
-            return meses == 1 ? "1 mes" : $"{meses} meses";
-        }
-
-        return años == 1 ? "1 año" : $"{años} años";
+        NavigationManager.NavigateTo("/veterinaria");
     }
 
-    private void ExplorarMascotas()
+    void gotoAdopciones()
     {
-        NavigationManager.NavigateTo(Urls.General.Mascotas);
-    }
-
-    private void ComoFunciona()
-    {
-        NavigationManager.NavigateTo(Urls.General.Nosotros);
-    }
-
-    private void VerDetalleMascota(int id)
-    {
-        NavigationManager.NavigateTo($"{Urls.Mascotas.Detalle}{id}");
-    }
-
-    // Clase para los testimonios
-    private class Testimonio
-    {
-        public string Nombre { get; set; } = "";
-        public string NombreMascota { get; set; } = "";
-        public string Texto { get; set; } = "";
-        public string ImageUrl { get; set; } = "";
+        NavigationManager.NavigateTo("/adopciones");
     }
 }
