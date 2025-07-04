@@ -11,10 +11,11 @@ namespace PawfectMatch.Services
         public async Task<bool> DeleteAsync(int id)
         {
             await using var ctx = await DbFactory.CreateDbContextAsync();
-            return await ctx.TipoViviendas
-                .AsNoTracking()
-                .Where(t => t.TipoViviendasID == id)
-                .ExecuteDeleteAsync() > 0;
+            var tipoVivienda = await ctx.TipoViviendas.FindAsync(id);
+            if (tipoVivienda == null) return false;
+            
+            tipoVivienda.IsDeleted = true;
+            return await ctx.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> ExistAsync(int id)
