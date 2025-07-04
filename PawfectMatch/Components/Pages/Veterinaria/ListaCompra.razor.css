@@ -1,0 +1,88 @@
+﻿.lista-compra {
+    background: #fff;
+    box-shadow: 0 2px 8px #0001;
+    border-radius: 14px;
+    padding: 18px 20px 14px 20px;
+    min-width: 270px;
+    max-width: 350px;
+    width: 100%;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.lista-compra-title {
+    font-size: 1.22rem;
+    color: #444;
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+
+.lista-productos {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.item-lista {
+    display: flex;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px dashed #eee;
+    gap: 12px;
+}
+
+.item-img {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #f3f6fa;
+    object-fit: contain;
+}
+
+.item-nombre {
+    flex: 1;
+    font-size: 1rem;
+    color: #222;
+    font-weight: 500;
+    line-height: 1.15;
+}
+
+.item-precio {
+    font-size: 1rem;
+    color: #1976d2;
+    font-weight: 600;
+    min-width: 75px;
+    text-align: right;
+}
+
+.btn-eliminar {
+    background: none;
+    color: #e53935;
+    border: none;
+    font-size: 1.19rem;
+    cursor: pointer;
+    margin-left: 8px;
+}
+
+    .btn-eliminar:hover {
+        color: #b71c1c;
+    }
+
+.lista-compra-total {
+    font-size: 1.18rem;
+    color: #388e3c;
+    font-weight: 700;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lista-vacia {
+    color: #888;
+    font-size: 1rem;
+    text-align: center;
+    padding: 28px 0;
+}

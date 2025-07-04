@@ -1,0 +1,45 @@
+﻿@using PawfectMatch.Models
+
+<style>
+    
+</style>
+
+<div class="lista-compra">
+    <div class="lista-compra-title">Lista de Compras</div>
+    <div class="lista-productos">
+        @if (ProductosSeleccionados is null || !ProductosSeleccionados.Any())
+        {
+            <div class="lista-vacia">
+                <i class="bi bi-bag-x"></i> No hay productos en la lista.
+            </div>
+        }
+        else
+        {
+            @foreach (var prod in ProductosSeleccionados)
+            {
+                <div class="item-lista">
+                    <img src="@((prod.ImagenUrl ?? "https://via.placeholder.com/34"))" alt="img" class="item-img" />
+                    <span class="item-nombre">@prod.Nombre</span>
+                    <span class="item-precio">$@String.Format("{0:N2}", prod.Precio)</span>
+                    <button class="btn-eliminar" title="Eliminar" @onclick="() => OnEliminarProducto.InvokeAsync(prod)">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </div>
+            }
+        }
+    </div>
+    <div class="lista-compra-total">
+        <span>Total:</span>
+        <span>$@String.Format("{0:N2}", Total)</span>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public List<Productos> ProductosSeleccionados { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<Productos> OnEliminarProducto { get; set; }
+
+    public decimal Total => ProductosSeleccionados?.Sum(p => p.Precio) ?? 0;
+}
