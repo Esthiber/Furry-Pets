@@ -1,0 +1,23 @@
+﻿@using PawfectMatch.Models
+@inject NavigationManager NavigationManager
+
+
+<div class="card-producto" @onclick="() => OnSeleccionarProducto.InvokeAsync(Producto)">
+    <div class="card-producto-img">
+        <img src="@((Producto?.ImagenUrl ?? "https://via.placeholder.com/80x80?text=No+Img"))"
+             alt="@Producto?.Nombre"
+             style="width:85px; height:85px; object-fit:contain" />
+    </div>
+    <div class="card-producto-info">
+        <div class="card-producto-nombre">@Producto?.Nombre</div>
+        <div class="card-producto-precio">$@String.Format("{0:N2}", Producto?.Precio ?? 0)</div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public Productos Producto { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback<Productos> OnSeleccionarProducto { get; set; }
+}
