@@ -1,0 +1,226 @@
+﻿.adopcion-bg {
+    background: #d2ab91;
+    min-height: 100vh;
+    padding-bottom: 48px;
+}
+
+.adopcion-titulo {
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #232323;
+    letter-spacing: 0.01em;
+}
+
+.adopcion-barra {
+    border-bottom: 3px solid #4a90e2;
+    width: 215px;
+    margin-bottom: 18px;
+}
+
+.adopcion-filtros-box {
+    background: #f9e6db;
+    border-radius: 18px;
+    padding: 24px 18px 12px 18px;
+    box-shadow: 0 2px 8px #0001;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.adopcion-filtros-row {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: center;
+    justify-content: center;
+}
+
+    .adopcion-filtros-row > * {
+        flex: 1 1 200px;
+        max-width: 280px;
+    }
+
+.adopcion-buscar-btn {
+    background: #1976d2;
+    color: #fff;
+    padding: 5px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.3rem;
+    margin-top: 4px;
+    transition: background 0.2s;
+}
+
+    .adopcion-buscar-btn:hover {
+        background: #115293;
+    }
+
+.adopcion-resultados {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: #575757;
+    font-size: .97em;
+    margin-bottom: 10px;
+    padding-right: 8px;
+}
+
+.adopcion-cards-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+@media (max-width: 860px) {
+    .adopcion-cards-grid {
+        justify-content: center;
+    }
+
+    .adopcion-filtros-row {
+        flex-direction: column;
+        gap: 11px;
+    }
+}
+
+
+/* Estilos para el buscador de mascotas */
+.search-section {
+    background-color: #f9f5f1;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.search-input-group {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+    .search-input-group i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #5e3023;
+        font-size: 1.1rem;
+        z-index: 10;
+    }
+
+    .search-input-group .form-control,
+    .search-input-group .form-select {
+        padding-left: 40px;
+        border-radius: 10px;
+        border: 1px solid #e0d5c9;
+        height: 45px;
+        background-color: white;
+        transition: all 0.3s ease;
+    }
+
+        .search-input-group .form-control:focus,
+        .search-input-group .form-select:focus {
+            border-color: #dab49d;
+            box-shadow: 0 0 0 0.25rem rgba(218, 180, 157, 0.25);
+        }
+
+    .search-input-group .btn-clear {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        padding: 0;
+        font-size: 1rem;
+        transition: color 0.2s ease;
+    }
+
+        .search-input-group .btn-clear:hover {
+            color: #5e3023;
+        }
+
+.search-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0d5c9;
+}
+
+.results-count {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-outline-secondary {
+    color: #666;
+    border-color: #ccc;
+    transition: all 0.2s ease;
+}
+
+    .btn-outline-secondary:hover {
+        background-color: #f3e9dc;
+        color: #5e3023;
+        border-color: #dab49d;
+    }
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 0;
+    color: #5e3023;
+}
+
+    .loading-container .spinner-border {
+        width: 3rem;
+        height: 3rem;
+        margin-bottom: 15px;
+    }
+
+/* Animación para los resultados filtrados */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mascotas-container .row {
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .search-actions {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .filter-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

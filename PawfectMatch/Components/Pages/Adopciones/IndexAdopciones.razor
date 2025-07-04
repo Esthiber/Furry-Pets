@@ -1,5 +1,177 @@
-﻿<h3>IndexAdopciones</h3>
+﻿@page "/adopciones"
+@using PawfectMatch.Models.Adopciones
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 
+@inject MascotasAdopcionService MascotaService
+
+@* ------------------- ESTILOS ------------------- *@
+
+<div class="adopcion-bg px-4 py-3">
+    <div class="adopcion-titulo">Mascotas en Adopción</div>
+    <div class="adopcion-barra"></div>
+
+    <!-- FILTROS -->
+    <div class="search-section">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="search-input-group">
+                    <i class="bi bi-search"></i>
+                    <InputText type="text"
+                               class="form-control"
+                               placeholder="Buscar por nombre..."
+                               @bind-Value="FiltroNombre"
+                               @onkeyup="AplicarFiltros" />
+
+                    @if (!string.IsNullOrEmpty(FiltroNombre))
+                    {
+                        <button class="btn-clear" @onclick="() => { FiltroNombre = string.Empty; AplicarFiltros(); }">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    }
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="search-input-group">
+                    <i class="bi bi-calendar-event"></i>
+                    <InputSelect class="form-select" @bind-Value="FiltroEdad" @onchange="AplicarFiltros">
+                        <option value="">Todas las edades</option>
+                        <option value="cachorro">Cachorro (0-1 año)</option>
+                        <option value="joven">Joven (1-3 años)</option>
+                        <option value="adulto">Adulto (3-8 años)</option>
+                        <option value="senior">Senior (8+ años)</option>
+                    </InputSelect>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="search-input-group">
+                    <i class="bi bi-rulers"></i>
+                    <InputSelect class="form-select" @bind-Value="FiltroTamanio" @onchange="AplicarFiltros">
+                        <option value="0">Todos los tamaños</option>
+                        @foreach (var tamano in TamaniosDisponibles)
+                        {
+                            <option value="@tamano">@tamano</option>
+                        }
+                    </InputSelect>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-actions">
+            <button class="btn btn-primary" @onclick="AplicarFiltros">
+                <i class="bi bi-search"></i>
+            </button>
+            <div class="results-count">
+                @if (MascotasFiltradas != null)
+                {
+                    <span>@MascotasFiltradas.Count mascotas encontradas</span>
+                }
+            </div>
+            <div class="filter-actions">
+
+                <button class="btn btn-outline-secondary btn-sm" @onclick="LimpiarFiltros">
+                    <i class="bi bi-x-circle"></i> Limpiar filtros
+                </button>
+
+                @* <AuthorizeView Roles="Admin">
+                    <button class="btn btn-primary" @onclick="gotoCreate">
+                        <i class="bi bi-plus-circle"></i> Crear Mascota
+                    </button>
+                </AuthorizeView> *@
+            </div>
+        </div>
+    </div>
+
+    <div class="adopcion-resultados">
+        @if (MascotasFiltradas is not null)
+        {
+            <span>@MascotasFiltradas.Count mascota(s) encontrada(s)</span>
+        }
+    </div>
+
+    <div class="adopcion-cards-grid">
+        @if (MascotasFiltradas is not null)
+        {
+            @foreach (var mascota in MascotasFiltradas)
+            {
+                <CardMascota Mascota="mascota" OnVerDetalles="() => { VerDetalles(mascota.MascotasAdopcionID);}" />
+            }
+        }
+        else
+        {
+            <span>Cargando mascotas...</span>
+        }
+    </div>
+</div>
 @code {
+    // [Inject] public PawfectMatch.Services.MascotasAdopcionService MascotaService { get; set; } = default!;
+
+    string FiltroNombre = "";
+    string FiltroEdad = "";
+    string FiltroTamanio = "";
+
+    List<MascotasAdopcion>? TodasMascotas;
+    List<MascotasAdopcion>? MascotasFiltradas;
+    List<string> TamaniosDisponibles => TodasMascotas?
+    .Select(m => m.RelacionSize?.Nombre)
+    .Where(x => !string.IsNullOrWhiteSpace(x))
+    .Distinct()
+    .ToList() ?? new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Trae todas las mascotas
+        TodasMascotas = await MascotaService.ListAsync(m => !m.IsDeleted && m.Estado!.Nombre.ToLower() == "disponible");
+        AplicarFiltros();
+    }
+
+    void gotoCreate()
+    {
+        NavigationManager.NavigateTo("/adopciones/crear");
+    }
+
+    void VerDetalles(int id)
+    {
+        NavigationManager.NavigateTo($"/mascotas/{id:int}");
+    }
+
+    void LimpiarFiltros()
+    {
+        FiltroNombre = "";
+        FiltroEdad = "";
+        FiltroTamanio = "";
+        AplicarFiltros();
+    }
+
+    void AplicarFiltros()
+    {
+        if (TodasMascotas == null) return;
+        MascotasFiltradas = TodasMascotas
+        .Where(m =>
+        (string.IsNullOrEmpty(FiltroNombre) || m.Nombre.Contains(FiltroNombre, StringComparison.OrdinalIgnoreCase))
+        && (string.IsNullOrEmpty(FiltroEdad) || EdadCoincide(m.FechaNacimiento, FiltroEdad))
+        && (string.IsNullOrEmpty(FiltroTamanio) || m.RelacionSize?.Nombre == FiltroTamanio)
+        )
+        .ToList();
+        StateHasChanged();
+    }
+
+    bool EdadCoincide(DateOnly? fechaNac, string filtro)
+    {
+        if (fechaNac is null) return false;
+        var hoy = DateTime.Today;
+        var edad = hoy.Year - fechaNac.Value.Year;
+        if (fechaNac.Value.AddYears(edad) > DateOnly.FromDateTime(hoy))
+            edad--;
+        return filtro switch
+        {
+            "cachorro" => edad <= 1,
+            "joven" => edad > 1 && edad <= 3,
+            "adulto" => edad > 3 && edad <= 8,
+            "senior" => edad > 8,
+            _ => true
+        };
+    }
+
 
 }
