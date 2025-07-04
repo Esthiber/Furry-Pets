@@ -1,10 +1,9 @@
-﻿@* 
-@using PawfectMatch.Models.Adopciones
+﻿@using PawfectMatch.Models.Adopciones
 @inject NavigationManager navigationManager
 
 <div class="card mascota-card">
     <div class="card-img-container">
-        <img src="@Mascota.FotoUrl" class="card-img-top" alt="@Mascota.Nombre">
+        <img src="@Mascota.FotoURL" class="card-img-top" alt="@Mascota.Nombre">
         <span class="badge @GetEstadoBadgeClass()">@Mascota.Estado.Nombre</span>
         <AuthorizeView Roles="Admin">
             <span class="edit-btn btn btn-primary" @onclick="GoToEdit"><i class="bi bi-pencil-square"></i></span>
@@ -18,32 +17,32 @@
                 <span>@CalcularEdad() años</span>
             </div>
             <div class="info-item">
-                <i class="bi bi-gender-@(Mascota.Sexo.Nombre.ToLower() == "macho" ? "male" : "female")"></i>
-                <span>@Mascota.Sexo.Nombre</span>
+                <i class="bi bi-gender-@(Mascota.Sexo == 'm' ? "male" : "female")"></i>
+                <span>@Mascota.Sexo</span>
             </div>
             <div class="info-item">
                 <i class="bi bi-rulers"></i>
-                <span>@Mascota.Tamano" (@Mascota.RelacionSize.Size)</span>
+                <span>@Mascota.Tamanio" (@Mascota.RelacionSize.Nombre)</span>
             </div>
         </div>
         <p class="card-text text-truncate">@Mascota.Descripcion</p>
         <div class="d-flex justify-content-between align-items-center">
-            <span class="categoria-badge">@Mascota.Categoria.Nombre</span>
-            <button class="btn btn-primary" @onclick="VerDetalles">Ver más</button>
+            <span class="categoria-badge">@Mascota.Razas?.Nombre</span>
+            <button class="btn btn-primary" @onclick="async () => { await VerDetalles();}">Ver más</button>
         </div>
     </div>
 </div>
 
 @code {
     [Parameter]
-    public Mascotas Mascota { get; set; } = null!;
+    public MascotasAdopcion Mascota { get; set; } = null!;
 
     [Parameter]
     public EventCallback<int> OnVerDetalles { get; set; }
 
     private string GetEstadoBadgeClass()
     {
-        return Mascota.Estado.Nombre.ToLower() switch
+        return Mascota.Estado?.Nombre.ToLower() switch
         {
             "disponible" => "bg-success",
             "adoptado" => "bg-info",
@@ -55,9 +54,9 @@
     private int CalcularEdad()
     {
         var hoy = DateOnly.FromDateTime(DateTime.Today);
-        int edad = hoy.Year - Mascota.FechaNacimiento.Year;
+        int edad = hoy.Year - Mascota.FechaNacimiento.Value.Year;
 
-        if (Mascota.FechaNacimiento.AddYears(edad) > hoy)
+        if (Mascota.FechaNacimiento.Value.AddYears(edad) > hoy)
         {
             edad--;
         }
@@ -67,11 +66,12 @@
 
     private async Task VerDetalles()
     {
-        await OnVerDetalles.InvokeAsync(Mascota.MascotaId);
+        // await OnVerDetalles.InvokeAsync(Mascota.MascotasAdopcionID);
+        navigationManager.NavigateTo($"/mascotas/{Mascota.MascotasAdopcionID}");
     }
 
     private void GoToEdit()
     {
-        navigationManager.NavigateTo($"{Urls.Mascotas.Editar}{Mascota.MascotaId}");
+        navigationManager.NavigateTo($"{Urls.Mascotas.Editar}{Mascota.MascotasAdopcionID}");
     }
-} *@
+}
