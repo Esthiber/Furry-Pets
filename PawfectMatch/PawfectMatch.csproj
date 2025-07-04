@@ -39,9 +39,10 @@
     <Folder Include="Components\Pages\Adopciones\_Mascotas\_Crear\" />
     <Folder Include="Components\Pages\Adopciones\_Mascotas\_Editar\" />
     <Folder Include="Components\Pages\Adopciones\_Mascotas\_Eliminar\" />
-    <Folder Include="Components\Pages\Adopciones\_Servicios\_Editar\" />
-    <Folder Include="Components\Pages\Adopciones\_Servicios\_Crear\" />
-    <Folder Include="Components\Pages\Adopciones\_Servicios\_Eliminar\" />
+    <Folder Include="Components\Pages\Adopciones\_Solicitudes\_Crear\" />
+    <Folder Include="Components\Pages\Veterinaria\_Servicios\_Editar\" />
+    <Folder Include="Components\Pages\Veterinaria\_Servicios\_Crear\" />
+    <Folder Include="Components\Pages\Veterinaria\_Servicios\_Eliminar\" />
     <Folder Include="Components\Pages\Adopciones\_Solicitudes\_Editar\" />
     <Folder Include="Components\Pages\Adopciones\_Solicitudes\_Eliminar\" />
     <Folder Include="Components\Pages\Veterinaria\_Productos\_Crear\" />
