@@ -33,14 +33,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<Servicios> Servicios { get; set; }
     public DbSet<TiposServicios> TiposServicios { get; set; }
 
-    // Facturación
+    // Facturaciï¿½n
     public DbSet<Facturas> Facturas { get; set; }
     public DbSet<EstadosPagos> EstadosPagos { get; set; }
     public DbSet<Pagos> Pagos { get; set; }
     public DbSet<DetallesFacturas> DetalleFacturas { get; set; }
     public DbSet<TiposItems> TiposItems { get; set; }
 
-    // Personas y Adopción
+    // Personas y Adopcion
     public DbSet<PersonasRoles> PersonasRoles { get; set; }
     public DbSet<Personas> Personas { get; set; }
     public DbSet<AdoptantesDetalles> AdoptantesDetalles { get; set; }
@@ -55,8 +55,16 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<Citas> Citas { get; set; }
     public DbSet<EstadosCitas> EstadosCitas { get; set; }
 
-    // Configuración
+    // Configuraciï¿½n
     public DbSet<ConfiguracionEmpresa> ConfiguracionEmpresa { get; set; }
+
+    // Presentaciones
+    public DbSet<Presentaciones> Presentaciones { get; set; }
+    public DbSet<Diapositivas> Diapositivas { get; set; }
+    public DbSet<PresentacionesDiapositivas> PresentacionesDiapositivas { get; set; }
+
+    // Sugerencias
+    public DbSet<Sugerencias> Sugerencias { get; set; }
     #endregion
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -123,6 +131,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         modelBuilder.Entity<Razas>()
             .HasQueryFilter(e => !e.IsDeleted);
 
+
+
         modelBuilder.Entity<ConfiguracionEmpresa>();// Solo un registro, no soft delete
 
         // Relaciones y restricciones adicionales si las hay:
@@ -183,7 +193,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         //    .HasForeignKey(mp => mp.PersonasID)
         //    .OnDelete(DeleteBehavior.SetNull);
 
-        //// Razas con MascotasAdopcion (navegación inversa)
+        //// Razas con MascotasAdopcion (navegaciï¿½n inversa)
         //modelBuilder.Entity<Razas>()
         //    .HasMany(r => r.MascotasAdopcion)
         //    .WithOne(m => m.Razas)
@@ -338,7 +348,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         //    .OnDelete(DeleteBehavior.Restrict);
 
 
-        // Puedes añadir relaciones faltantes o específicas para tu dominio.
+        // Puedes aï¿½adir relaciones faltantes o especï¿½ficas para tu dominio.
         // Chequea la cardinalidad y los requerimientos de borrado en cascada por tus reglas de negocio.
 
         // Puedes agregar configuraciones similares para los modelos restantes si necesitas especificar relaciones/cascadas/restricciones particulares.
@@ -355,7 +365,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         // EstadoSolicitud
         modelBuilder.Entity<EstadoSolicitud>().HasData(
             new EstadoSolicitud { EstadoSolicitudID = 1, Nombre = "Aprobada", IsDeleted = false },
-            new EstadoSolicitud { EstadoSolicitudID = 2, Nombre = "En Revisión", IsDeleted = false },
+            new EstadoSolicitud { EstadoSolicitudID = 2, Nombre = "En Revisiï¿½n", IsDeleted = false },
             new EstadoSolicitud { EstadoSolicitudID = 3, Nombre = "Rechazada", IsDeleted = false },
             new EstadoSolicitud { EstadoSolicitudID = 4, Nombre = "En Espera", IsDeleted = false }
         );
@@ -381,7 +391,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         // TiposServicios
         modelBuilder.Entity<TiposServicios>().HasData(
             new TiposServicios { TiposServiciosID = 1, Nombre = "Consulta Veterinaria", IsDeleted = false },
-            new TiposServicios { TiposServiciosID = 2, Nombre = "Vacunación", IsDeleted = false }
+            new TiposServicios { TiposServiciosID = 2, Nombre = "Vacunaciï¿½n", IsDeleted = false }
         );
 
         // TipoViviendas
@@ -390,14 +400,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             new TipoViviendas { TipoViviendasID = 2, Nombre = "Apartamento", IsDeleted = false }
         );
 
-        // Especies y Razas (ejemplo mínimo)
+        // Especies y Razas (ejemplo mï¿½nimo)
         modelBuilder.Entity<Especies>().HasData(
             new Especies { EspeciesID = 1, Nombre = "Gato", IsDeleted = false },
             new Especies { EspeciesID = 2, Nombre = "Perro", IsDeleted = false }
         );
 
         modelBuilder.Entity<RelacionSize>().HasData(
-            new RelacionSize { RelacionSizeID = 1, Nombre = "Pequeño", IsDeleted = false },
+            new RelacionSize { RelacionSizeID = 1, Nombre = "Pequeï¿½o", IsDeleted = false },
             new RelacionSize { RelacionSizeID = 2, Nombre = "Mediano", IsDeleted = false },
             new RelacionSize { RelacionSizeID = 3, Nombre = "Grande", IsDeleted = false }
         );
@@ -408,7 +418,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             new Razas { RazasID = 3, EspeciesID = 1, Nombre = "Gato Naranja", IsDeleted = false }
         );
 
-        // Categorías de productos
+        // Categorï¿½as de productos
         modelBuilder.Entity<CategoriasProductos>().HasData(
             new CategoriasProductos { CategoriasProductosID = 1, Nombre = "Alimentos", IsDeleted = false },
             new CategoriasProductos { CategoriasProductosID = 2, Nombre = "Accesorios", IsDeleted = false }
@@ -421,7 +431,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             new EstadosCitas { EstadosCitasID = 3, Nombre = "Cancelada", IsDeleted = false }
         );
 
-        // Configuración de empresa: Solo se admite un registro
+        // Configuraciï¿½n de empresa: Solo se admite un registro
         modelBuilder.Entity<ConfiguracionEmpresa>().HasData(
             new ConfiguracionEmpresa
             {
@@ -433,7 +443,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             }
         );
 
-        // ------ Ajustar/añadir seeds según tus necesidades -----
+        // ------ Ajustar/aï¿½adir seeds segï¿½n tus necesidades -----
 
         #endregion
     }
