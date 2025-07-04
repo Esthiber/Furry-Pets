@@ -6,6 +6,7 @@ using PawfectMatch.Components;
 using PawfectMatch.Components.Account;
 using PawfectMatch.Data;
 using PawfectMatch.Models;
+using PawfectMatch.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,38 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
 
 // Estos servicios. 
 // builder.Services.AddScoped<PersonasService>();
-
+builder.Services.AddScoped<AdoptantesDetallesService>();
+builder.Services.AddScoped<CategoriasProductosService>();
+builder.Services.AddScoped<CitasService>();
+builder.Services.AddScoped<ConfiguracionEmpresaService>();
+builder.Services.AddScoped<DetallesFacturasService>();
+builder.Services.AddScoped<DiapositivasService>();
+builder.Services.AddScoped<EspeciesService>();
+builder.Services.AddScoped<EstadoMascotaService>();
+builder.Services.AddScoped<EstadosCitasService>();
+builder.Services.AddScoped<EstadoSolicitudService>();
+builder.Services.AddScoped<EstadosPagosService>();
+builder.Services.AddScoped<FacturasService>();
+builder.Services.AddScoped<HistorialAdopcionesService>();
+builder.Services.AddScoped<HistoriasClinicasService>();
+builder.Services.AddScoped<MascotasAdopcionService>();          // Ya estaba, OK
+builder.Services.AddScoped<MascotasPersonasService>();         // Ya estaba, OK
+builder.Services.AddScoped<PagosService>();
+builder.Services.AddScoped<PersonasRolesService>();
+builder.Services.AddScoped<PersonasService>();
+builder.Services.AddScoped<PresentacionesDiapositivasService>();
+builder.Services.AddScoped<PresentacionesService>();
+builder.Services.AddScoped<ProductosService>();
+builder.Services.AddScoped<ProveedoresService>();
+builder.Services.AddScoped<RazasService>();
+builder.Services.AddScoped<RelacionSizeService>();
+builder.Services.AddScoped<SeguimientoMascotasService>();
+builder.Services.AddScoped<ServiciosService>();
+builder.Services.AddScoped<SolicitudesAdopcionesService>();
+builder.Services.AddScoped<SugerenciasService>();
+builder.Services.AddScoped<TiposItemsService>();
+builder.Services.AddScoped<TiposServiciosService>();
+builder.Services.AddScoped<TipoViviendasService>();
 
 builder.Services.AddBlazorBootstrap();
 builder.Services.AddBlazoredToast();
