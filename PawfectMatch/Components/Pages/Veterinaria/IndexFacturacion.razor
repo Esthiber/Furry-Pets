@@ -1,5 +1,55 @@
-﻿<h3>IndexFacturacion</h3>
+﻿@page "/veterinaria"
+@using PawfectMatch.Models
+@using PawfectMatch.Services
+@inject ProductosService ProductosService
+@rendermode InteractiveServer
+
+<h2>Facturación Veterinaria</h2>
+<p>Selecciona productos para agregar a la lista de compra:</p>
+<div class="facturacion-layout">
+    <div class="facturacion-productos">
+        @if (ProductosDisponibles == null)
+        {
+            <div>Cargando productos...</div>
+        }
+        else if (!ProductosDisponibles.Any())
+        {
+            <div>No hay productos disponibles.</div>
+        }
+        else
+        {
+            @foreach (var prod in ProductosDisponibles)
+            {
+                <CardProductos Producto="prod" OnSeleccionarProducto="AgregarProducto" />
+            }
+        }
+    </div>
+    <div class="facturacion-lista">
+        <ListaCompra ProductosSeleccionados="Carrito"
+                     OnEliminarProducto="QuitarProducto" />
+    </div>
+</div>
 
 @code {
+    List<Productos> ProductosDisponibles = new();
+    List<Productos> Carrito = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        // Mostrar solo productos en stock y no eliminados
+        ProductosDisponibles = await ProductosService.ListAsync(p => !p.IsDeleted && p.Stock > 0);
+    }
+
+    void AgregarProducto(Productos producto)
+    {
+        // Permite agregar repetidos, o para evitarlo verifica primero
+        Carrito.Add(producto);
+        StateHasChanged();
+    }
+
+    void QuitarProducto(Productos producto)
+    {
+        Carrito.Remove(producto); // Remueve la primera instancia encontrada
+        StateHasChanged();
+    }
 }
