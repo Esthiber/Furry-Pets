@@ -5,20 +5,26 @@
 <PageTitle>Furry-Pets | Adop-Veterinaria</PageTitle>
 
 <!--Div card que es  un boton que manda a la pagina de adopciones-->
-<div class="card text-center home-card" @onclick="() => { gotoAdopciones(); }">
-    <div class="card-body">
-        <h5 class="card-title">Adopta una mascota</h5>
-        <p class="card-text">Descubre nuestras adorables mascotas en adopción.</p>
-        <button class="btn btn-primary">Ver Adopciones</button>
+<div class="home-container">
+    
+    <div class="card text-center home-card" @onclick="gotoAdopciones">
+        <div class="card-body">
+            <i class="fas fa-dog fa-2x mb-2 icon-style"></i>
+            <h5 class="card-title">Adopta una mascota</h5>
+            <p class="card-text">Descubre nuestras adorables mascotas en adopción.</p>
+            <button class="btn btn-primary">Ver Adopciones</button>
+        </div>
     </div>
-</div>
 
 <!--Div card que es un boton que manda a la pagina de veterinaria-->
-<div class="card text-center home-card" @onclick="() => { gotoVeterinaria(); }">
-    <div class="card-body">
-        <h5 class="card-title">Veterinaria</h5>
-        <p class="card-text">Consulta a nuestros veterinarios expertos.</p>
-        <button class="btn btn-primary">Ver Veterinaria</button>
+
+    <div class="card text-center home-card" @onclick="gotoVeterinaria">
+        <div class="card-body">
+            <i class="fas fa-stethoscope fa-2x mb-2 icon-style"></i>
+            <h5 class="card-title">Veterinaria</h5>
+            <p class="card-text">Consulta a nuestros veterinarios expertos.</p>
+            <button class="btn btn-primary">Ver Veterinaria</button>
+        </div>
     </div>
 </div>
 

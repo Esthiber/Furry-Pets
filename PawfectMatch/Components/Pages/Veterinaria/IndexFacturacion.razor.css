@@ -1,8 +1,74 @@
-﻿.facturacion-layout {
+﻿body {
+    background-color: #e6e6e6;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.facturacion-layout {
     display: flex;
     flex-direction: row;
     gap: 32px;
     padding: 32px 0 0 0;
+    background-color: #e6e6e6;
+}
+
+.facturacion-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    background-color: #e6e6e6;
+    padding: 12px 24px;
+    border-bottom: 4px solid #d5a67b;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.facturacion-titulo-container {
+    display: flex;
+    justify-content: center;
+}
+
+.facturacion-cajero-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.facturacion-logo {
+    height: 45px;
+}
+
+.facturacion-titulo {
+    font-size: 1.8rem;
+    margin: 0;
+    color: #333;
+}
+
+.nombre-cajero {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.titular {
+    padding: 20px 24px 10px 24px;
+    background-color: #e6e6e6;
+}
+
+    .titular h2 {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: bold;
+    }
+
+    .titular p {
+        margin-top: 4px;
+        margin-bottom: 16px;
+    }
+
+.facturacion-wrapper {
+    background-color: #e6e6e6;
+    padding-bottom: 40px;
+    min-height: 100vh;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
 }
 
 @media (max-width: 1000px) {
