@@ -1,0 +1,116 @@
+﻿@page "/adopciones/crear"
+@using PawfectMatch.Models
+@using PawfectMatch.Services
+@inject MascotasAdopcionService MascotaService
+@inject RazasService RazasService
+@inject RelacionSizeService RelacionSizeService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<div class="formulario-container">
+    <h2 class="crear-titulo">🐾 Nueva Mascota en Adopción</h2>
+
+    <EditForm Model="@NuevaMascota" OnValidSubmit="GuardarMascota">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="formulario-crear">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <InputText id="nombre" class="form-control" @bind-Value="NuevaMascota.Nombre" />
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripción</label>
+                <InputTextArea id="descripcion" class="form-control" @bind-Value="NuevaMascota.Descripcion" />
+            </div>
+
+            <div class="form-group">
+                <label for="sexo">Sexo</label>
+                <InputSelect id="sexo" class="form-control" @bind-Value="NuevaMascota.Sexo">
+                    <option value="">Seleccione</option>
+                    <option value="Macho">Macho</option>
+                    <option value="Hembra">Hembra</option>
+                </InputSelect>
+            </div>
+
+            <div class="form-group">
+                <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                <InputDate id="fechaNacimiento" class="form-control" @bind-Value="NuevaMascota.FechaNacimiento" />
+            </div>
+
+            <div class="form-group">
+                <label for="foto">URL de la Foto</label>
+                <InputText id="foto" class="form-control" @bind-Value="NuevaMascota.FotoURL" />
+            </div>
+
+            <div class="form-group">
+                <label for="raza">Raza</label>
+                <InputSelect id="raza" class="form-control" @bind-Value="NuevaMascota.RazasID">
+                    <option value="">Seleccione una raza</option>
+                    @foreach (var raza in ListaRazas)
+                    {
+                        <option value="@raza.RazasID">@raza.Nombre</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="form-group">
+                <label for="size">Tamaño</label>
+                <InputSelect id="size" class="form-control" @bind-Value="NuevaMascota.RelacionSizeID">
+                    <option value="">Seleccione tamaño</option>
+                    @foreach (var size in ListaTamanios)
+                    {
+                        <option value="@size.RelacionSizeID">@size.Nombre</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <InputNumber id="estado" class="form-control" @bind-Value="NuevaMascota.EstadoID" />
+            </div>
+        </div>
+
+        <div class="form-botones">
+            <button type="submit" class="btn btn-success">💾 Guardar</button>
+            <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+        </div>
+
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger mt-3">@ErrorMessage</div>
+        }
+    </EditForm>
+</div>
+
+@code {
+    MascotasAdopcion NuevaMascota = new();
+    List<Razas> ListaRazas = new();
+    List<RelacionSize> ListaTamanios = new();
+    string ErrorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaRazas = await RazasService.ListAsync(r => !r.IsDeleted);
+        ListaTamanios = await RelacionSizeService.ListAsync(r => !r.IsDeleted);
+    }
+
+    async Task GuardarMascota()
+    {
+        var exito = await MascotaService.InsertAsync(NuevaMascota);
+        if (exito)
+        {
+            NavigationManager.NavigateTo("/adopciones");
+        }
+        else
+        {
+            ErrorMessage = "No se pudo guardar la mascota. Intente nuevamente.";
+        }
+    }
+
+    void Cancelar()
+    {
+        NavigationManager.NavigateTo("/adopciones");
+    }
+}

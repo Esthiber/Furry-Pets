@@ -1,0 +1,82 @@
+﻿@page "/veterinaria/crear"
+@using PawfectMatch.Models
+@using PawfectMatch.Services
+@inject ProductosService ProductosService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<div class="formulario-container">
+    <h2 class="crear-titulo">📦 Nuevo Producto</h2>
+
+    <EditForm Model="@NuevoProducto" OnValidSubmit="@GuardarProducto">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="formulario-crear">
+            <div class="form-group">
+                <label for="nombre">Nombre del Producto</label>
+                <InputText id="nombre" class="form-control" @bind-Value="NuevoProducto.Nombre" />
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripción</label>
+                <InputTextArea id="descripcion" class="form-control" @bind-Value="NuevoProducto.Descripcion" />
+            </div>
+
+            <div class="form-group">
+                <label for="costo">Costo</label>
+                <InputNumber id="costo" class="form-control" @bind-Value="NuevoProducto.Costo" />
+            </div>
+
+            <div class="form-group">
+                <label for="precio">Precio</label>
+                <InputNumber id="precio" class="form-control" @bind-Value="NuevoProducto.Precio" />
+            </div>
+
+            <div class="form-group">
+                <label for="stock">Stock</label>
+                <InputNumber id="stock" class="form-control" @bind-Value="NuevoProducto.Stock" />
+            </div>
+
+            <div class="form-group">
+                <label for="imagen">URL de Imagen</label>
+                <InputText id="imagen" class="form-control" @bind-Value="NuevoProducto.ImagenUrl" />
+            </div>
+
+            <div class="form-group">
+                <label for="proveedor">ID Proveedor</label>
+                <InputNumber id="proveedor" class="form-control" @bind-Value="NuevoProducto.ProveedoresID" />
+            </div>
+        </div>
+
+        <div class="form-botones">
+            <button type="submit" class="btn btn-success">💾 Guardar</button>
+            <button type="button" class="btn btn-secondary" @onclick="@(() => NavigationManager.NavigateTo("/veterinaria"))">Cancelar</button>
+        </div>
+    </EditForm>
+</div>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="modal-error">
+        <p>⚠️ @ErrorMessage</p>
+    </div>
+}
+
+@code {
+    Productos NuevoProducto = new();
+    string ErrorMessage;
+
+    private async Task GuardarProducto()
+    {
+        var exito = await ProductosService.InsertAsync(NuevoProducto);
+        if (exito)
+        {
+            NavigationManager.NavigateTo("/veterinaria");
+        }
+        else
+        {
+            ErrorMessage = "No se pudo guardar el producto. Intenta de nuevo.";
+        }
+    }
+}
