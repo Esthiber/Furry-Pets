@@ -6,6 +6,7 @@ using PawfectMatch.Models._Mascotas;
 using PawfectMatch.Models._Servicios;
 using PawfectMatch.Models.Adopciones._Servicios;
 using PawfectMatch.Models.Adopciones._Solicitudes;
+using PawfectMatch.Models.Servicios;
 using PawfectMatch.Services;
 using PawfectMatch.Services._Mascotas;
 using PawfectMatch.Services._Solicitudes;

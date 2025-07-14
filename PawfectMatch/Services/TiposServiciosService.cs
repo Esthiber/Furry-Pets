@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PawfectMatch.Data;
-using PawfectMatch.Models;
+using PawfectMatch.Models.Servicios;
 using System.Linq;
 using System.Linq.Expressions;
 

@@ -30,7 +30,7 @@ var connectionString = builder.Configuration.GetConnectionString("SqlConStr") ??
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Estos servicios. 
+#region Injeccion de Servicios
 // builder.Services.AddScoped<PersonasService>();
 builder.Services.AddScoped<AdoptantesDetallesService>();
 builder.Services.AddScoped<CategoriasProductosService>();
@@ -64,6 +64,8 @@ builder.Services.AddScoped<SugerenciasService>();
 builder.Services.AddScoped<TiposItemsService>();
 builder.Services.AddScoped<TiposServiciosService>();
 builder.Services.AddScoped<TipoViviendasService>();
+builder.Services.AddScoped<VetasTabsService>();
+builder.Services.AddScoped<ProductosInTabsService>();
 
 builder.Services.AddBlazorBootstrap();
 builder.Services.AddBlazoredToast();
@@ -78,7 +80,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
-
+#endregion
 
 var app = builder.Build();
 
