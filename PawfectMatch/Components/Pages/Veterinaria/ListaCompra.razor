@@ -1,13 +1,13 @@
 ﻿@using PawfectMatch.Models
+@using System.Linq
+@inject NavigationManager NavigationManager
 
-<style>
-    
-</style>
 
 <div class="lista-compra">
     <div class="lista-compra-title">Lista de Compras</div>
     <div class="lista-productos">
-        @if (ProductosSeleccionados is null || !ProductosSeleccionados.Any())
+        @* 1. Se cambia la condición para que verifique la nueva lista agrupada *@
+        @if (ProductosAgrupados is null || !ProductosAgrupados.Any())
         {
             <div class="lista-vacia">
                 <i class="bi bi-bag-x"></i> No hay productos en la lista.
@@ -15,13 +15,28 @@
         }
         else
         {
-            @foreach (var prod in ProductosSeleccionados)
+            @* 2. Se itera sobre la nueva lista de productos agrupados en lugar de la original *@
+            @foreach (var grupo in ProductosAgrupados)
             {
                 <div class="item-lista">
-                    <img src="@((prod.ImagenUrl ?? "https://via.placeholder.com/34"))" alt="img" class="item-img" />
-                    <span class="item-nombre">@prod.Nombre</span>
-                    <span class="item-precio">$@String.Format("{0:N2}", prod.Precio)</span>
-                    <button class="btn-eliminar" title="Eliminar" @onclick="() => OnEliminarProducto.InvokeAsync(prod)">
+                    <img src="@((grupo.Producto.ImagenUrl ?? "https://via.placeholder.com/34"))" alt="img" class="item-img" />
+
+                    @* 3. Se añade un nuevo contenedor para el nombre y la cantidad para un mejor layout *@
+                    <div class="item-details">
+                        <span class="item-nombre">@grupo.Producto.Nombre</span>
+                        @* Mostramos la cantidad y el precio unitario solo si hay más de uno *@
+                        @if (grupo.Cantidad > 1)
+                        {
+                            <span class="item-cantidad">@grupo.Cantidad x $@String.Format("{0:N2}", grupo.Producto.Precio)</span>
+                        }
+                    </div>
+
+                    @* 4. El precio ahora muestra el subtotal del grupo (Precio * Cantidad) *@
+                    <span class="item-precio">$@String.Format("{0:N2}", grupo.Subtotal)</span>
+
+                    @* 5. El botón de eliminar sigue funcionando igual: elimina UNA instancia del producto, 
+                       lo que decrementará la cantidad o eliminará la fila si solo queda uno. *@
+                    <button class="btn-eliminar" title="Eliminar" @onclick="() => OnEliminarProducto.InvokeAsync(grupo.Producto)">
                         <i class="bi bi-trash-fill"></i>
                     </button>
                 </div>
@@ -32,6 +47,18 @@
         <span>Total:</span>
         <span>$@String.Format("{0:N2}", Total)</span>
     </div>
+
+    <!-- Panel de Acciones -->
+    <div class="panel-acciones">
+        <button class="btn-accion btn-cliente" @onclick="OnIngresarCliente" disabled="@(!ProductosSeleccionados.Any())">
+            <i class="bi bi-person-plus"></i>
+            <span>Cliente</span>
+        </button>
+        <button class="btn-accion btn-pagar" @onclick="OnProcesarPago" disabled="@(!ProductosSeleccionados.Any())">
+            <i class="bi bi-credit-card"></i>
+            <span>Pagar</span>
+        </button>
+    </div>
 </div>
 
 @code {
@@ -41,5 +68,40 @@
     [Parameter]
     public EventCallback<Productos> OnEliminarProducto { get; set; }
 
+    [Parameter]
+    public EventCallback OnIngresarCliente { get; set; }
+
+    [Parameter]
+    public EventCallback OnProcesarPago { get; set; }
+
+    // --- NUEVA LÓGICA DE AGRUPACIÓN ---
+
+    // Helper class para representar un ítem agrupado en la lista.
+    private class ItemAgrupado
+    {
+        public Productos Producto { get; set; }
+        public int Cantidad { get; set; }
+        public decimal Subtotal => Producto.Precio * Cantidad;
+    }
+
+    // Propiedad calculada que agrupa los productos seleccionados.
+    // Esta es la clave de la solución. Se ejecuta cada vez que el componente se renderiza.
+    private IEnumerable<ItemAgrupado> ProductosAgrupados =>
+        ProductosSeleccionados?
+            .GroupBy(p => p.ProductosID) // Asumimos que el modelo 'Productos' tiene una propiedad 'Id' única.
+            .Select(g => new ItemAgrupado
+            {
+                // Tomamos el primer producto del grupo para obtener sus datos (nombre, imagen, precio).
+                Producto = g.First(),
+                // Contamos cuántos elementos hay en el grupo para obtener la cantidad.
+                Cantidad = g.Count()
+            })
+            // Ordenamos para que los productos añadidos más recientemente aparezcan al final.
+            .OrderBy(g => ProductosSeleccionados.FindLastIndex(p => p.ProductosID == g.Producto.ProductosID))
+            ?? Enumerable.Empty<ItemAgrupado>();
+
+    // El cálculo del Total no necesita cambios, ya que sigue sumando cada producto individual
+    // de la lista original, lo cual es matemáticamente correcto.
     public decimal Total => ProductosSeleccionados?.Sum(p => p.Precio) ?? 0;
 }
+

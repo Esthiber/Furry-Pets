@@ -1,4 +1,5 @@
-﻿.lista-compra {
+﻿/* Estilos existentes... */
+.lista-compra {
     background: #fff;
     box-shadow: 0 2px 8px #0001;
     border-radius: 14px;
@@ -7,6 +8,7 @@
     max-width: 350px;
     width: 100%;
     min-height: 300px;
+    height: calc(100vh - 10px);
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -42,13 +44,27 @@
     object-fit: contain;
 }
 
+/* --- NUEVOS ESTILOS Y AJUSTES --- */
+.item-details {
+    flex: 1; /* Ocupa el espacio disponible */
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
 .item-nombre {
-    flex: 1;
     font-size: 1rem;
     color: #222;
     font-weight: 500;
-    line-height: 1.15;
 }
+
+.item-cantidad {
+    font-size: 0.8rem;
+    color: #757575; /* Un gris sutil */
+    font-weight: 400;
+}
+
+/* Se elimina flex: 1 de item-nombre ya que ahora está en item-details */
 
 .item-precio {
     font-size: 1rem;
@@ -79,6 +95,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
 }
 
 .lista-vacia {
@@ -87,3 +105,64 @@
     text-align: center;
     padding: 28px 0;
 }
+
+/* Panel de Acciones (sin cambios) */
+.panel-acciones {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.btn-accion {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 12px 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+    .btn-accion i {
+        font-size: 1.3rem;
+    }
+
+    .btn-accion span {
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+.btn-cliente {
+    color: #1976d2;
+}
+
+    .btn-cliente:hover:not(:disabled) {
+        background: #e3f2fd;
+        border-color: #1976d2;
+    }
+
+.btn-pagar {
+    color: #388e3c;
+}
+
+    .btn-pagar:hover:not(:disabled) {
+        background: #e8f5e9;
+        border-color: #388e3c;
+    }
+
+.btn-accion:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: #999;
+}
+
+    .btn-accion:disabled:hover {
+        background: #fff;
+        border-color: #e0e0e0;
+    }
