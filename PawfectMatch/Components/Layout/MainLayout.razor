@@ -1,22 +1,19 @@
-﻿@inherits LayoutComponentBase
+﻿@using PawfectMatch.Components.Layout.QuickMenu
+@inherits LayoutComponentBase
 
-<div class="page">
-    @* <div class="sidebar">  *@
-    @*     <NavMenu />  *@
-    @* </div> *@
+@* 1. Estructura principal con Flexbox: 'main-content' y 'quick-menu-sidebar' *@
+<div class="page-container">
 
-    <main>
-        @* <div class="top-row">
-            <TopNavMenu />
-        </div> *@
-
-        <article class="content">
-            @Body   
-        </article>
-        @* <footer>
-            <MainFooter />
-        </footer> *@
+    <main class="main-content">
+        @* El contenido de cada página se renderizará aquí *@
+        @Body
     </main>
+
+    @* 2. Contenedor para el menú rápido. Lo he cambiado a <aside> por semántica. *@
+    <aside class="quick-menu-sidebar">
+        <QuickMenu />
+    </aside>
+
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>

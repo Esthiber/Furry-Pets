@@ -1,0 +1,24 @@
+﻿.page {
+    display: flex; /* La magia de Flexbox para poner elementos en fila */
+    flex-direction: row; /* Columnas una al lado de la otra */
+    min-height: 100vh; /* Ocupa al menos toda la altura de la pantalla */
+    background-color: #f4f6f9; /* Un color de fondo base para toda la app */
+}
+
+.main-content {
+    flex: 1; /* Hace que esta columna ocupe todo el espacio sobrante */
+    padding: 0rem; /* Espacio interno para que el contenido no pegue a los bordes */
+    overflow-y: auto; /* Si el contenido es muy largo, solo esta columna tendrá scroll */
+}
+
+.quick-menu {
+    width: 150px; /* Ancho fijo para la barra de menú */
+    flex-shrink: 0; /* Evita que la barra se encoja si la ventana es muy pequeña */
+    height: 100vh; /* Ocupa exactamente toda la altura de la pantalla */
+    position: sticky; /* La barra se quedará fija en su sitio aunque el contenido principal haga scroll */
+    top: 0;
+    background-color: #2c3e50; /* Un color oscuro para la barra lateral */
+    box-shadow: -3px 0px 15px rgba(0, 0, 0, 0.1); /* Sombra sutil a la izquierda */
+    color: white; /* Color de texto por defecto para los elementos dentro */
+}
+    
