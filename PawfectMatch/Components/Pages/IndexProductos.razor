@@ -1,0 +1,175 @@
+﻿@page "/productos"
+@inject ProductosService ProductosService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<h3>Productos</h3>
+
+<!-- Buscador -->
+<div class="mb-3">
+    <input type="text" class="form-control" @bind="filtro" placeholder="Buscar por ID o Nombre..." @oninput="FiltrarProductos" />
+</div>
+
+<!-- Botón de crear producto -->
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="CrearProducto">Crear Nuevo Producto</button>
+</div>
+
+<!-- Grid de tarjetas de productos -->
+<div class="row">
+    @if (productosFiltrados == null)
+    {
+        <p>Cargando productos...</p>
+    }
+    else if (productosFiltrados.Count == 0)
+    {
+        <p>No se encontraron productos.</p>
+    }
+    else
+    {
+        @foreach (var producto in productosFiltrados)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card" style="width: 18rem; cursor: pointer;" @onclick="() => AbrirModal(producto)">
+                    <img src="@(producto.ImagenUrl ?? "https://via.placeholder.com/150")" class="card-img-top" alt="@producto.Nombre" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@producto.ProductosID | @producto.Nombre</h5>
+                        <p class="card-text">Precio: $@producto.Precio</p>
+                        <p class="card-text">Stock: @producto.Stock</p>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<!-- Modal para editar producto -->
+@if (productoSeleccionado != null)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Producto: @productoSeleccionado.Nombre</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@productoSeleccionado" OnValidSubmit="GuardarCambios">
+                        <DataAnnotationsValidator />
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <InputText class="form-control" @bind-Value="productoSeleccionado.Nombre" />
+                            <ValidationMessage For="@(() => productoSeleccionado.Nombre)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción</label>
+                            <InputTextArea class="form-control" @bind-Value="productoSeleccionado.Descripcion" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Costo</label>
+                            <InputNumber class="form-control" @bind-Value="productoSeleccionado.Costo" />
+                            <ValidationMessage For="@(() => productoSeleccionado.Costo)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Precio</label>
+                            <InputNumber class="form-control" @bind-Value="productoSeleccionado.Precio" />
+                            <ValidationMessage For="@(() => productoSeleccionado.Precio)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stock</label>
+                            <InputNumber class="form-control" @bind-Value="productoSeleccionado.Stock" />
+                            <ValidationMessage For="@(() => productoSeleccionado.Stock)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">URL de Imagen</label>
+                            <InputText class="form-control" @bind-Value="productoSeleccionado.ImagenUrl" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    private List<Productos> productos = new();
+    private List<Productos> productosFiltrados = new();
+    private Productos? productoSeleccionado = null;
+    private string filtro = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cargar todos los productos que no estén eliminados
+        productos = await ProductosService.ListAsync(p => !p.IsDeleted);
+        productosFiltrados = productos;
+    }
+
+    private void FiltrarProductos(ChangeEventArgs e)
+    {
+        filtro = e.Value?.ToString() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(filtro))
+        {
+            productosFiltrados = productos;
+        }
+        else
+        {
+            productosFiltrados = productos
+                .Where(p => p.ProductosID.ToString().Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
+                           p.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+    }
+
+    private void CrearProducto()
+    {
+        NavigationManager.NavigateTo("/ventas/crear");
+    }
+
+    private void AbrirModal(Productos producto)
+    {
+        productoSeleccionado = new Productos
+        {
+            ProductosID = producto.ProductosID,
+            Nombre = producto.Nombre,
+            Descripcion = producto.Descripcion,
+            Costo = producto.Costo,
+            Precio = producto.Precio,
+            Stock = producto.Stock,
+            ImagenUrl = producto.ImagenUrl,
+            CategoriasProductosID = producto.CategoriasProductosID,
+            ProveedoresID = producto.ProveedoresID,
+            IsDeleted = producto.IsDeleted
+        };
+    }
+
+    private void CerrarModal()
+    {
+        productoSeleccionado = null;
+    }
+
+    private async Task GuardarCambios()
+    {
+        if (productoSeleccionado != null)
+        {
+            var result = await ProductosService.SaveAsync(productoSeleccionado);
+            if (result)
+            {
+                // Actualizar la lista de productos
+                var index = productos.FindIndex(p => p.ProductosID == productoSeleccionado.ProductosID);
+                if (index >= 0)
+                {
+                    productos[index] = productoSeleccionado;
+                }
+                productosFiltrados = productos
+                    .Where(p => string.IsNullOrWhiteSpace(filtro) ||
+                               p.ProductosID.ToString().Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
+                               p.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+                CerrarModal();
+            }
+        }
+    }
+}
