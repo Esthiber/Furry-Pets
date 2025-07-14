@@ -8,12 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Components\Pages\Adopciones\_Solicitudes\_Editar\**" />
     <Compile Remove="DAL\**" />
     <Compile Remove="wwwroot\lib\bootstrap\dist\bootstrap-icons-1.11.3\**" />
+    <Content Remove="Components\Pages\Adopciones\_Solicitudes\_Editar\**" />
     <Content Remove="DAL\**" />
     <Content Remove="wwwroot\lib\bootstrap\dist\bootstrap-icons-1.11.3\**" />
+    <EmbeddedResource Remove="Components\Pages\Adopciones\_Solicitudes\_Editar\**" />
     <EmbeddedResource Remove="DAL\**" />
     <EmbeddedResource Remove="wwwroot\lib\bootstrap\dist\bootstrap-icons-1.11.3\**" />
+    <None Remove="Components\Pages\Adopciones\_Solicitudes\_Editar\**" />
     <None Remove="DAL\**" />
     <None Remove="wwwroot\lib\bootstrap\dist\bootstrap-icons-1.11.3\**" />
   </ItemGroup>
@@ -43,7 +47,6 @@
     <Folder Include="Components\Pages\Veterinaria\_Servicios\_Editar\" />
     <Folder Include="Components\Pages\Veterinaria\_Servicios\_Crear\" />
     <Folder Include="Components\Pages\Veterinaria\_Servicios\_Eliminar\" />
-    <Folder Include="Components\Pages\Adopciones\_Solicitudes\_Editar\" />
     <Folder Include="Components\Pages\Adopciones\_Solicitudes\_Eliminar\" />
     <Folder Include="Components\Pages\Veterinaria\_Productos\_Crear\" />
     <Folder Include="Components\Pages\Veterinaria\_Productos\_Editar\" />
