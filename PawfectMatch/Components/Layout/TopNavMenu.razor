@@ -1,4 +1,4 @@
-﻿
+﻿@* 
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
 @rendermode InteractiveServer
@@ -38,24 +38,24 @@
                         <i class="bi bi-calendar-heart"></i>
                         <span>Citas</span>
                     </NavLink>
-                </li>
+                </li> *@
                 @* <li class="nav-item"> *@
                 @*     <NavLink href="/Contacto" ActiveClass="active"> *@
                 @*         <i class="bi bi-chat-dots"></i> *@
                 @*         <span>Contacto</span> *@
                 @*     </NavLink> *@
                 @* </li> *@
-            </ul>
-        </nav>
+        @*     </ul>
+        </nav> *@
 
         <!-- Action Buttons -->
-        <div class="nav-actions">
+        @* <div class="nav-actions"> *@
             @* <button class="discover-btn" @onclick="GoToRandomMascota">
                 <i class="bi bi-shuffle"></i>
                 <span>¡Descubrir!</span>
             </button> *@
 
-            <div class="user-menu-container">
+          @*   <div class="user-menu-container">
                 <button class="user-btn" @onclick="ToggleUserMenu">
                     <AuthorizeView>
                         <Authorized>
@@ -68,24 +68,24 @@
                         </NotAuthorized>
                     </AuthorizeView>
                 </button>
-            </div>
+            </div> *@
 
             <!-- Mobile Menu Toggle -->
-            <button class="mobile-menu-toggle" @onclick="ToggleMobileMenu">
+    @*         <button class="mobile-menu-toggle" @onclick="ToggleMobileMenu">
                 <i class="bi @(mobileMenuOpen ? "bi-x-lg" : "bi-list")"></i>
             </button>
         </div>
-    </div>
+    </div> *@
 
-    @if (showUserMenu)
+    @* @if (showUserMenu)
     {
         <div class="user-dropdown">
             <UserMenu OnClose="CloseUserMenu" />
         </div>
-    }
+    } *@
 
     <!-- Mobile Navigation Menu -->
-    @if (mobileMenuOpen)
+    @* @if (mobileMenuOpen)
     {
         <div class="mobile-nav">
             <ul class="mobile-nav-links">
@@ -117,13 +117,13 @@
                     @* <button class="mobile-discover-btn" @onclick="GoToRandomMascota">
                         <i class="bi bi-shuffle"></i>
                         <span>¡Descubrir!</span>
-                    </button> *@
+                    </button> 
                 </li>
             </ul>
         </div>
-    }
-</header>
-
+    } 
+</header>*@
+@* 
 @code {
     private bool showUserMenu = false;
     private bool mobileMenuOpen = false;
@@ -185,4 +185,4 @@
     //     mobileMenuOpen = false;
     //     showUserMenu = false;
     // }
-}
+} *@
