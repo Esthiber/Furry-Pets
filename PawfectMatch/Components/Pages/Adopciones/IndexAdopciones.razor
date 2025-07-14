@@ -1,9 +1,11 @@
-﻿@page "/adopciones"
+﻿@page "/catalogo"
 @using PawfectMatch.Models.Adopciones
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
 @inject MascotasAdopcionService MascotaService
+
+@attribute [Authorize(Roles = "Admin,User")]
 
 @* ------------------- ESTILOS ------------------- *@
 
