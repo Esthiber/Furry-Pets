@@ -19,7 +19,7 @@
             <QuickFunc IconName="house-door-fill" Text="Inicio" OnClick="@(() => NavigationManager.NavigateTo("/"))" />
 
             <QuickFunc IconName="question-lg" Text="Funcion por Asignar" OnClick="@(() => { })" />
-            <QuickFunc IconName="database-fill-gear" Text="Administracion" OnClick="@(() => Console.WriteLine("Administracion"))" />
+            <QuickFunc IconName="database-fill-gear" Text="Administracion" OnClick="@(() => NavigationManager.NavigateTo("/admin"))" />
             <QuickFunc IconName="dribbble" Text="Productos" OnClick="@(() => NavigationManager.NavigateTo("/productos"))" />
             <QuickFunc IconName="gitlab" Text="Mascotas" OnClick="@(() => NavigationManager.NavigateTo("/mascotasadopcion"))" />
             <QuickFunc IconName="gear-fill" Text="Ajustes" OnClick="@(() => NavigationManager.NavigateTo("/settings"))" />

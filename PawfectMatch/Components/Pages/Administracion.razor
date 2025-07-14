@@ -1,0 +1,273 @@
+﻿@page "/admin"
+@attribute [Authorize(Roles = "Admin")]
+@inject NavigationManager NavigationManager
+@inject ProductosService ProductosService
+@inject FacturasService FacturasService
+@inject VetasTabsService VetasTabsService
+@inject SugerenciasService SugerenciasService
+@inject PresentacionesService PresentacionesService
+
+@rendermode InteractiveServer
+
+<PageTitle>Administración | Pawfect Match</PageTitle>
+
+<div class="admin-dashboard">
+    <div class="dashboard-header">
+        <div class="title-section">
+            <h3>Administración</h3>
+            <p class="subtitle">Panel de control y estadísticas del sistema</p>
+        </div>
+        <div class="action-buttons">
+            <button class="btn btn-primary" @onclick="CargarDatos">
+                <i class="bi bi-arrow-clockwise"></i> Actualizar
+            </button>
+        </div>
+    </div>
+
+    <div class="dashboard-stats">
+        <div class="stat-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Productos))">
+            <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
+            <div class="stat-info">
+                <div class="stat-value">@productosCount</div>
+                <div class="stat-label">Productos</div>
+            </div>
+        </div>
+        <div class="stat-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Index))">
+            <div class="stat-icon"><i class="bi bi-receipt"></i></div>
+            <div class="stat-info">
+                <div class="stat-value">@ventasCount</div>
+                <div class="stat-label">Ventas</div>
+            </div>
+        </div>
+        <div class="stat-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Tabs))">
+            <div class="stat-icon"><i class="bi bi-ui-checks-grid"></i></div>
+            <div class="stat-info">
+                <div class="stat-value">@tabsCount</div>
+                <div class="stat-label">Tabs</div>
+            </div>
+        </div>
+        <div class="stat-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Sugerencias.Index))">
+            <div class="stat-icon"><i class="bi bi-envelope-paper-heart"></i></div>
+            <div class="stat-info">
+                <div class="stat-value">@sugerenciasCount</div>
+                <div class="stat-label">Sugerencias</div>
+            </div>
+        </div>
+        <div class="stat-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Advanced.Presentacion))">
+            <div class="stat-icon"><i class="bi bi-display"></i></div>
+            <div class="stat-info">
+                <div class="stat-value">@presentacionesCount</div>
+                <div class="stat-label">Presentaciones</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-charts">
+        <div class="chart-section">
+            <h5>Ventas por Mes</h5>
+            <canvas id="ventasChart" width="400" height="180"></canvas>
+        </div>
+        <div class="chart-section">
+            <h5>Stock de Productos</h5>
+            <canvas id="stockChart" width="400" height="180"></canvas>
+        </div>
+    </div>
+
+    <div class="dashboard-sections">
+        <div class="admin-section">
+            <div class="section-header">
+                <h4>Gestión de Catálogos</h4>
+                <p>Administra los catálogos principales del sistema</p>
+            </div>
+            <div class="section-content">
+                <div class="admin-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Productos))">
+                    <div class="card-icon"><i class="bi bi-box-seam"></i></div>
+                    <div class="card-info">
+                        <h5>Productos</h5>
+                        <p>Ver y administrar productos</p>
+                    </div>
+                    <div class="card-action"><i class="bi bi-chevron-right"></i></div>
+                </div>
+                <div class="admin-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Tabs))">
+                    <div class="card-icon"><i class="bi bi-ui-checks-grid"></i></div>
+                    <div class="card-info">
+                        <h5>Tabs</h5>
+                        <p>Configura los tabs de ventas</p>
+                    </div>
+                    <div class="card-action"><i class="bi bi-chevron-right"></i></div>
+                </div>
+                <div class="admin-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Index))">
+                    <div class="card-icon"><i class="bi bi-receipt"></i></div>
+                    <div class="card-info">
+                        <h5>Ventas</h5>
+                        <p>Historial y gestión de ventas</p>
+                    </div>
+                    <div class="card-action"><i class="bi bi-chevron-right"></i></div>
+                </div>
+                <div class="admin-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Sugerencias.Index))">
+                    <div class="card-icon"><i class="bi bi-envelope-paper-heart"></i></div>
+                    <div class="card-info">
+                        <h5>Sugerencias</h5>
+                        <p>Ver sugerencias de usuarios</p>
+                    </div>
+                    <div class="card-action"><i class="bi bi-chevron-right"></i></div>
+                </div>
+                <div class="admin-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Advanced.Presentacion))">
+                    <div class="card-icon"><i class="bi bi-display"></i></div>
+                    <div class="card-info">
+                        <h5>Presentaciones</h5>
+                        <p>Gestiona el carrusel principal</p>
+                    </div>
+                    <div class="card-action"><i class="bi bi-chevron-right"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="admin-section">
+            <div class="section-header">
+                <h4>Acciones Rápidas</h4>
+                <p>Accesos directos a funciones clave</p>
+            </div>
+            <div class="quick-actions">
+                <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.CrearProducto))">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Nuevo Producto</span>
+                </button>
+                <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.CrearTab))">
+                    <i class="bi bi-ui-checks"></i>
+                    <span>Nuevo Tab</span>
+                </button>
+                <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Configuracion.Backup))">
+                    <i class="bi bi-database-check"></i>
+                    <span>Respaldo</span>
+                </button>
+            </div>
+        </div>
+        <div class="admin-section">
+            <div class="section-header">
+                <h4>Actividad Reciente</h4>
+                <p>Últimas ventas y productos agregados</p>
+            </div>
+            <div class="section-content">
+                <ul>
+                    @foreach (var venta in ultimasVentas)
+                    {
+                        <li>
+                            <i class="bi bi-receipt"></i>
+                            Venta #{venta.FacturasID} - $@venta.Total.ToString("N2") - @venta.Fecha.ToString("dd/MM/yyyy")
+                        </li>
+                    }
+                    @foreach (var prod in ultimosProductos)
+                    {
+                        <li>
+                            <i class="bi bi-box-seam"></i>
+                            Producto: @prod.Nombre - Stock: @prod.Stock
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    int productosCount, ventasCount, tabsCount, sugerenciasCount, presentacionesCount;
+    List<Facturas> ultimasVentas = new();
+    List<Productos> ultimosProductos = new();
+
+    // Variables para los datos de los gráficos
+    string[] meses = Array.Empty<string>();
+    decimal[] totales = Array.Empty<decimal>();
+    string[] nombresProd = Array.Empty<string>();
+    int[] stocks = Array.Empty<int>();
+
+    bool chartsRendered = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        var productos = await ProductosService.ListAsync(p => true);
+        productosCount = productos.Count;
+        ultimosProductos = productos.OrderByDescending(p => p.ProductosID).Take(5).ToList();
+
+        var ventas = await FacturasService.ListAsync(f => true);
+        ventasCount = ventas.Count;
+        ultimasVentas = ventas.OrderByDescending(f => f.Fecha).Take(5).ToList();
+
+        var tabs = await VetasTabsService.ListAsync(t => true);
+        tabsCount = tabs.Count;
+
+        var sugerencias = await SugerenciasService.ListAsync(s => true);
+        sugerenciasCount = sugerencias.Count;
+
+        var presentaciones = await PresentacionesService.ListAsync(p => true);
+        presentacionesCount = presentaciones.Count;
+
+        // Prepara los datos para los gráficos
+        var ventasPorMes = ventas
+            .GroupBy(v => v.Fecha.ToString("yyyy-MM"))
+            .OrderBy(g => g.Key)
+            .Select(g => new { Mes = g.Key, Total = g.Sum(f => f.Total) })
+            .ToList();
+
+        meses = ventasPorMes.Select(v => v.Mes).ToArray();
+        totales = ventasPorMes.Select(v => v.Total).ToArray();
+
+        var topProductos = productos.OrderByDescending(p => p.Stock).Take(5).ToList();
+        nombresProd = topProductos.Select(p => p.Nombre).ToArray();
+        stocks = topProductos.Select(p => p.Stock).ToArray();
+
+        chartsRendered = false; // Permite renderizar los gráficos en el siguiente OnAfterRenderAsync
+        StateHasChanged();
+    }
+
+    [Inject] IJSRuntime JS { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Renderiza los gráficos solo después de que los datos estén listos y solo una vez por actualización
+        if (!chartsRendered && meses.Length > 0 && nombresProd.Length > 0)
+        {
+            await JS.InvokeVoidAsync("renderAdminCharts", meses, totales, nombresProd, stocks);
+            chartsRendered = true;
+        }
+    }
+}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    window.renderAdminCharts = (meses, totales, nombresProd, stocks) => {
+        // Ventas por mes
+        if (window.ventasChartInstance) window.ventasChartInstance.destroy();
+        const ctx1 = document.getElementById('ventasChart').getContext('2d');
+        window.ventasChartInstance = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: meses,
+                datasets: [{
+                    label: 'Ventas',
+                    data: totales,
+                    backgroundColor: '#007bff'
+                }]
+            }
+        });
+
+        // Stock de productos
+        if (window.stockChartInstance) window.stockChartInstance.destroy();
+        const ctx2 = document.getElementById('stockChart').getContext('2d');
+        window.stockChartInstance = new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: nombresProd,
+                datasets: [{
+                    label: 'Stock',
+                    data: stocks,
+                    backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d']
+                }]
+            }
+        });
+    };
+</script>

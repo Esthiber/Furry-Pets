@@ -33,5 +33,28 @@ namespace PawfectMatch
             public const string Reportes = "/configuracion/reportes";
             public const string Backup = "/configuracion/backup";
         }
+
+        public static class Ventas
+        {
+            public const string Index = "/ventas";
+            public const string CrearProducto = "/ventas/crear";
+            public const string CrearTab = "/ventas/crear";
+            public const string Editar = "/ventas/editar/";
+            public const string Detalle = "/ventas/detalle/";
+            public const string Productos = "/ventas/productos";
+            public const string Tabs = "/ventas/tabs";
+        }
+
+        public static class Sugerencias
+        {
+            public const string Index = "/sugerencias";
+            public const string Crear = "/sugerencias/crear";
+            public const string Detalle = "/sugerencias/detalle/";
+        }
+    
+        public static class Advanced
+        {
+            public const string Presentacion = "/";
+        }
     }
 }
