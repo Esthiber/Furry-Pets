@@ -12,7 +12,7 @@ using PawfectMatch.Data;
 namespace PawfectMatch.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250704191119_Initial")]
+    [Migration("20250711141228_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -50,6 +50,20 @@ namespace PawfectMatch.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -918,6 +918,15 @@ namespace PawfectMatch.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "1", null, "Admin", "ADMIN" },
+                    { "2", null, "User", "USER" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "CategoriasProductos",
                 columns: new[] { "CategoriasProductosID", "IsDeleted", "Nombre" },
                 values: new object[,]
