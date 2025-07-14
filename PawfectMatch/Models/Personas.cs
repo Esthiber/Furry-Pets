@@ -1,4 +1,7 @@
-﻿using System;
+﻿using PawfectMatch.Models.Adopciones;
+using PawfectMatch.Models.POS;
+using PawfectMatch.Models.Servicios;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PawfectMatch.Models
+namespace PawfectMatch.Models.Adopciones
 {
     public class EstadoMascota
     {

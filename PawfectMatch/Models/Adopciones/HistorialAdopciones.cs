@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PawfectMatch.Models
+namespace PawfectMatch.Models.Adopciones
 {
     public class HistorialAdopciones
     {

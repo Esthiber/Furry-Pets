@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PawfectMatch.Models.Adopciones;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

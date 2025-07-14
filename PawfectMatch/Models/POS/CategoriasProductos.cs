@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PawfectMatch.Models
+namespace PawfectMatch.Models.POS
 {
-    public class TiposServicios
+    public class CategoriasProductos
     {
         [Key]
-        public int TiposServiciosID { get; set; }
+        public int CategoriasProductosID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        [StringLength(100)]
         public string Nombre { get; set; } = string.Empty;
 
         public bool IsDeleted { get; set; } = false;

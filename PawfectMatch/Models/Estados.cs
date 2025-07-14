@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PawfectMatch.Models.Adopciones;
+using System.ComponentModel.DataAnnotations;
 
 namespace PawfectMatch.Models
 {
