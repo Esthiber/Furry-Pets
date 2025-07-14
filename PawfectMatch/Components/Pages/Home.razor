@@ -2,6 +2,8 @@
 
 @inject NavigationManager NavigationManager
 
+@rendermode InteractiveServer
+
 <PageTitle>Furry-Pets | Adop-Veterinaria</PageTitle>
 
 <!--Div card que es  un boton que manda a la pagina de adopciones-->
@@ -28,17 +30,14 @@
     </div>
 </div>
 
-
-
-
 @code {
     void gotoVeterinaria()
     {
-        NavigationManager.NavigateTo("/veterinaria");
+        NavigationManager.NavigateTo("/pos");
     }
 
     void gotoAdopciones()
     {
-        NavigationManager.NavigateTo("/adopciones");
+        NavigationManager.NavigateTo("/catalogo");
     }
 }
