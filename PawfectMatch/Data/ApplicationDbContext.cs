@@ -2,9 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PawfectMatch.Models;
-using System.Reflection.Emit;
-using PawfectMatch.Models.Adopciones._Presentacion;
 using PawfectMatch.Models.Adopciones;
+using PawfectMatch.Models.Adopciones._Presentacion;
 
 namespace PawfectMatch.Data;
 
@@ -369,6 +368,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         #endregion
 
         #region Initial Seed
+
+        // Roles
+        modelBuilder.Entity<IdentityRole>().HasData(
+          new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
+          new IdentityRole { Id = "2", Name = "User", NormalizedName = "USER" }
+      );
+
         // Estados (MascotasAdopcion)
         modelBuilder.Entity<Estados>().HasData(
             new Estados { EstadoID = 1, Nombre = "Adoptado", IsDeleted = false },
