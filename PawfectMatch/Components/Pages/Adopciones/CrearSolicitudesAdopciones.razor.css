@@ -1,0 +1,145 @@
+﻿
+.adoption-wizard-container {
+    max-width: 700px;
+    margin: 32px auto;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(94,48,35,0.08);
+    padding: 32px 24px 24px 24px;
+}
+.wizard-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    gap: 8px;
+}
+.wizard-step {
+    flex: 1;
+    text-align: center;
+    color: #bdbdbd;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 8px;
+    transition: color 0.2s;
+}
+.wizard-step span {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.wizard-step.active {
+    color: #5e3023;
+}
+.wizard-step.active span {
+    background: #5e3023;
+}
+.wizard-step.done {
+    color: #10b981;
+}
+.wizard-step.done span {
+    background: #10b981;
+}
+.wizard-content {
+    min-height: 350px;
+    animation: fadeIn 0.3s;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px);}
+    to { opacity: 1; transform: none;}
+}
+.pet-card {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    background: #f9f6f2;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(94,48,35,0.06);
+}
+.pet-card img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #dab49d;
+}
+.pet-info h2 {
+    margin: 0 0 8px 0;
+    color: #5e3023;
+}
+.pet-info .badge {
+    background: #10b981;
+    color: #fff;
+    border-radius: 8px;
+    padding: 2px 12px;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+.pet-details {
+    display: flex;
+    gap: 16px;
+    font-size: 1rem;
+    color: #7c5e4a;
+    margin-bottom: 8px;
+}
+.wizard-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 24px;
+}
+@media (max-width: 600px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .pet-card {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+.servicios-section .servicios-seleccionados {
+    margin-bottom: 12px;
+}
+.servicios-list-modal {
+    background: #f3e9dc;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(94,48,35,0.06);
+}
+.summary-card {
+    background: #f9f6f2;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 8px rgba(94,48,35,0.06);
+}
+.summary-pet {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+.summary-pet img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #dab49d;
+}
+.btn-lg {
+    font-size: 1.2rem;
+    padding: 12px 32px;
+}

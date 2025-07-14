@@ -16,8 +16,24 @@
 @inject NavigationManager Nav
 @inject IToastService ToastService
 
-<div class="adoption-request-container">
-    <h1>Solicitud de Adopción</h1>
+<div class="adoption-wizard-container">
+    <div class="wizard-steps">
+        <div class="wizard-step @(step == 1 ? "active" : (step > 1 ? "done" : ""))">
+            <span>1</span> Mascota
+        </div>
+        <div class="wizard-step @(step == 2 ? "active" : (step > 2 ? "done" : ""))">
+            <span>2</span> Tus Datos
+        </div>
+        <div class="wizard-step @(step == 3 ? "active" : (step > 3 ? "done" : ""))">
+            <span>3</span> Hogar
+        </div>
+        <div class="wizard-step @(step == 4 ? "active" : (step > 4 ? "done" : ""))">
+            <span>4</span> Servicios
+        </div>
+        <div class="wizard-step @(step == 5 ? "active" : "")">
+            <span>5</span> Confirmar
+        </div>
+    </div>
 
     @if (!string.IsNullOrEmpty(Error))
     {
@@ -28,178 +44,227 @@
         <div class="alert alert-success">@Success</div>
     }
 
-    <!-- Info mascota -->
-    <section class="pet-section">
-        @if (Mascota == null)
+    <div class="wizard-content">
+        @if (step == 1)
         {
-            <div>Cargando mascota...</div>
-        }
-        else
-        {
-            <div class="pet-card">
-                <img src="@Mascota.FotoURL" alt="@Mascota.Nombre" />
-                <div>
-                    <h3>@Mascota.Nombre</h3>
-                    <span class="badge">@Mascota.Estado?.Nombre</span>
-                    <div>Tamaño: @Mascota.Tamanio" (@Mascota.RelacionSize?.Nombre)</div>
-                    <div>Edad: @MostrarEdad(Mascota.FechaNacimiento)</div>
-                    <p>@Mascota.Descripcion</p>
-                </div>
-            </div>
-        }
-    </section>
-    <hr />
-
-    <!-- Datos de persona -->
-    <section class="persona-section">
-        <h2>Tus Datos</h2>
-        <EditForm Model="@Persona" OnValidSubmit="@GuardarPersonaYContinuar">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div class="row">
-                <div class="col-md-6">
-                    <label>Nombre:</label>
-                    <InputText class="form-control" @bind-Value="Persona.Nombre" />
-                    <ValidationMessage For="() => Persona.Nombre" />
-                </div>
-                <div class="col-md-6">
-                    <label>Sexo:</label>
-                    <InputSelect class="form-control" @bind-Value="Persona.Sexo">
-                        <option value="m">Masculino</option>
-                        <option value="f">Femenino</option>
-                        <option value="u">Otro/Prefiero no decir</option>
-                    </InputSelect>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <label>Teléfono:</label>
-                    <InputText class="form-control" @bind-Value="Persona.Telefono" />
-                    <ValidationMessage For="() => Persona.Telefono" />
-                </div>
-                <div class="col-md-6">
-                    <label>Email:</label>
-                    <InputText class="form-control" @bind-Value="Persona.Email" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <label>Identificación:</label>
-                    <InputText class="form-control" @bind-Value="Persona.Identificacion" />
-                </div>
-                <div class="col-md-6">
-                    <label>Dirección:</label>
-                    <InputText class="form-control" @bind-Value="Persona.Direccion" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <label>Fecha nacimiento:</label>
-                    <InputDate class="form-control" @bind-Value="Persona.FechaNacimiento" />
-                </div>
-                <div class="col-md-6">
-                    <label>Nacionalidad:</label>
-                    <InputText class="form-control" @bind-Value="Persona.Nacionalidad" />
-                </div>
-            </div>
-            <div>
-                <label>Estado civil:</label>
-                <InputText class="form-control" @bind-Value="Persona.EstadoCivil" />
-            </div>
-            <button type="submit" class="btn btn-success mt-3">Guardar y Continuar</button>
-        </EditForm>
-    </section>
-    <hr />
-
-    <!-- Sección Adoptante Detalles -->
-    @if (Persona.PersonasID > 0)
-    {
-        <section class="adoptantes-detalles-section">
-            <h2>Detalles de tu Hogar</h2>
-            <EditForm Model="Detalles" OnValidSubmit="@GuardarDetalles">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <div>
-                    <label>Tipo de vivienda:</label>
-                    <InputSelect class="form-select" @bind-value="Detalles.TipoViviendasID">
-                        <option value="">Selecciona una opción</option>
-                        <option value="0">Casa</option>
-                        <option value="1">Departamento</option>
-                        <option value="2">Otro</option>
-                    </InputSelect>
-                </div>
-                <div>
-                    <label>¿Vives en vivienda alquilada?</label>
-                    <InputCheckbox class="form-check-input" @bind-Value="Detalles.ViveEnViviendaAlquilada" />
-                </div>
-                <div>
-                    <label>¿Tienes jardín?</label>
-                    <InputCheckbox class="form-check-input" @bind-Value="Detalles.TieneJardin" />
-                </div>
-                <div>
-                    <label>Notas sobre el jardín:</label>
-                    <InputText class="form-control" @bind-Value="Detalles.NotasJardin" />
-                </div>
-                <div>
-                    <label>¿Tienes otras mascotas?</label>
-                    <InputCheckbox class="form-check-input" @bind-Value="Detalles.TieneOtrasMascotas" />
-                </div>
-                <div>
-                    <label>Notas sobre otras mascotas:</label>
-                    <InputText class="form-control" @bind-Value="Detalles.NotasOtrasMascotas" />
-                </div>
-                <div>
-                    <label>¿Cuántas horas al día estás fuera?</label>
-                    <InputNumber class="form-control" @bind-Value="Detalles.HorasAusentes" />
-                </div>
-                <div>
-                    <label>¿Por qué quieres adoptar?</label>
-                    <InputText class="form-control" @bind-Value="Detalles.RazonAdopcion" />
-                </div>
-                <button type="submit" class="btn btn-success mt-3">Guardar Detalles</button>
-            </EditForm>
-        </section>
-    }
-
-    <!-- Servicios adicionales -->
-    @if (Persona.PersonasID > 0)
-    {
-        <section class="servicios-section">
-            <h2>Servicios Adicionales</h2>
-            <button class="btn btn-outline-primary" @onclick="CargarServicios">Añadir Servicios</button>
-            <div>
-                @foreach (var s in ServiciosSeleccionados)
+            <section class="pet-section">
+                @if (Mascota == null)
                 {
-                    <span class="badge bg-secondary me-1">
-                        @s.Nombre <button class="btn btn-sm btn-link text-danger" @onclick="() => QuitarServicio(s)">x</button>
-                    </span>
+                    <div class="loading-pet">Cargando mascota...</div>
                 }
-            </div>
-            @if (MostrarServicios)
-            {
-                <!-- Aquí iría tu selector de servicios custom, de momento simple lista -->
-                <ul>
-                    @foreach (var servicio in ListaServicios)
+                else
+                {
+                    <div class="pet-card">
+                        <img src="@Mascota.FotoURL" alt="@Mascota.Nombre" />
+                        <div class="pet-info">
+                            <h2>@Mascota.Nombre</h2>
+                            <span class="badge">@Mascota.Estado?.Nombre</span>
+                            <div class="pet-details">
+                                <span><i class="bi bi-rulers"></i> Tamaño: @Mascota.Tamanio" (@Mascota.RelacionSize?.Nombre)</span>
+                                <span><i class="bi bi-calendar-heart"></i> Edad: @MostrarEdad(Mascota.FechaNacimiento)</span>
+                            </div>
+                            <p>@Mascota.Descripcion</p>
+                        </div>
+                    </div>
+                    <div class="wizard-actions">
+                        <button class="btn btn-primary" @onclick="() => step = 2">Siguiente <i class="bi bi-arrow-right"></i></button>
+                    </div>
+                }
+            </section>
+        }
+        else if (step == 2)
+        {
+            <section class="persona-section">
+                <h2>Tus Datos</h2>
+                <EditForm Model="@Persona" OnValidSubmit="@OnPersonaSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="form-grid">
+                        <div>
+                            <label>Nombre</label>
+                            <InputText class="form-control" @bind-Value="Persona.Nombre" />
+                            <ValidationMessage For="() => Persona.Nombre" />
+                        </div>
+                        <div>
+                            <label>Sexo</label>
+                            <InputSelect class="form-control" @bind-Value="Persona.Sexo">
+                                <option value="m">Masculino</option>
+                                <option value="f">Femenino</option>
+                                <option value="u">Otro/Prefiero no decir</option>
+                            </InputSelect>
+                        </div>
+                        <div>
+                            <label>Teléfono</label>
+                            <InputText class="form-control" @bind-Value="Persona.Telefono" />
+                            <ValidationMessage For="() => Persona.Telefono" />
+                        </div>
+                        <div>
+                            <label>Email</label>
+                            <InputText class="form-control" @bind-Value="Persona.Email" />
+                        </div>
+                        <div>
+                            <label>Identificación</label>
+                            <InputText class="form-control" @bind-Value="Persona.Identificacion" />
+                        </div>
+                        <div>
+                            <label>Dirección</label>
+                            <InputText class="form-control" @bind-Value="Persona.Direccion" />
+                        </div>
+                        <div>
+                            <label>Fecha nacimiento</label>
+                            <InputDate class="form-control" @bind-Value="Persona.FechaNacimiento" />
+                        </div>
+                        <div>
+                            <label>Nacionalidad</label>
+                            <InputText class="form-control" @bind-Value="Persona.Nacionalidad" />
+                        </div>
+                        <div>
+                            <label>Estado civil</label>
+                            <InputText class="form-control" @bind-Value="Persona.EstadoCivil" />
+                        </div>
+                    </div>
+                    <div class="wizard-actions">
+                        <button class="btn btn-secondary" type="button" @onclick="() => step = 1"><i class="bi bi-arrow-left"></i> Atrás</button>
+                        <button class="btn btn-primary" type="submit">Siguiente <i class="bi bi-arrow-right"></i></button>
+                    </div>
+                </EditForm>
+            </section>
+        }
+        else if (step == 3)
+        {
+            <section class="adoptantes-detalles-section">
+                <h2>Detalles de tu Hogar</h2>
+                <EditForm Model="Detalles" OnValidSubmit="@OnDetallesSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="form-grid">
+                        <div>
+                            <label>Tipo de vivienda</label>
+                            <InputSelect class="form-control" @bind-value="Detalles.TipoViviendasID">
+                                <option value="">Selecciona una opción</option>
+                                <option value="0">Casa</option>
+                                <option value="1">Departamento</option>
+                                <option value="2">Otro</option>
+                            </InputSelect>
+                        </div>
+                        <div>
+                            <label>¿Vives en vivienda alquilada?</label>
+                            <InputCheckbox class="form-check-input" @bind-Value="Detalles.ViveEnViviendaAlquilada" />
+                        </div>
+                        <div>
+                            <label>¿Tienes jardín?</label>
+                            <InputCheckbox class="form-check-input" @bind-Value="Detalles.TieneJardin" />
+                        </div>
+                        <div>
+                            <label>Notas sobre el jardín</label>
+                            <InputText class="form-control" @bind-Value="Detalles.NotasJardin" />
+                        </div>
+                        <div>
+                            <label>¿Tienes otras mascotas?</label>
+                            <InputCheckbox class="form-check-input" @bind-Value="Detalles.TieneOtrasMascotas" />
+                        </div>
+                        <div>
+                            <label>Notas sobre otras mascotas</label>
+                            <InputText class="form-control" @bind-Value="Detalles.NotasOtrasMascotas" />
+                        </div>
+                        <div>
+                            <label>¿Cuántas horas al día estás fuera?</label>
+                            <InputNumber class="form-control" @bind-Value="Detalles.HorasAusentes" />
+                        </div>
+                        <div>
+                            <label>¿Por qué quieres adoptar?</label>
+                            <InputText class="form-control" @bind-Value="Detalles.RazonAdopcion" />
+                        </div>
+                    </div>
+                    <div class="wizard-actions">
+                        <button class="btn btn-secondary" type="button" @onclick="() => step = 2"><i class="bi bi-arrow-left"></i> Atrás</button>
+                        <button class="btn btn-primary" type="submit">Siguiente <i class="bi bi-arrow-right"></i></button>
+                    </div>
+                </EditForm>
+            </section>
+        }
+        else if (step == 4)
+        {
+            <section class="servicios-section">
+                <h2>Servicios Adicionales</h2>
+                <button class="btn btn-outline-primary mb-2" @onclick="CargarServicios">Añadir Servicios</button>
+                <div class="servicios-seleccionados">
+                    @foreach (var s in ServiciosSeleccionados)
                     {
-                        <li>
-                            <button class="btn btn-sm btn-success" @onclick="() => AgregarServicio(servicio)">
-                                @servicio.Nombre
-                            </button>
-                        </li>
+                        <span class="badge bg-secondary me-1">
+                            @s.Nombre <button class="btn btn-sm btn-link text-danger" @onclick="() => QuitarServicio(s)">x</button>
+                        </span>
                     }
-                </ul>
-                <button class="btn btn-secondary" @onclick="@(() => MostrarServicios = false)">Cerrar</button>
-            }
-        </section>
-    }
-
-    <!-- Enviar solicitud -->
-    @if (Persona.PersonasID > 0)
-    {
-        <section class="enviar-section">
-            <button class="btn btn-primary btn-lg" @onclick="GuardarSolicitud">Enviar Solicitud de Adopción</button>
-        </section>
-    }
+                </div>
+                @if (MostrarServicios)
+                {
+                    <div class="servicios-list-modal">
+                        <div class="servicios-list">
+                            @foreach (var servicio in ListaServicios)
+                            {
+                                <button class="btn btn-sm btn-success mb-1" @onclick="() => AgregarServicio(servicio)">
+                                    <i class="bi bi-plus-circle"></i> @servicio.Nombre
+                                </button>
+                            }
+                        </div>
+                        <button class="btn btn-secondary mt-2" @onclick="@(() => MostrarServicios = false)">Cerrar</button>
+                    </div>
+                }
+                <div class="wizard-actions">
+                    <button class="btn btn-secondary" type="button" @onclick="() => step = 3"><i class="bi bi-arrow-left"></i> Atrás</button>
+                    <button class="btn btn-primary" type="button" @onclick="() => step = 5">Siguiente <i class="bi bi-arrow-right"></i></button>
+                </div>
+            </section>
+        }
+        else if (step == 5)
+        {
+            <section class="confirm-section">
+                <h2>Revisa y Confirma tu Solicitud</h2>
+                <div class="summary-card">
+                    <h4>Mascota</h4>
+                    <div class="summary-pet">
+                        <img src="@Mascota?.FotoURL" alt="@Mascota?.Nombre" />
+                        <div>
+                            <strong>@Mascota?.Nombre</strong>
+                            <div>@Mascota?.Descripcion</div>
+                        </div>
+                    </div>
+                    <h4>Tus Datos</h4>
+                    <ul>
+                        <li><b>Nombre:</b> @Persona.Nombre</li>
+                        <li><b>Email:</b> @Persona.Email</li>
+                        <li><b>Teléfono:</b> @Persona.Telefono</li>
+                        <li><b>Dirección:</b> @Persona.Direccion</li>
+                    </ul>
+                    <h4>Detalles del Hogar</h4>
+                    <ul>
+                        <li><b>Tipo de vivienda:</b> @(Detalles.TipoViviendasID == 0 ? "Casa" : Detalles.TipoViviendasID == 1 ? "Departamento" : "Otro")</li>
+                        <li><b>Jardín:</b> @(Detalles.TieneJardin ? "Sí" : "No")</li>
+                        <li><b>Otras mascotas:</b> @(Detalles.TieneOtrasMascotas ? "Sí" : "No")</li>
+                        <li><b>Horas fuera:</b> @Detalles.HorasAusentes</li>
+                    </ul>
+                    <h4>Servicios Adicionales</h4>
+                    <ul>
+                        @if (ServiciosSeleccionados.Any())
+                        {
+                            @foreach (var s in ServiciosSeleccionados)
+                            {
+                                <li>@s.Nombre</li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No se seleccionaron servicios adicionales.</li>
+                        }
+                    </ul>
+                </div>
+                <div class="wizard-actions">
+                    <button class="btn btn-secondary" type="button" @onclick="() => step = 4"><i class="bi bi-arrow-left"></i> Atrás</button>
+                    <button class="btn btn-success btn-lg" @onclick="GuardarSolicitud"><i class="bi bi-send"></i> Enviar Solicitud</button>
+                </div>
+            </section>
+        }
+    </div>
 </div>
 
 @code {
@@ -214,6 +279,7 @@
 
     string? Error;
     string? Success;
+    int step = 1;
 
     protected override async Task OnInitializedAsync()
     {
@@ -221,7 +287,6 @@
 
         var authState = await AuthProvider.GetAuthenticationStateAsync();
         Persona.Email = authState.User.FindFirstValue(ClaimTypes.Email) ?? "";
-        // Si ya existe la persona por ese email, la carga
         var yaExiste = await PersonasService.ListAsync(p => p.Email == Persona.Email && !p.IsDeleted);
         if (yaExiste.Any())
         {
@@ -232,10 +297,9 @@
         Detalles.PersonasID = Persona.PersonasID;
     }
 
-    async Task GuardarPersonaYContinuar()
+    async Task OnPersonaSubmit()
     {
         Error = Success = null;
-        // Insert/Update persona
         if (Persona.PersonasID == 0)
         {
             await PersonasService.InsertAsync(Persona);
@@ -247,10 +311,10 @@
             await PersonasService.UpdateAsync(Persona);
         }
         Detalles.PersonasID = Persona.PersonasID;
-        Success = "¡Tus datos se han guardado!";
+        step = 3;
     }
 
-    async Task GuardarDetalles()
+    async Task OnDetallesSubmit()
     {
         Error = Success = null;
         if (Detalles.AdoptantesDetallesID == 0)
@@ -261,7 +325,7 @@
         {
             await AdoptantesDetallesService.UpdateAsync(Detalles);
         }
-        Success = "¡Detalles de tu situación guardados!";
+        step = 4;
     }
 
     async Task CargarServicios()
@@ -289,16 +353,19 @@
         if (Persona.PersonasID == 0)
         {
             Error = "Primero debes guardar tus datos personales.";
+            step = 2;
             return;
         }
         if (Detalles.AdoptantesDetallesID == 0)
         {
             Error = "Debes guardar los detalles de tu situación antes de enviar la solicitud.";
+            step = 3;
             return;
         }
         if (Mascota == null)
         {
             Error = "No se encontró la mascota a adoptar.";
+            step = 1;
             return;
         }
 
@@ -306,7 +373,7 @@
         {
             PersonasID = Persona.PersonasID,
             MascotasAdopcionID = Mascota.MascotasAdopcionID,
-            EstadoSolicitudID = 1, // Asume 'pendiente' o similar
+            EstadoSolicitudID = 1,
             Fecha = DateTime.Now
         };
 
@@ -320,17 +387,8 @@
         Success = "¡Tu solicitud ha sido enviada exitosamente! Nos pondremos en contacto contigo pronto.";
         ToastService.ShowSuccess(Success);
 
-        // Si tienes un servicio para asociar servicios extra a la solicitud, agregarlos aquí:
-        // foreach (var servicio in ServiciosSeleccionados)
-        // {
-        //     await solicitudesServiciosService.InsertAsync(new SolicitudesServicios {
-        //         SolicitudesAdopcionesID = solicitud.SolicitudesAdopcionesID,
-        //         ServiciosID = servicio.ServiciosID
-        //     });
-        // }
-
         await Task.Delay(2500);
-        Nav.NavigateTo("/solicitudes"); // O la ruta a la que quieras redirigir
+        Nav.NavigateTo("/solicitudes");
     }
 
     string MostrarEdad(DateOnly? fechaNacimiento)
