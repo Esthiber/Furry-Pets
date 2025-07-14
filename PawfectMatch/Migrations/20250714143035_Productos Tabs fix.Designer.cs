@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PawfectMatch.Data;
 
@@ -11,9 +12,11 @@ using PawfectMatch.Data;
 namespace PawfectMatch.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250714143035_Productos Tabs fix")]
+    partial class ProductosTabsfix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1359,7 +1362,7 @@ namespace PawfectMatch.Migrations
                         {
                             ProductosInTabsID = 1,
                             IsDeleted = false,
-                            Orden = 1,
+                            Orden = 0,
                             ProductosID = 1,
                             VetasTabsID = 1
                         },
@@ -1367,7 +1370,7 @@ namespace PawfectMatch.Migrations
                         {
                             ProductosInTabsID = 2,
                             IsDeleted = false,
-                            Orden = 2,
+                            Orden = 0,
                             ProductosID = 2,
                             VetasTabsID = 1
                         },
@@ -1375,7 +1378,7 @@ namespace PawfectMatch.Migrations
                         {
                             ProductosInTabsID = 3,
                             IsDeleted = false,
-                            Orden = 3,
+                            Orden = 0,
                             ProductosID = 3,
                             VetasTabsID = 1
                         },
@@ -1383,7 +1386,7 @@ namespace PawfectMatch.Migrations
                         {
                             ProductosInTabsID = 4,
                             IsDeleted = false,
-                            Orden = 4,
+                            Orden = 0,
                             ProductosID = 4,
                             VetasTabsID = 1
                         },
@@ -1391,7 +1394,7 @@ namespace PawfectMatch.Migrations
                         {
                             ProductosInTabsID = 5,
                             IsDeleted = false,
-                            Orden = 5,
+                            Orden = 0,
                             ProductosID = 5,
                             VetasTabsID = 1
                         });

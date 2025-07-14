@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PawfectMatch.Data;
 
@@ -11,9 +12,11 @@ using PawfectMatch.Data;
 namespace PawfectMatch.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250714133008_Productos Tabs")]
+    partial class ProductosTabs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1337,9 +1340,6 @@ namespace PawfectMatch.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Orden")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProductosID")
                         .HasColumnType("int");
 
@@ -1359,7 +1359,6 @@ namespace PawfectMatch.Migrations
                         {
                             ProductosInTabsID = 1,
                             IsDeleted = false,
-                            Orden = 1,
                             ProductosID = 1,
                             VetasTabsID = 1
                         },
@@ -1367,7 +1366,6 @@ namespace PawfectMatch.Migrations
                         {
                             ProductosInTabsID = 2,
                             IsDeleted = false,
-                            Orden = 2,
                             ProductosID = 2,
                             VetasTabsID = 1
                         },
@@ -1375,7 +1373,6 @@ namespace PawfectMatch.Migrations
                         {
                             ProductosInTabsID = 3,
                             IsDeleted = false,
-                            Orden = 3,
                             ProductosID = 3,
                             VetasTabsID = 1
                         },
@@ -1383,7 +1380,6 @@ namespace PawfectMatch.Migrations
                         {
                             ProductosInTabsID = 4,
                             IsDeleted = false,
-                            Orden = 4,
                             ProductosID = 4,
                             VetasTabsID = 1
                         },
@@ -1391,7 +1387,6 @@ namespace PawfectMatch.Migrations
                         {
                             ProductosInTabsID = 5,
                             IsDeleted = false,
-                            Orden = 5,
                             ProductosID = 5,
                             VetasTabsID = 1
                         });
@@ -1429,47 +1424,6 @@ namespace PawfectMatch.Migrations
                             TiposItemsID = 2,
                             IsDeleted = false,
                             Nombre = "Servicio"
-                        });
-                });
-
-            modelBuilder.Entity("PawfectMatch.Models.POS.VetasTabs", b =>
-                {
-                    b.Property<int>("VetasTabsID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VetasTabsID"));
-
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Icono")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Orden")
-                        .HasColumnType("int");
-
-                    b.HasKey("VetasTabsID");
-
-                    b.ToTable("VetasTabs");
-
-                    b.HasData(
-                        new
-                        {
-                            VetasTabsID = 1,
-                            Color = "#FF5733",
-                            Icono = "fas fa-home",
-                            IsDeleted = false,
-                            Nombre = "Inicio",
-                            Orden = 1
                         });
                 });
 
@@ -1928,6 +1882,47 @@ namespace PawfectMatch.Migrations
                         });
                 });
 
+            modelBuilder.Entity("PawfectMatch.Models.VetasTabs", b =>
+                {
+                    b.Property<int>("VetasTabsID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VetasTabsID"));
+
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icono")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Orden")
+                        .HasColumnType("int");
+
+                    b.HasKey("VetasTabsID");
+
+                    b.ToTable("VetasTabs");
+
+                    b.HasData(
+                        new
+                        {
+                            VetasTabsID = 1,
+                            Color = "#FF5733",
+                            Icono = "fas fa-home",
+                            IsDeleted = false,
+                            Nombre = "Inicio",
+                            Orden = 1
+                        });
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -2191,7 +2186,7 @@ namespace PawfectMatch.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PawfectMatch.Models.POS.VetasTabs", "VetasTab")
+                    b.HasOne("PawfectMatch.Models.VetasTabs", "VetasTab")
                         .WithMany()
                         .HasForeignKey("VetasTabsID")
                         .OnDelete(DeleteBehavior.Cascade)

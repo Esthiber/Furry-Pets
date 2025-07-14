@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using PawfectMatch.Models;
 using PawfectMatch.Models.Adopciones;
 using PawfectMatch.Models.Adopciones._Presentacion;
+using PawfectMatch.Models.POS;
+using PawfectMatch.Models.Servicios;
 
 namespace PawfectMatch.Data;
 
@@ -61,6 +63,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<Presentaciones> Presentaciones { get; set; }
     public DbSet<Diapositivas> Diapositivas { get; set; }
     public DbSet<PresentacionesDiapositivas> PresentacionesDiapositivas { get; set; }
+
+    // Tabs
+    public DbSet<VetasTabs> VetasTabs { get; set; }
+    public DbSet<ProductosInTabs> ProductosInTabs { get; set; }
 
     // Sugerencias
     public DbSet<Sugerencias> Sugerencias { get; set; }
@@ -373,7 +379,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         modelBuilder.Entity<IdentityRole>().HasData(
           new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
           new IdentityRole { Id = "2", Name = "User", NormalizedName = "USER" }
-      );
+        );
 
         // Estados (MascotasAdopcion)
         modelBuilder.Entity<Estados>().HasData(
@@ -420,7 +426,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             new TipoViviendas { TipoViviendasID = 2, Nombre = "Apartamento", IsDeleted = false }
         );
 
-        // Especies y Razas (ejemplo m�nimo)
+        // Especies y Razas
         modelBuilder.Entity<Especies>().HasData(
             new Especies { EspeciesID = 1, Nombre = "Gato", IsDeleted = false },
             new Especies { EspeciesID = 2, Nombre = "Perro", IsDeleted = false }
@@ -728,6 +734,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     }
 );
 
+        // Proveedores
         modelBuilder.Entity<Proveedores>().HasData(
     new Proveedores
     {
@@ -758,9 +765,21 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     }
 );
 
+        // Tabs 
+        modelBuilder.Entity<VetasTabs>().HasData(
+            new VetasTabs { VetasTabsID = 1, Color = "#FF5733", Icono = "fas fa-home", Nombre = "Inicio", Orden = 1, IsDeleted = false }
+            );
 
+        // Productos In Tabs
+        modelBuilder.Entity<ProductosInTabs>().HasData(
+            new ProductosInTabs { ProductosInTabsID = 1, ProductosID = 1, VetasTabsID = 1, Orden = 1, IsDeleted = false },
+            new ProductosInTabs { ProductosInTabsID = 2, ProductosID = 2, VetasTabsID = 1, Orden = 2, IsDeleted = false },
+            new ProductosInTabs { ProductosInTabsID = 3, ProductosID = 3, VetasTabsID = 1, Orden = 3, IsDeleted = false },
+            new ProductosInTabs { ProductosInTabsID = 4, ProductosID = 4, VetasTabsID = 1, Orden = 4, IsDeleted = false },
+            new ProductosInTabs { ProductosInTabsID = 5, ProductosID = 5, VetasTabsID = 1, Orden = 5, IsDeleted = false }
+        );
 
-        // Configuraci�n de empresa: Solo se admite un registro
+        // Configuracion de empresa: Solo se admite un registro
         modelBuilder.Entity<ConfiguracionEmpresa>().HasData(
             new ConfiguracionEmpresa
             {
@@ -771,8 +790,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
                 Direccion = "Av. Principal 123, Ciudad"
             }
         );
-
-        // ------ Ajustar/a�adir seeds seg�n tus necesidades -----
 
         #endregion
     }

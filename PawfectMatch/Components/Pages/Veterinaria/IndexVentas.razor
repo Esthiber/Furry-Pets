@@ -1,15 +1,26 @@
 ﻿@page "/pos"
 @using PawfectMatch.Components.Layout
 @using PawfectMatch.Models
+@using PawfectMatch.Models.POS
 @using PawfectMatch.Services
+@inject ProductosInTabsService ProductosInTabsService
+@inject VetasTabsService VetasTabsService
 @inject ProductosService ProductosService
 @layout VentasLayout
 @rendermode InteractiveServer
 
 @attribute [Authorize(Roles = "Admin,User")]
 
-<div class="facturacion-wrapper">
+<div class="tabs">
+    @foreach (var tab in VetasTabsDisponibles)
+    {
+        <button class="tab-button @(tab.VetasTabsID == activeTabId ? "active" : "")" @onclick="@(() => cambiarTab(tab.VetasTabsID))">
+            <i class="bi bi-@tab.Icono"></i> @tab.Nombre
+        </button>
+    }
+</div>
 
+<div class="facturacion-wrapper">
     <div class="facturacion-layout">
         <div class="facturacion-productos">
             @if (ProductosDisponibles == null)
@@ -78,13 +89,10 @@
                 <button class="modal-close" @onclick="CerrarModalPago">&times;</button>
             </div>
             <div class="modal-pago-body">
-                <!-- Información del Cliente -->
                 <div class="pago-section">
                     <h3>Cliente</h3>
                     <p class="cliente-info">@(Cliente?.Nombre ?? "No especificado")</p>
                 </div>
-
-                <!-- Resumen de Productos -->
                 <div class="pago-section">
                     <h3>Resumen de Compra</h3>
                     <div class="productos-resumen">
@@ -98,8 +106,6 @@
                         }
                     </div>
                 </div>
-
-                <!-- Totales -->
                 <div class="pago-section totales">
                     <div class="total-linea">
                         <span>Subtotal:</span>
@@ -110,8 +116,6 @@
                         <span>$@total.ToString("F2")</span>
                     </div>
                 </div>
-
-                <!-- Método de Pago -->
                 <div class="pago-section">
                     <h3>Método de Pago</h3>
                     <select class="form-control" @bind="metodoPago">
@@ -120,8 +124,6 @@
                         <option value="Transferencia">Transferencia</option>
                     </select>
                 </div>
-
-                <!-- Monto a Pagar -->
                 @if (metodoPago == "Efectivo")
                 {
                     <div class="pago-section">
@@ -145,30 +147,29 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-cancel" @onclick="CerrarModalPago">Cancelar</button>
-                <button class="btn-pay" @onclick="EfectuarPago" disabled="@(!PuedeEfectuarPago())">
-                    Efectuar Pago
-                </button>
+                <button class="btn-pay" @onclick="EfectuarPago" disabled="@(!PuedeEfectuarPago())">Efectuar Pago</button>
             </div>
         </div>
     </div>
 }
 
 @code {
+    List<VetasTabs> VetasTabsDisponibles = new();
     List<Productos> ProductosDisponibles = new();
     List<Productos> Carrito = new();
+    int activeTabId;
+
     Personas? Cliente { get; set; }
     Personas clienteTemp = new();
     bool mostrarModalCliente = false;
     bool mostrarModalPago = false;
 
-    // Variables para el modal de pago
     string metodoPago = "Efectivo";
     decimal montoPagado = 0;
     decimal subtotal => Carrito.Sum(p => p.Precio);
-    decimal total => subtotal; // Aquí podrías agregar impuestos si es necesario
+    decimal total => subtotal;
     decimal cambio => montoPagado - total;
 
-    // Agrupar productos para mostrar cantidades
     List<(Productos Producto, int Cantidad)> productosAgrupados =>
         Carrito.GroupBy(p => p.ProductosID)
                .Select(g => (g.First(), g.Count()))
@@ -177,33 +178,27 @@
     protected override async Task OnInitializedAsync()
     {
         Cliente = new Personas();
-        ProductosDisponibles = await ProductosService.ListAsync(p => !p.IsDeleted && p.Stock > 0);
+        VetasTabsDisponibles = await VetasTabsService.ListAsync(t => !t.IsDeleted);
+        if (VetasTabsDisponibles.Count > 0)
+        {
+            activeTabId = VetasTabsDisponibles.First().VetasTabsID;
+            await CargarProductos();
+        }
     }
 
-    void OnIngresarCliente()
+    async Task cambiarTab(int tabId)
     {
-        clienteTemp = new Personas();
-        mostrarModalCliente = true;
+        activeTabId = tabId;
+        await CargarProductos();
     }
 
-    void OnProcesarPago()
+    async Task CargarProductos()
     {
-        if (Carrito.Count == 0)
-        {
-            // Mostrar mensaje de carrito vacío
-            return;
-        }
-
-        if (Cliente == null || string.IsNullOrEmpty(Cliente.Nombre))
-        {
-            // Primero debe ingresar el cliente
-            OnIngresarCliente();
-            return;
-        }
-
-        montoPagado = 0;
-        metodoPago = "Efectivo";
-        mostrarModalPago = true;
+        var productosInTabs = await ProductosInTabsService.ListAsync(p => p.VetasTabsID == activeTabId && !p.IsDeleted);
+        ProductosDisponibles = productosInTabs
+            .Where(p => p.Producto != null && !p.Producto.IsDeleted && p.Producto.Stock > 0)
+            .Select(p => p.Producto!)
+            .ToList();
     }
 
     void AgregarProducto(Productos producto)
@@ -218,20 +213,17 @@
         StateHasChanged();
     }
 
-    void CerrarModal()
+    void OnIngresarCliente()
     {
-        mostrarModalCliente = false;
         clienteTemp = new Personas();
+        mostrarModalCliente = true;
     }
 
     void GuardarCliente()
     {
-        if (string.IsNullOrWhiteSpace(clienteTemp.Nombre) ||
-            string.IsNullOrWhiteSpace(clienteTemp.Telefono) ||
-            string.IsNullOrWhiteSpace(clienteTemp.Direccion))
-        {
-            return;
-        }
+        // if (string.IsNullOrWhiteSpace(clienteTemp.Nombre) ||
+        //     string.IsNullOrWhiteSpace(clienteTemp.Telefono) ||
+        //     string.IsNullOrWhiteSpace(clienteTemp.Direccion)) return;
 
         Cliente = new Personas
         {
@@ -249,47 +241,37 @@
         StateHasChanged();
     }
 
+    void OnProcesarPago()
+    {
+        if (Carrito.Count == 0) return;
+
+        if (Cliente == null || string.IsNullOrEmpty(Cliente.Nombre))
+        {
+            OnIngresarCliente();
+            return;
+        }
+
+        montoPagado = 0;
+        metodoPago = "Efectivo";
+        mostrarModalPago = true;
+    }
+
+    void CerrarModal() => mostrarModalCliente = false;
+
     void CerrarModalPago()
     {
         mostrarModalPago = false;
         montoPagado = 0;
     }
 
-    void EstablecerMontoExacto()
-    {
-        montoPagado = total;
-    }
+    void EstablecerMontoExacto() => montoPagado = total;
 
-    bool PuedeEfectuarPago()
-    {
-        if (metodoPago == "Efectivo")
-        {
-            return montoPagado >= total;
-        }
-        return true; // Para tarjeta y transferencia
-    }
+    bool PuedeEfectuarPago() =>
+        metodoPago == "Efectivo" ? montoPagado >= total : true;
 
     async Task EfectuarPago()
     {
-        // TODO: Implementar la lógica para efectuar el pago
-        // 1. Crear la factura con el estado de pago correspondiente
-        // 2. Crear los detalles de la factura por cada producto
-        // 3. Crear el registro de pago
-        // 4. Actualizar el stock de los productos
-        // 5. Limpiar el carrito
-        // 6. Cerrar el modal
-        // 7. Mostrar mensaje de éxito o imprimir recibo
-
-        // Ejemplo de estructura:
-        // var factura = new Facturas {
-        //     PersonasID = Cliente.PersonasID,
-        //     Fecha = DateTime.Now,
-        //     Total = total,
-        //     EstadoPagoID = 1 // Pagado
-        // };
-        // await FacturasService.CreateAsync(factura);
-        // ...resto de la lógica...
-
+        // TODO: Implementar lógica real de facturación
         CerrarModalPago();
         Carrito.Clear();
         Cliente = new Personas();
