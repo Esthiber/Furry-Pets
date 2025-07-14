@@ -1,0 +1,39 @@
+﻿.quick-func-button {
+    /* Reseteamos los estilos de botón para que parezca un div */
+    background: #D32F2F; /* Un rojo más material design (ligeramente más oscuro que el de la imagen) */
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: white; /* Color para el texto y el icono */
+    /* Layout y Dimensiones */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0.5rem; /* Espacio interno para que no se pegue a los bordes */
+    border-bottom: 1px solid #B71C1C; /* Borde inferior más oscuro para separación */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    text-align: center;
+}
+
+    .quick-func-button:hover {
+        background-color: #C62828; /* Un rojo un poco más oscuro al pasar el ratón */
+    }
+
+    .quick-func-button:focus {
+        outline: 2px solid #29B6F6; /* Un outline para accesibilidad al navegar con teclado */
+        outline-offset: -2px;
+    }
+
+.quick-func-icon {
+    font-size: 2.2rem; /* Tamaño del icono */
+    margin-bottom: 0.5rem; /* Espacio entre el icono y el texto */
+}
+
+.quick-func-text {
+    font-size: 0.8rem; /* Tamaño del texto */
+    font-weight: 500;
+    line-height: 1.2;
+}

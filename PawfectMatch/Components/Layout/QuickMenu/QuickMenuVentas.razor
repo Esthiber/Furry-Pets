@@ -1,0 +1,105 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using PawfectMatch.Data
+
+@inject SignInManager<ApplicationUser> SignInManager
+
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<div id="QuickMenu">
+
+    <AuthorizeView>
+        <QuickFunc IconName="person-circle" Text="@context.User.Identity?.Name" OnClick="ToggleUserModal"></QuickFunc>
+    </AuthorizeView>
+
+    <QuickFunc></QuickFunc>
+
+    <QuickFunc></QuickFunc>
+
+    <QuickFunc></QuickFunc>
+
+    <QuickFunc></QuickFunc>
+
+    <QuickFunc></QuickFunc>
+
+    <QuickFunc Text="Volver" OnClick="GoHome" IconName="back"></QuickFunc>
+</div>
+@* --- 3. El Modal del Usuario --- *@
+@if (isUserModalVisible)
+{
+    <div class="user-modal-overlay" @onclick="ToggleUserModal">
+
+        @* El contenido del modal. @onclick:stopPropagation evita que el clic en el modal cierre el overlay. *@
+        <div class="user-modal-content" @onclick:stopPropagation="true">
+
+            <div class="user-modal-header">
+                <h3>Cuenta de Usuario</h3>
+                <button class="user-modal-close-btn" @onclick="ToggleUserModal" title="Cerrar">&times;</button>
+            </div>
+
+            <div class="user-modal-body">
+                <i class="bi bi-person-check-fill user-modal-icon"></i>
+                <p>Sesión iniciada como:</p>
+                <strong>@UserName</strong>
+            </div>
+
+            <div class="user-modal-footer">
+                <form action="Account/Logout" method="post">
+                    <AntiforgeryToken />
+                    <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                    <button type="submit" class="user-modal-logout-btn">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    private bool isUserModalVisible = false;
+    private string? UserName { get; set; }
+    private string? currentUrl;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+
+        var authState = await AuthenticationStateTask;
+        var user = authState.User;
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            UserName = user.Identity.Name;
+        }
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    private void ToggleUserModal()
+    {
+        isUserModalVisible = !isUserModalVisible;
+    }
+
+    private async Task HandleLogout()
+    {
+        await SignInManager.SignOutAsync();
+        NavigationManager.NavigateTo("/", forceLoad: true);
+    }
+}
+
+@code {
+    void GoHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}

@@ -1,0 +1,40 @@
+﻿@*
+    Componente reutilizable para una función rápida en un menú.
+    Acepta un nombre de icono, un texto y una acción de clic.
+*@
+
+@* 1. El div principal es ahora un botón para mejor semántica y accesibilidad. 
+      Maneja el evento OnClick. *@
+<button type="button" class="quick-func-button" @onclick="OnClick" title="@Text">
+
+    @* 2. El icono se construye dinámicamente. Añadimos "bi bi-" al nombre del icono que nos pasan. *@
+    <i class="quick-func-icon bi bi-@IconName"></i>
+
+    @* 3. El texto se muestra desde el parámetro Text. *@
+    <span class="quick-func-text">@Text</span>
+
+</button>
+
+@code {
+    /// <summary>
+    /// El nombre del icono de Bootstrap Icons a mostrar (ej. "amd", "house", "cart-fill").
+    /// </summary>
+    [Parameter]
+    public string IconName { get; set; } = "question-circle"; // Icono por defecto si no se especifica.
+
+    /// <summary>
+    /// El texto descriptivo que se muestra debajo del icono.
+    /// </summary>
+    [Parameter]
+    public string Text { get; set; } = "Función"; // Texto por defecto.
+
+    /// <summary>
+    /// El evento que se dispara cuando el usuario hace clic en este componente.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+}
+
+<style>
+    
+</style>
