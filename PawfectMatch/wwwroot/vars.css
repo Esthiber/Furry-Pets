@@ -1,4 +1,7 @@
-/* Figma Styles of your File */
+/* 
+ * Archivo reorganizado: solo variables y custom properties globales.
+ * El resto de estilos deben ir en archivos separados por feature o componente.
+ */
 :root {
   /* Colors */
   --firstcolor: #f3e9dc;
@@ -23,11 +26,8 @@
   --parrafo-1-line-height: normal;
   --parrafo-1-font-weight: 400;
   --parrafo-1-font-style: normal;
-
   --single-line-body-base-font-family: "Inter-Regular", sans-serif;
   --single-line-body-base-font-size: 16px;
   --single-line-body-base-line-height: 100%;
   --single-line-body-base-font-weight: 400;
-
-  /* Effects */
 }

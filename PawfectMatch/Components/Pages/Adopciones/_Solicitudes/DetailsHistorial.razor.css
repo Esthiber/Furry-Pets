@@ -1,0 +1,18 @@
+/*
+ * Estilos migrados y organizados desde Historial.css para DetailsHistorial
+ * Se usan variables globales y se eliminan duplicados
+ */
+
+// ...Pega aquí los estilos de Historial.css, adaptando el scope si es necesario...
+
+// Ejemplo de uso de variables globales y clases comunes:
+.historial-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--firstcolor);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.3s ease-out;
+}
+// ...resto de los estilos migrados...

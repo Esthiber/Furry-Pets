@@ -1,4 +1,8 @@
-/* ===== FOOTER ===== */
+/*
+ * Estilos migrados y organizados desde Footer.css para MainFooter
+ * Se usan variables globales y se eliminan duplicados
+ */
+
 .footer {
     background-color: var(--thirdcolor);
     color: var(--firstcolor);
@@ -33,18 +37,18 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.footer    .social-link:hover {
-        background-color: var(--secondcolor);
-        transform: translateY(-3px);
-    }
+.footer .social-link:hover {
+    background-color: var(--secondcolor);
+    transform: translateY(-3px);
+}
 
-    .footer    .social-link img {
-        width: 20px;
-        height: 20px;
-        filter: brightness(0) invert(1);
-    }
+.footer .social-link img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
 
-    .footer .copyright p {
+.footer .copyright p {
     font-family: var(--parrafo-1-font-family);
     font-size: var(--single-line-body-base-font-size);
     font-weight: var(--single-line-body-base-font-weight);
@@ -54,19 +58,14 @@
 }
 
 @media (min-width: 768px) {
-    .footer    .container
-
-{
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.footer .social-icons {
-    order: 2;
-}
-
-.footer .copyright {
-    order: 1;
-}
-
+    .footer .container {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .footer .social-icons {
+        order: 2;
+    }
+    .footer .copyright {
+        order: 1;
+    }
 }
