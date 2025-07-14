@@ -1,0 +1,179 @@
+﻿@page "/mascotasadopcion"
+@inject MascotasAdopcionService MascotasAdopcionService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<h3>Mascotas en Adopción</h3>
+
+<!-- Buscador -->
+<div class="mb-3">
+    <input type="text" class="form-control" @bind="filtro" placeholder="Buscar por ID o Nombre..." @oninput="FiltrarMascotas" />
+</div>
+
+<!-- Botón de crear mascota -->
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="CrearMascota">Crear Nueva Mascota</button>
+</div>
+
+<!-- Grid de tarjetas de mascotas -->
+<div class="row">
+    @if (mascotasFiltradas == null)
+    {
+        <p>Cargando mascotas...</p>
+    }
+    else if (mascotasFiltradas.Count == 0)
+    {
+        <p>No se encontraron mascotas.</p>
+    }
+    else
+    {
+        @foreach (var mascota in mascotasFiltradas)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card" style="width: 18rem; cursor: pointer;" @onclick="() => AbrirModal(mascota)">
+                    <img src="@(mascota.FotoURL ?? "https://via.placeholder.com/150")" class="card-img-top" alt="@mascota.Nombre" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@mascota.MascotasAdopcionID | @mascota.Nombre</h5>
+                        <p class="card-text">Sexo: @(mascota.Sexo == 'm' ? "Macho" : mascota.Sexo == 'f' ? "Hembra" : "Desconocido")</p>
+                        <p class="card-text">Estado: @(mascota.Estado?.Nombre ?? "N/A")</p>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<!-- Modal para editar mascota -->
+@if (mascotaSeleccionada != null)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Mascota: @mascotaSeleccionada.Nombre</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@mascotaSeleccionada" OnValidSubmit="GuardarCambios">
+                        <DataAnnotationsValidator />
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <InputText class="form-control" @bind-Value="mascotaSeleccionada.Nombre" />
+                            <ValidationMessage For="@(() => mascotaSeleccionada.Nombre)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción</label>
+                            <InputTextArea class="form-control" @bind-Value="mascotaSeleccionada.Descripcion" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sexo</label>
+                            <InputSelect class="form-control" @bind-Value="mascotaSeleccionada.Sexo">
+                                <option value="m">Macho</option>
+                                <option value="f">Hembra</option>
+                                <option value="u">Desconocido</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => mascotaSeleccionada.Sexo)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tamaño (pulgadas)</label>
+                            <InputNumber class="form-control" @bind-Value="mascotaSeleccionada.Tamanio" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Fecha de Nacimiento</label>
+                            <InputDate class="form-control" @bind-Value="mascotaSeleccionada.FechaNacimiento" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">URL de Foto</label>
+                            <InputText class="form-control" @bind-Value="mascotaSeleccionada.FotoURL" />
+                        </div>
+                        <!-- Nota: Campos como RazasID, RelacionSizeID y EstadoID se pueden implementar con selectores si tienes las listas correspondientes -->
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    private List<MascotasAdopcion> mascotas = new();
+    private List<MascotasAdopcion> mascotasFiltradas = new();
+    private MascotasAdopcion? mascotaSeleccionada = null;
+    private string filtro = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cargar todas las mascotas que no estén eliminadas
+        mascotas = await MascotasAdopcionService.ListAsync(m => !m.IsDeleted);
+        mascotasFiltradas = mascotas;
+    }
+
+    private void FiltrarMascotas(ChangeEventArgs e)
+    {
+        filtro = e.Value?.ToString() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(filtro))
+        {
+            mascotasFiltradas = mascotas;
+        }
+        else
+        {
+            mascotasFiltradas = mascotas
+                .Where(m => m.MascotasAdopcionID.ToString().Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
+                           m.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+    }
+
+    private void CrearMascota()
+    {
+        NavigationManager.NavigateTo("/ventas/crear"); // Ajusta esta ruta según corresponda para mascotas
+    }
+
+    private void AbrirModal(MascotasAdopcion mascota)
+    {
+        mascotaSeleccionada = new MascotasAdopcion
+        {
+            MascotasAdopcionID = mascota.MascotasAdopcionID,
+            Nombre = mascota.Nombre,
+            Descripcion = mascota.Descripcion,
+            Tamanio = mascota.Tamanio,
+            FechaNacimiento = mascota.FechaNacimiento,
+            FotoURL = mascota.FotoURL,
+            RazasID = mascota.RazasID,
+            EstadoID = mascota.EstadoID,
+            RelacionSizeID = mascota.RelacionSizeID,
+            Sexo = mascota.Sexo,
+            IsDeleted = mascota.IsDeleted
+        };
+    }
+
+    private void CerrarModal()
+    {
+        mascotaSeleccionada = null;
+    }
+
+    private async Task GuardarCambios()
+    {
+        if (mascotaSeleccionada != null)
+        {
+            var result = await MascotasAdopcionService.SaveAsync(mascotaSeleccionada);
+            if (result)
+            {
+                // Actualizar la lista de mascotas
+                var index = mascotas.FindIndex(m => m.MascotasAdopcionID == mascotaSeleccionada.MascotasAdopcionID);
+                if (index >= 0)
+                {
+                    mascotas[index] = mascotaSeleccionada;
+                }
+                mascotasFiltradas = mascotas
+                    .Where(m => string.IsNullOrWhiteSpace(filtro) ||
+                               m.MascotasAdopcionID.ToString().Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
+                               m.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+                CerrarModal();
+            }
+        }
+    }
+}
