@@ -1,0 +1,298 @@
+﻿@page "/pos"
+@using PawfectMatch.Components.Layout
+@using PawfectMatch.Models
+@using PawfectMatch.Services
+@inject ProductosService ProductosService
+@layout VentasLayout
+@rendermode InteractiveServer
+
+@attribute [Authorize(Roles = "Admin,User")]
+
+<div class="facturacion-wrapper">
+
+    <div class="facturacion-layout">
+        <div class="facturacion-productos">
+            @if (ProductosDisponibles == null)
+            {
+                <div>Cargando productos...</div>
+            }
+            else if (!ProductosDisponibles.Any())
+            {
+                <div>No hay productos disponibles.</div>
+            }
+            else
+            {
+                @foreach (var prod in ProductosDisponibles)
+                {
+                    <CardProductos Producto="prod" OnSeleccionarProducto="AgregarProducto" />
+                }
+            }
+        </div>
+        <div class="facturacion-lista">
+            <ListaCompra ProductosSeleccionados="Carrito"
+                         OnEliminarProducto="QuitarProducto"
+                         OnIngresarCliente="OnIngresarCliente"
+                         OnProcesarPago="OnProcesarPago" />
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cliente -->
+@if (mostrarModalCliente)
+{
+    <div class="modal-overlay" @onclick="CerrarModal">
+        <div class="modal-content" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <h2>Información del Cliente</h2>
+                <button class="modal-close" @onclick="CerrarModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" class="form-control" @bind="clienteTemp.Nombre" placeholder="Ingrese el nombre del cliente" />
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" class="form-control" @bind="clienteTemp.Telefono" placeholder="Ingrese el teléfono" />
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <textarea id="direccion" class="form-control" @bind="clienteTemp.Direccion" placeholder="Ingrese la dirección" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" @onclick="CerrarModal">Cancelar</button>
+                <button class="btn-save" @onclick="GuardarCliente">Guardar Cliente</button>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Modal Pago -->
+@if (mostrarModalPago)
+{
+    <div class="modal-overlay" @onclick="CerrarModalPago">
+        <div class="modal-pago-content" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <h2>Procesar Pago</h2>
+                <button class="modal-close" @onclick="CerrarModalPago">&times;</button>
+            </div>
+            <div class="modal-pago-body">
+                <!-- Información del Cliente -->
+                <div class="pago-section">
+                    <h3>Cliente</h3>
+                    <p class="cliente-info">@(Cliente?.Nombre ?? "No especificado")</p>
+                </div>
+
+                <!-- Resumen de Productos -->
+                <div class="pago-section">
+                    <h3>Resumen de Compra</h3>
+                    <div class="productos-resumen">
+                        @foreach (var grupo in productosAgrupados)
+                        {
+                            <div class="producto-linea">
+                                <span class="producto-nombre">@grupo.Producto.Nombre</span>
+                                <span class="producto-cantidad">$@grupo.Producto.Precio x @grupo.Cantidad</span>
+                                <span class="producto-subtotal">$@((grupo.Producto.Precio * grupo.Cantidad).ToString("F2"))</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Totales -->
+                <div class="pago-section totales">
+                    <div class="total-linea">
+                        <span>Subtotal:</span>
+                        <span>$@subtotal.ToString("F2")</span>
+                    </div>
+                    <div class="total-linea total-final">
+                        <span>Total:</span>
+                        <span>$@total.ToString("F2")</span>
+                    </div>
+                </div>
+
+                <!-- Método de Pago -->
+                <div class="pago-section">
+                    <h3>Método de Pago</h3>
+                    <select class="form-control" @bind="metodoPago">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                        <option value="Transferencia">Transferencia</option>
+                    </select>
+                </div>
+
+                <!-- Monto a Pagar -->
+                @if (metodoPago == "Efectivo")
+                {
+                    <div class="pago-section">
+                        <h3>Monto Recibido</h3>
+                        <div class="monto-input-group">
+                            <input type="number" class="form-control monto-input" @bind="montoPagado" @bind:event="oninput"
+                                   placeholder="0.00" step="0.01" min="0" />
+                            <button class="btn-monto-exacto" @onclick="EstablecerMontoExacto">Monto Exacto</button>
+                        </div>
+                        @if (montoPagado > 0)
+                        {
+                            <div class="cambio-info">
+                                <span>Cambio a devolver:</span>
+                                <span class="@(cambio < 0 ? "cambio-negativo" : "cambio-positivo")">
+                                    $@Math.Abs(cambio).ToString("F2")
+                                </span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" @onclick="CerrarModalPago">Cancelar</button>
+                <button class="btn-pay" @onclick="EfectuarPago" disabled="@(!PuedeEfectuarPago())">
+                    Efectuar Pago
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    List<Productos> ProductosDisponibles = new();
+    List<Productos> Carrito = new();
+    Personas? Cliente { get; set; }
+    Personas clienteTemp = new();
+    bool mostrarModalCliente = false;
+    bool mostrarModalPago = false;
+
+    // Variables para el modal de pago
+    string metodoPago = "Efectivo";
+    decimal montoPagado = 0;
+    decimal subtotal => Carrito.Sum(p => p.Precio);
+    decimal total => subtotal; // Aquí podrías agregar impuestos si es necesario
+    decimal cambio => montoPagado - total;
+
+    // Agrupar productos para mostrar cantidades
+    List<(Productos Producto, int Cantidad)> productosAgrupados =>
+        Carrito.GroupBy(p => p.ProductosID)
+               .Select(g => (g.First(), g.Count()))
+               .ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Cliente = new Personas();
+        ProductosDisponibles = await ProductosService.ListAsync(p => !p.IsDeleted && p.Stock > 0);
+    }
+
+    void OnIngresarCliente()
+    {
+        clienteTemp = new Personas();
+        mostrarModalCliente = true;
+    }
+
+    void OnProcesarPago()
+    {
+        if (Carrito.Count == 0)
+        {
+            // Mostrar mensaje de carrito vacío
+            return;
+        }
+
+        if (Cliente == null || string.IsNullOrEmpty(Cliente.Nombre))
+        {
+            // Primero debe ingresar el cliente
+            OnIngresarCliente();
+            return;
+        }
+
+        montoPagado = 0;
+        metodoPago = "Efectivo";
+        mostrarModalPago = true;
+    }
+
+    void AgregarProducto(Productos producto)
+    {
+        Carrito.Add(producto);
+        StateHasChanged();
+    }
+
+    void QuitarProducto(Productos producto)
+    {
+        Carrito.Remove(producto);
+        StateHasChanged();
+    }
+
+    void CerrarModal()
+    {
+        mostrarModalCliente = false;
+        clienteTemp = new Personas();
+    }
+
+    void GuardarCliente()
+    {
+        if (string.IsNullOrWhiteSpace(clienteTemp.Nombre) ||
+            string.IsNullOrWhiteSpace(clienteTemp.Telefono) ||
+            string.IsNullOrWhiteSpace(clienteTemp.Direccion))
+        {
+            return;
+        }
+
+        Cliente = new Personas
+        {
+            Nombre = clienteTemp.Nombre,
+            Telefono = clienteTemp.Telefono,
+            Direccion = clienteTemp.Direccion,
+            Sexo = 'u',
+            Identificacion = string.Empty,
+            Email = string.Empty,
+            Nacionalidad = string.Empty,
+            EstadoCivil = string.Empty
+        };
+
+        mostrarModalCliente = false;
+        StateHasChanged();
+    }
+
+    void CerrarModalPago()
+    {
+        mostrarModalPago = false;
+        montoPagado = 0;
+    }
+
+    void EstablecerMontoExacto()
+    {
+        montoPagado = total;
+    }
+
+    bool PuedeEfectuarPago()
+    {
+        if (metodoPago == "Efectivo")
+        {
+            return montoPagado >= total;
+        }
+        return true; // Para tarjeta y transferencia
+    }
+
+    async Task EfectuarPago()
+    {
+        // TODO: Implementar la lógica para efectuar el pago
+        // 1. Crear la factura con el estado de pago correspondiente
+        // 2. Crear los detalles de la factura por cada producto
+        // 3. Crear el registro de pago
+        // 4. Actualizar el stock de los productos
+        // 5. Limpiar el carrito
+        // 6. Cerrar el modal
+        // 7. Mostrar mensaje de éxito o imprimir recibo
+
+        // Ejemplo de estructura:
+        // var factura = new Facturas {
+        //     PersonasID = Cliente.PersonasID,
+        //     Fecha = DateTime.Now,
+        //     Total = total,
+        //     EstadoPagoID = 1 // Pagado
+        // };
+        // await FacturasService.CreateAsync(factura);
+        // ...resto de la lógica...
+
+        CerrarModalPago();
+        Carrito.Clear();
+        Cliente = new Personas();
+        StateHasChanged();
+    }
+}
