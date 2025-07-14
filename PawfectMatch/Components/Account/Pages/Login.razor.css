@@ -1,0 +1,147 @@
+﻿.login-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #f0f2f5; /* Un color de fondo suave, similar al de muchas webs modernas */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.login-form-card {
+    background: #ffffff;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+}
+
+.login-form-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.login-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #1c1c1e;
+    margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #6c757d;
+}
+
+.login-divider {
+    border: 0;
+    height: 1px;
+    background-color: #e9ecef;
+    margin: 1.5rem 0;
+}
+
+.login-form-group {
+    margin-bottom: 1.25rem;
+}
+
+.login-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.login-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .login-input:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+        outline: none;
+    }
+
+.login-remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.login-label-checkbox {
+    font-size: 0.9rem;
+    color: #495057;
+    cursor: pointer;
+}
+
+.login-checkbox {
+    width: 1em;
+    height: 1em;
+}
+
+.login-submit-button {
+    width: 100%;
+    padding: 14px 20px;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .login-submit-button:hover {
+        background-color: #0b5ed7;
+    }
+
+.login-links-section {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+    .login-links-section p {
+        margin-bottom: 0.5rem;
+    }
+
+    .login-links-section a {
+        color: #0d6efd;
+        text-decoration: none;
+    }
+
+        .login-links-section a:hover {
+            text-decoration: underline;
+        }
+
+/* Estilos para los mensajes de validación */
+.login-validation-summary {
+    color: #dc3545; /* Bootstrap's danger color */
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+    .login-validation-summary ul {
+        padding-left: 1.2rem;
+        margin-bottom: 0;
+    }
+
+.login-validation-message {
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}
