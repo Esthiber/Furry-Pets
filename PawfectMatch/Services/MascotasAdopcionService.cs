@@ -37,6 +37,7 @@ namespace PawfectMatch.Services
             await using var ctx = await DbFactory.CreateDbContextAsync();
             return await ctx.MascotasAdopcion
                 .Include(m => m.Razas)
+                    .ThenInclude(r => r.Especie)
                 .Include(m => m.Estado)
                 .Include(m => m.RelacionSize)
                 .AsNoTracking()

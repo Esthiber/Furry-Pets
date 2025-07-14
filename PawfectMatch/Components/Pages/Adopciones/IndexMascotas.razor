@@ -4,132 +4,260 @@
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
-<h3>Mascotas en Adopción</h3>
-
-<!-- Buscador -->
-<div class="mb-3">
-    <input type="text" class="form-control" @bind="filtro" placeholder="Buscar por ID o Nombre..." @oninput="FiltrarMascotas" />
-</div>
-
-<!-- Botón de crear mascota -->
-<div class="mb-3">
-    <button class="btn btn-primary" @onclick="CrearMascota">Crear Nueva Mascota</button>
-</div>
-
-<!-- Grid de tarjetas de mascotas -->
-<div class="row">
-    @if (mascotasFiltradas == null)
-    {
-        <p>Cargando mascotas...</p>
-    }
-    else if (mascotasFiltradas.Count == 0)
-    {
-        <p>No se encontraron mascotas.</p>
-    }
-    else
-    {
-        @foreach (var mascota in mascotasFiltradas)
-        {
-            <div class="col-md-4 mb-3">
-                <div class="card" style="width: 18rem; cursor: pointer;" @onclick="() => AbrirModal(mascota)">
-                    <img src="@(mascota.FotoURL ?? "https://via.placeholder.com/150")" class="card-img-top" alt="@mascota.Nombre" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">@mascota.MascotasAdopcionID | @mascota.Nombre</h5>
-                        <p class="card-text">Sexo: @(mascota.Sexo == 'm' ? "Macho" : mascota.Sexo == 'f' ? "Hembra" : "Desconocido")</p>
-                        <p class="card-text">Estado: @(mascota.Estado?.Nombre ?? "N/A")</p>
-                    </div>
-                </div>
-            </div>
-        }
-    }
-</div>
-
-<!-- Modal para editar mascota -->
-@if (mascotaSeleccionada != null)
-{
-    <div class="modal fade show" style="display: block;" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Mascota: @mascotaSeleccionada.Nombre</h5>
-                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
-                </div>
-                <div class="modal-body">
-                    <EditForm Model="@mascotaSeleccionada" OnValidSubmit="GuardarCambios">
-                        <DataAnnotationsValidator />
-                        <div class="mb-3">
-                            <label class="form-label">Nombre</label>
-                            <InputText class="form-control" @bind-Value="mascotaSeleccionada.Nombre" />
-                            <ValidationMessage For="@(() => mascotaSeleccionada.Nombre)" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Descripción</label>
-                            <InputTextArea class="form-control" @bind-Value="mascotaSeleccionada.Descripcion" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Sexo</label>
-                            <InputSelect class="form-control" @bind-Value="mascotaSeleccionada.Sexo">
-                                <option value="m">Macho</option>
-                                <option value="f">Hembra</option>
-                                <option value="u">Desconocido</option>
-                            </InputSelect>
-                            <ValidationMessage For="@(() => mascotaSeleccionada.Sexo)" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Tamaño (pulgadas)</label>
-                            <InputNumber class="form-control" @bind-Value="mascotaSeleccionada.Tamanio" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Fecha de Nacimiento</label>
-                            <InputDate class="form-control" @bind-Value="mascotaSeleccionada.FechaNacimiento" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">URL de Foto</label>
-                            <InputText class="form-control" @bind-Value="mascotaSeleccionada.FotoURL" />
-                        </div>
-                        <!-- Nota: Campos como RazasID, RelacionSizeID y EstadoID se pueden implementar con selectores si tienes las listas correspondientes -->
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                        <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
-                    </EditForm>
-                </div>
-            </div>
+<div class="mascotas-admin-container">
+    <div class="header-section">
+        <div>
+            <h2>Mascotas en Adopción</h2>
+            <p class="subtitle">Panel administrativo de mascotas disponibles para adopción</p>
         </div>
+        <div class="summary-cards">
+            <div class="summary-card total">
+                <span class="summary-label">Total</span>
+                <span class="summary-value">@mascotas.Count</span>
+            </div>
+            @foreach (var cat in categorias)
+            {
+                <div class="summary-card">
+                    <span class="summary-label">@cat.Nombre</span>
+                    <span class="summary-value">@mascotas.Count(m => m.Razas?.Especie?.Nombre == cat.Nombre)</span>
+                </div>
+            }
+        </div>
+        <button class="btn btn-primary" @onclick="CrearMascota">
+            <i class="bi bi-plus-circle"></i> Nueva Mascota
+        </button>
     </div>
-    <div class="modal-backdrop fade show"></div>
-}
 
-@code {
-    private List<MascotasAdopcion> mascotas = new();
-    private List<MascotasAdopcion> mascotasFiltradas = new();
-    private MascotasAdopcion? mascotaSeleccionada = null;
-    private string filtro = string.Empty;
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Cargar todas las mascotas que no estén eliminadas
-        mascotas = await MascotasAdopcionService.ListAsync(m => !m.IsDeleted);
-        mascotasFiltradas = mascotas;
-    }
-
-    private void FiltrarMascotas(ChangeEventArgs e)
-    {
-        filtro = e.Value?.ToString() ?? string.Empty;
-        if (string.IsNullOrWhiteSpace(filtro))
+    <div class="tabs-section">
+        <button class="tab-btn @(categoriaSeleccionada == "Todas" ? "active" : "")" @onclick='() => CambiarCategoria("Todas")'>Todas</button>
+        @foreach (var cat in categorias)
         {
-            mascotasFiltradas = mascotas;
+            <button class="tab-btn @(categoriaSeleccionada == cat.Nombre ? "active" : "")" @onclick='() => CambiarCategoria(cat.Nombre)'>
+                @cat.Nombre
+            </button>
+        }
+    </div>
+
+    <div class="filters-section">
+        <div class="search-group">
+            <input type="text" class="form-control" placeholder="Buscar por ID o Nombre..." @bind="filtro" @bind:event="oninput" />
+            <button class="btn btn-outline-secondary" @onclick="LimpiarFiltro" title="Limpiar búsqueda">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        </div>
+        <select class="form-select" @bind="filtroSexo">
+            <option value="">Sexo</option>
+            <option value="m">Macho</option>
+            <option value="f">Hembra</option>
+            <option value="u">Desconocido</option>
+        </select>
+        <select class="form-select" @bind="filtroEstado">
+            <option value="">Estado</option>
+            @foreach (var estado in estados)
+            {
+                <option value="@estado.EstadoID">@estado.Nombre</option>
+            }
+        </select>
+        <select class="form-select" @bind="filtroEdad">
+            <option value="">Edad</option>
+            <option value="0-1">0-1 año</option>
+            <option value="1-3">1-3 años</option>
+            <option value="3-7">3-7 años</option>
+            <option value="7+">7+ años</option>
+        </select>
+    </div>
+
+    <div class="mascotas-grid">
+        @if (mascotasFiltradas == null)
+        {
+            <div class="loading">Cargando mascotas...</div>
+        }
+        else if (!mascotasFiltradas.Any())
+        {
+            <div class="empty-state">
+                <i class="bi bi-emoji-frown"></i>
+                <p>No se encontraron mascotas con los filtros seleccionados.</p>
+            </div>
         }
         else
         {
-            mascotasFiltradas = mascotas
-                .Where(m => m.MascotasAdopcionID.ToString().Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
-                           m.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            @foreach (var mascota in mascotasFiltradas)
+            {
+                <div class="mascota-card" @onclick="() => AbrirModal(mascota)">
+                    <div class="mascota-img">
+                        <img src="@(mascota.FotoURL ?? "https://via.placeholder.com/150")" alt="@mascota.Nombre" />
+                    </div>
+                    <div class="mascota-info">
+                        <div class="mascota-header">
+                            <span class="mascota-id">#@mascota.MascotasAdopcionID</span>
+                            <span class="mascota-estado @mascota.Estado?.Nombre?.ToLower()">@mascota.Estado?.Nombre</span>
+                        </div>
+                        <h4 class="mascota-nombre">@mascota.Nombre</h4>
+                        <div class="mascota-raza">
+                            <i class="bi bi-bookmark-heart"></i> @mascota.Razas?.Nombre
+                        </div>
+                        <div class="mascota-details">
+                            <span><i class="bi bi-gender-@(mascota.Sexo == 'm' ? "male" : mascota.Sexo == 'f' ? "female" : "ambiguous")"></i> @(mascota.Sexo == 'm' ? "Macho" : mascota.Sexo == 'f' ? "Hembra" : "Desconocido")</span>
+                            <span><i class="bi bi-calendar-heart"></i> @MostrarEdad(mascota.FechaNacimiento)</span>
+                        </div>
+                    </div>
+                </div>
+            }
         }
+    </div>
+
+    @if (mascotaSeleccionada != null)
+    {
+        <div class="modal-backdrop"></div>
+        <div class="modal show" style="display: block;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Mascota: @mascotaSeleccionada.Nombre</h5>
+                        <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <EditForm Model="@mascotaSeleccionada" OnValidSubmit="GuardarCambios">
+                            <DataAnnotationsValidator />
+                            <div class="form-row">
+                                <div>
+                                    <label>Nombre</label>
+                                    <InputText class="form-control" @bind-Value="mascotaSeleccionada.Nombre" />
+                                    <ValidationMessage For="@(() => mascotaSeleccionada.Nombre)" />
+                                </div>
+                                <div>
+                                    <label>Raza</label>
+                                    <InputText class="form-control" @bind-Value="mascotaSeleccionada.Razas.Nombre" disabled />
+                                </div>
+                                <div>
+                                    <label>Sexo</label>
+                                    <InputSelect class="form-control" @bind-Value="mascotaSeleccionada.Sexo">
+                                        <option value="m">Macho</option>
+                                        <option value="f">Hembra</option>
+                                        <option value="u">Desconocido</option>
+                                    </InputSelect>
+                                </div>
+                                <div>
+                                    <label>Estado</label>
+                                    <InputSelect class="form-control" @bind-Value="mascotaSeleccionada.EstadoID">
+                                        @foreach (var estado in estados)
+                                        {
+                                            <option value="@estado.EstadoID">@estado.Nombre</option>
+                                        }
+                                    </InputSelect>
+                                </div>
+                                <div>
+                                    <label>Edad (Fecha Nacimiento)</label>
+                                    <InputDate class="form-control" @bind-Value="mascotaSeleccionada.FechaNacimiento" />
+                                </div>
+                                <div>
+                                    <label>Tamaño (pulgadas)</label>
+                                    <InputNumber class="form-control" @bind-Value="mascotaSeleccionada.Tamanio" />
+                                </div>
+                                <div>
+                                    <label>URL de Foto</label>
+                                    <InputText class="form-control" @bind-Value="mascotaSeleccionada.FotoURL" />
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <label>Descripción</label>
+                                <InputTextArea class="form-control" @bind-Value="mascotaSeleccionada.Descripcion" />
+                            </div>
+                            <div class="modal-actions">
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<MascotasAdopcion> mascotas { get; set; } = new();
+    private List<MascotasAdopcion> mascotasFiltradas { get; set; } = new();
+    private MascotasAdopcion? mascotaSeleccionada { get; set; } 
+    // private string filtro = string.Empty;
+    // private string filtroSexo = string.Empty;
+    // private string filtroEstado = string.Empty;
+    // private string filtroEdad = string.Empty;
+    // private string categoriaSeleccionada = "Todas";
+
+    private List<Razas> razas = new();
+    private List<Estados> estados = new();
+    private List<Especies> categorias = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        mascotas = await MascotasAdopcionService.ListAsync(m => !m.IsDeleted);
+        razas = mascotas.Select(m => m.Razas).Where(r => r != null).DistinctBy(r => r.RazasID).ToList()!;
+        estados = mascotas.Select(m => m.Estado).Where(e => e != null).DistinctBy(e => e.EstadoID).ToList()!;
+        categorias = mascotas.Select(m => m.Razas?.Especie).Where(e => e != null).DistinctBy(e => e.EspeciesID).ToList()!;
+        FiltrarMascotas();
+    }
+
+    private void FiltrarMascotas()
+    {
+        IEnumerable<MascotasAdopcion> query = mascotas;
+
+        // Filtro por categoría
+        if (categoriaSeleccionada != "Todas")
+            query = query.Where(m => m.Razas?.Especie?.Nombre == categoriaSeleccionada);
+
+        // Filtro por texto
+        if (!string.IsNullOrWhiteSpace(filtro))
+        {
+            query = query.Where(m =>
+                m.MascotasAdopcionID.ToString().Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
+                m.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Filtro por sexo
+        if (!string.IsNullOrWhiteSpace(filtroSexo))
+            query = query.Where(m => m.Sexo.ToString() == filtroSexo);
+
+        // Filtro por estado
+        if (!string.IsNullOrWhiteSpace(filtroEstado) && int.TryParse(filtroEstado, out var estadoId))
+            query = query.Where(m => m.EstadoID == estadoId);
+
+        // Filtro por edad
+        if (!string.IsNullOrWhiteSpace(filtroEdad))
+        {
+            query = query.Where(m =>
+            {
+                if (m.FechaNacimiento == null) return false;
+                var edad = CalcularEdad(m.FechaNacimiento.Value);
+                return filtroEdad switch
+                {
+                    "0-1" => edad >= 0 && edad < 1,
+                    "1-3" => edad >= 1 && edad < 3,
+                    "3-7" => edad >= 3 && edad < 7,
+                    "7+" => edad >= 7,
+                    _ => true
+                };
+            });
+        }
+
+        mascotasFiltradas = query.OrderByDescending(m => m.MascotasAdopcionID).ToList();
+    }
+
+    private void CambiarCategoria(string categoria)
+    {
+        categoriaSeleccionada = categoria;
+        FiltrarMascotas();
+    }
+
+    private void LimpiarFiltro()
+    {
+        filtro = string.Empty;
+        FiltrarMascotas();
     }
 
     private void CrearMascota()
     {
-        NavigationManager.NavigateTo("/ventas/crear"); // Ajusta esta ruta según corresponda para mascotas
+        NavigationManager.NavigateTo("/mascotas/crear");
     }
 
     private void AbrirModal(MascotasAdopcion mascota)
@@ -146,7 +274,10 @@
             EstadoID = mascota.EstadoID,
             RelacionSizeID = mascota.RelacionSizeID,
             Sexo = mascota.Sexo,
-            IsDeleted = mascota.IsDeleted
+            IsDeleted = mascota.IsDeleted,
+            Razas = mascota.Razas,
+            Estado = mascota.Estado,
+            RelacionSize = mascota.RelacionSize
         };
     }
 
@@ -162,19 +293,68 @@
             var result = await MascotasAdopcionService.SaveAsync(mascotaSeleccionada);
             if (result)
             {
-                // Actualizar la lista de mascotas
                 var index = mascotas.FindIndex(m => m.MascotasAdopcionID == mascotaSeleccionada.MascotasAdopcionID);
                 if (index >= 0)
                 {
                     mascotas[index] = mascotaSeleccionada;
                 }
-                mascotasFiltradas = mascotas
-                    .Where(m => string.IsNullOrWhiteSpace(filtro) ||
-                               m.MascotasAdopcionID.ToString().Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
-                               m.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                FiltrarMascotas();
                 CerrarModal();
             }
         }
+        else
+        {
+            // Manejar el caso donde mascotaSeleccionada es null
+            Console.WriteLine("No se pudo guardar, mascotaSeleccionada es null.");
+        }
+    }
+
+    private int CalcularEdad(DateOnly fechaNacimiento)
+    {
+        var hoy = DateOnly.FromDateTime(DateTime.Today);
+        int edad = hoy.Year - fechaNacimiento.Year;
+        if (fechaNacimiento.AddYears(edad) > hoy)
+            edad--;
+        return edad;
+    }
+
+    private string MostrarEdad(DateOnly? fechaNacimiento)
+    {
+        if (fechaNacimiento is null) return "Desconocida";
+        int edad = CalcularEdad(fechaNacimiento.Value);
+        return edad == 1 ? "1 año" : $"{edad} años";
+    }
+
+    // Reactividad para filtros
+    private string _filtro;
+    private string _filtroSexo;
+    private string _filtroEstado;
+    private string _filtroEdad;
+    private string _categoriaSeleccionada;
+
+    private string filtro
+    {
+        get => _filtro;
+        set { _filtro = value; FiltrarMascotas(); }
+    }
+    private string filtroSexo
+    {
+        get => _filtroSexo;
+        set { _filtroSexo = value; FiltrarMascotas(); }
+    }
+    private string filtroEstado
+    {
+        get => _filtroEstado;
+        set { _filtroEstado = value; FiltrarMascotas(); }
+    }
+    private string filtroEdad
+    {
+        get => _filtroEdad;
+        set { _filtroEdad = value; FiltrarMascotas(); }
+    }
+    private string categoriaSeleccionada
+    {
+        get => _categoriaSeleccionada;
+        set { _categoriaSeleccionada = value; FiltrarMascotas(); }
     }
 }
