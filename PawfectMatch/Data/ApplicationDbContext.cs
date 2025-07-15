@@ -59,11 +59,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     // Configuraci�n
     public DbSet<ConfiguracionEmpresa> ConfiguracionEmpresa { get; set; }
 
-    // Presentaciones
-    public DbSet<Presentaciones> Presentaciones { get; set; }
-    public DbSet<Diapositivas> Diapositivas { get; set; }
-    public DbSet<PresentacionesDiapositivas> PresentacionesDiapositivas { get; set; }
-
     // Tabs
     public DbSet<VetasTabs> VetasTabs { get; set; }
     public DbSet<ProductosInTabs> ProductosInTabs { get; set; }

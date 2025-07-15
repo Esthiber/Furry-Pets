@@ -67,7 +67,7 @@
 
     private async Task VerDetalles()
     {
-        // await OnVerDetalles.InvokeAsync(Mascota.MascotasAdopcionID);
+         await OnVerDetalles.InvokeAsync(Mascota.MascotasAdopcionID);
         navigationManager.NavigateTo($"/mascotas/{Mascota.MascotasAdopcionID}");
     }
 

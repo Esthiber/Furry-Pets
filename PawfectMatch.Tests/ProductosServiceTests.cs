@@ -57,6 +57,7 @@ namespace PawfectMatch.Tests
             };
             await _service.InsertAsync(producto);
             producto.Nombre = "Updated";
+            producto.Precio = 15;
             var result = await _service.UpdateAsync(producto);
             Assert.True(result);
         }

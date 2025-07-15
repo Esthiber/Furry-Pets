@@ -5,8 +5,6 @@
 @inject ProductosService ProductosService
 @inject FacturasService FacturasService
 @inject VetasTabsService VetasTabsService
-@inject SugerenciasService SugerenciasService
-@inject PresentacionesService PresentacionesService
 
 @rendermode InteractiveServer
 
@@ -205,10 +203,10 @@
         var tabs = await VetasTabsService.ListAsync(t => true);
         tabsCount = tabs.Count;
 
-        var sugerencias = await SugerenciasService.ListAsync(s => true);
+        var sugerencias = new List<int>();
         sugerenciasCount = sugerencias.Count;
 
-        var presentaciones = await PresentacionesService.ListAsync(p => true);
+        var presentaciones = new List<int>();
         presentacionesCount = presentaciones.Count;
 
         // Prepara los datos para los gráficos
