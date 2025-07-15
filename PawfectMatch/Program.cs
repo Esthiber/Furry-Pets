@@ -1,4 +1,5 @@
 using Blazored.Toast;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<Microsoft.AspNetCore.Identity.UserManager<ApplicationUser>>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
 builder.Services.AddAuthentication(options =>
@@ -31,7 +33,7 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 #region Injeccion de Servicios
-// builder.Services.AddScoped<PersonasService>();
+
 builder.Services.AddScoped<AdoptantesDetallesService>();
 builder.Services.AddScoped<CategoriasProductosService>();
 builder.Services.AddScoped<CitasService>();
@@ -74,6 +76,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
+    //.AddUserManager<UserManager>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -81,6 +84,17 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 #endregion
+
+builder.Services.AddAuthorization(options =>
+{
+    // Política basada en un Claim
+    // El usuario debe tener el claim "CanEditPosts" con el valor "true"
+    options.AddPolicy("CanEditPets", policy =>
+        policy.RequireClaim("CanEditPets", "true"));
+
+    // También puedes crear políticas basadas en roles, aunque es más común usar el parámetro Roles directamente
+    // options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+});
 
 var app = builder.Build();
 

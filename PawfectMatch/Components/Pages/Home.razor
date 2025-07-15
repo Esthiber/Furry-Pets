@@ -8,7 +8,17 @@
 
 <!--Div card que es  un boton que manda a la pagina de adopciones-->
 <div class="home-container">
-    
+
+    <AuthorizeView Policy="CanEditPets">
+        <Authorized>
+            Editar Mascota Activo
+
+        </Authorized>
+        <NotAuthorized>
+            No tienes permiso para editar mascotas.
+        </NotAuthorized>
+    </AuthorizeView>
+
     <div class="card text-center home-card" @onclick="gotoAdopciones">
         <div class="card-body">
             <i class="fas fa-dog fa-2x mb-2 icon-style"></i>
@@ -18,7 +28,7 @@
         </div>
     </div>
 
-<!--Div card que es un boton que manda a la pagina de veterinaria-->
+    <!--Div card que es un boton que manda a la pagina de veterinaria-->
 
     <div class="card text-center home-card" @onclick="gotoVeterinaria">
         <div class="card-body">

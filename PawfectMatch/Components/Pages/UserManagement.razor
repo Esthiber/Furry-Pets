@@ -1,0 +1,288 @@
+﻿@page "/user-management"
+@attribute [Authorize(Roles = "Admin")]
+
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@using System.ComponentModel.DataAnnotations
+@using PawfectMatch.Data
+
+@inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<h3>Gestión de Usuarios</h3>
+
+@if (userList == null)
+{
+    <p><em>Cargando usuarios...</em></p>
+}
+else
+{
+    <button class="btn btn-success mb-3" @onclick="StartCreateUser">
+        <i class="oi oi-plus"></i> Crear Nuevo Usuario
+    </button>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in userList)
+            {
+                <tr>
+                    <td>@user.Email</td>
+                    <td>
+                        <span class="badge bg-primary">@user.Role</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" @onclick="() => StartEditUser(user)">
+                            <i class="oi oi-pencil"></i> Editar
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!-- Modal para Crear/Editar Usuario -->
+@if (showModal)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block;" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@(isNewUser ? "Crear Nuevo Usuario" : $"Editar Usuario: {editUserModel.Email}")</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@editUserModel" OnValidSubmit="HandleSaveUser">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <InputText id="email" class="form-control" @bind-Value="editUserModel.Email" disabled="@(!isNewUser)" />
+                        </div>
+
+                        @if (isNewUser)
+                        {
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Contraseña</label>
+                                <InputText id="password" type="password" class="form-control" @bind-Value="editUserModel.Password" />
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Rol</label>
+                            <InputSelect id="role" class="form-select" @bind-Value="editUserModel.RoleId">
+                                <option value="">-- Sin Rol --</option>
+                                @foreach (var role in allRoles)
+                                {
+                                    <option value="@role.Id">@role.Name</option>
+                                }
+                            </InputSelect>
+                        </div>
+
+                        <hr />
+                        <h5>Policies / Claims Especiales</h5>
+
+                        @if (editUserModel.Claims.Any())
+                        {
+                            <ul class="list-group mb-3">
+                                @foreach (var claim in editUserModel.Claims)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <code>@claim.Type = @claim.Value</code>
+                                        <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveClaim(claim)">Quitar</button>
+                                    </li>
+                                }
+                            </ul>
+                        }
+
+                        <div class="input-group mb-3">
+                            <InputText @bind-Value="newClaimType" class="form-control" placeholder="Tipo de Claim (ej. CanEditPosts)" />
+                            <InputText @bind-Value="newClaimValue" class="form-control" placeholder="Valor (ej. true)" />
+                            <button type="button" class="btn btn-outline-secondary" @onclick="AddClaim">Añadir Claim</button>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+
+@code {
+    // ---- Modelos de Vista ----
+    private class UserViewModel
+    {
+        public string Id { get; set; }
+        public string Email { get; set; }
+        public string Role { get; set; }
+    }
+
+    private class EditUserModel
+    {
+        public string Id { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "La contraseña es requerida.")]
+        [StringLength(100, ErrorMessage = "La {0} debe tener al menos {2} y como máximo {1} caracteres.", MinimumLength = 6)]
+        public string Password { get; set; } = "123456A";
+
+        public string RoleId { get; set; } // El ID del rol seleccionado
+        public List<Claim> Claims { get; set; } = new List<Claim>();
+    }
+
+    // ---- Propiedades del Componente ----
+    private List<UserViewModel>? userList { get; set; }
+    private List<IdentityRole>? allRoles { get; set; }
+    private EditUserModel editUserModel = new EditUserModel();
+    private string newClaimType { get; set; } = string.Empty;
+    private string newClaimValue { get; set; } = string.Empty;
+
+    private bool showModal = false;
+    private bool isNewUser = false;
+
+    // ---- Ciclo de Vida ----
+    protected override async Task OnInitializedAsync()
+    {
+        allRoles = RoleManager.Roles.ToList();
+        await LoadUsers();
+    }
+
+    // ---- Lógica de Carga y UI ----
+    private async Task LoadUsers()
+    {
+        userList = new List<UserViewModel>();
+        var users = UserManager.Users.ToList();
+        foreach (var user in users)
+        {
+            var roles = await UserManager.GetRolesAsync(user);
+            userList.Add(new UserViewModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Role = roles.FirstOrDefault() ?? "Sin Rol"
+            });
+        }
+    }
+
+    private void StartCreateUser()
+    {
+        isNewUser = true;
+        editUserModel = new EditUserModel();
+        newClaimType = string.Empty;
+        newClaimValue = string.Empty;
+        showModal = true;
+    }
+
+    private async Task StartEditUser(UserViewModel userVm)
+    {
+        isNewUser = false;
+        var user = await UserManager.FindByIdAsync(userVm.Id);
+        if (user == null) return;
+
+        var userRoles = await UserManager.GetRolesAsync(user);
+        var role = allRoles.FirstOrDefault(r => r.Name == userRoles.FirstOrDefault());
+
+        editUserModel = new EditUserModel
+        {
+            Id = user.Id,
+            Email = user.Email,
+            RoleId = role?.Id,
+            Claims = (await UserManager.GetClaimsAsync(user)).ToList()
+        };
+        newClaimType = string.Empty;
+        newClaimValue = string.Empty;
+        showModal = true;
+    }
+
+    private void CloseModal()
+    {
+        showModal = false;
+    }
+
+    // ---- Lógica de Guardado (CRUD) ----
+    private async Task HandleSaveUser()
+    {
+        if (isNewUser)
+        {
+            // Crear usuario
+            var newUser = new ApplicationUser { UserName = editUserModel.Email, Email = editUserModel.Email, EmailConfirmed = true };
+            var result = await UserManager.CreateAsync(newUser, editUserModel.Password);
+            if (result.Succeeded)
+            {
+                await AssignRoleAndClaims(newUser);
+            }
+            // Aquí deberías manejar los errores de `result.Errors`
+        }
+        else
+        {
+            // Editar usuario
+            var user = await UserManager.FindByIdAsync(editUserModel.Id);
+            if (user != null)
+            {
+                await AssignRoleAndClaims(user);
+            }
+        }
+
+        CloseModal();
+        await LoadUsers(); // Recargar la lista de usuarios
+        StateHasChanged(); // Forzar re-renderizado
+    }
+
+    private async Task AssignRoleAndClaims(ApplicationUser user)
+    {
+        // Gestionar Rol
+        var currentRoles = await UserManager.GetRolesAsync(user);
+        await UserManager.RemoveFromRolesAsync(user, currentRoles); // Quitar roles viejos
+        if (!string.IsNullOrEmpty(editUserModel.RoleId))
+        {
+            var newRole = await RoleManager.FindByIdAsync(editUserModel.RoleId);
+            if (newRole != null)
+            {
+                await UserManager.AddToRoleAsync(user, newRole.Name); // Añadir rol nuevo
+            }
+        }
+
+        // Gestionar Claims
+        var currentClaims = await UserManager.GetClaimsAsync(user);
+        var claimsToRemove = currentClaims.Where(c => !editUserModel.Claims.Any(ec => ec.Type == c.Type && ec.Value == c.Value)).ToList();
+        var claimsToAdd = editUserModel.Claims.Where(ec => !currentClaims.Any(c => c.Type == ec.Type && c.Value == ec.Value)).ToList();
+
+        if (claimsToRemove.Any()) await UserManager.RemoveClaimsAsync(user, claimsToRemove);
+        if (claimsToAdd.Any()) await UserManager.AddClaimsAsync(user, claimsToAdd);
+    }
+
+    private void AddClaim()
+    {
+        if (!string.IsNullOrWhiteSpace(newClaimType) && !editUserModel.Claims.Any(c => c.Type == newClaimType))
+        {
+            editUserModel.Claims.Add(new Claim(newClaimType, newClaimValue ?? "true"));
+            newClaimType = string.Empty;
+            newClaimValue = string.Empty;
+        }
+    }
+
+    private void RemoveClaim(Claim claim)
+    {
+        editUserModel.Claims.Remove(claim);
+    }
+}
