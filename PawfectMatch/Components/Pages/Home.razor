@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using PawfectMatch.Constants
 
 @inject NavigationManager NavigationManager
 
@@ -6,10 +7,10 @@
 
 <PageTitle>Furry-Pets | Adop-Veterinaria</PageTitle>
 
-<!--Div card que es  un boton que manda a la pagina de adopciones-->
+
 <div class="home-container">
 
-    <AuthorizeView Policy="CanEditPets">
+    <AuthorizeView Policy="@Permissions.Pets.Edit">
         <Authorized>
             Editar Mascota Activo
 
@@ -28,14 +29,22 @@
         </div>
     </div>
 
-    <!--Div card que es un boton que manda a la pagina de veterinaria-->
-
     <div class="card text-center home-card" @onclick="gotoVeterinaria">
         <div class="card-body">
             <i class="fas fa-stethoscope fa-2x mb-2 icon-style"></i>
             <h5 class="card-title">Veterinaria</h5>
             <p class="card-text">Consulta a nuestros veterinarios expertos.</p>
             <button class="btn btn-primary">Ver Veterinaria</button>
+        </div>
+    </div>
+
+
+    <div class="card text-center home-card" @onclick="gotoUserManagement">
+        <div class="card-body">
+            <i class="fas fa-stethoscope fa-2x mb-2 icon-style"></i>
+            <h5 class="card-title">UserManagement</h5>
+            <p class="card-text">Consultar Usuarios, Roles y Permisos</p>
+            <button class="btn btn-primary">Ver Usuarios</button>
         </div>
     </div>
 </div>
@@ -49,5 +58,10 @@
     void gotoAdopciones()
     {
         NavigationManager.NavigateTo("/catalogo");
+    }
+
+    void gotoUserManagement()
+    {
+        NavigationManager.NavigateTo("/user-management");
     }
 }

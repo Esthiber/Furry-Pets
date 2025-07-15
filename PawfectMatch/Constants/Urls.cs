@@ -1,5 +1,4 @@
-﻿
-namespace PawfectMatch
+﻿namespace PawfectMatch.Constants
 {
     public static class Urls
     {
@@ -52,9 +51,5 @@ namespace PawfectMatch
             public const string Detalle = "/sugerencias/detalle/";
         }
     
-        public static class Advanced
-        {
-            public const string Presentacion = "/";
-        }
     }
 }

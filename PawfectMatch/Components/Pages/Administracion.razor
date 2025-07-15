@@ -1,4 +1,5 @@
 ﻿@page "/admin"
+@using PawfectMatch.Constants
 @attribute [Authorize(Roles = "Admin")]
 @inject NavigationManager NavigationManager
 @inject ProductosService ProductosService
@@ -53,13 +54,15 @@
                 <div class="stat-label">Sugerencias</div>
             </div>
         </div>
-        <div class="stat-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Advanced.Presentacion))">
+
+        <div class="stat-card" @onclick="@(() =>{})">
             <div class="stat-icon"><i class="bi bi-display"></i></div>
             <div class="stat-info">
                 <div class="stat-value">@presentacionesCount</div>
                 <div class="stat-label">Presentaciones</div>
             </div>
         </div>
+
     </div>
 
     <div class="dashboard-charts">
@@ -112,7 +115,8 @@
                     </div>
                     <div class="card-action"><i class="bi bi-chevron-right"></i></div>
                 </div>
-                <div class="admin-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Advanced.Presentacion))">
+
+                <div class="admin-card" @onclick="@(() => {})">
                     <div class="card-icon"><i class="bi bi-display"></i></div>
                     <div class="card-info">
                         <h5>Presentaciones</h5>
@@ -120,6 +124,7 @@
                     </div>
                     <div class="card-action"><i class="bi bi-chevron-right"></i></div>
                 </div>
+
             </div>
         </div>
         <div class="admin-section">

@@ -1,0 +1,23 @@
+﻿/* Estilo para cada switch de permiso */
+.permission-switch {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding-left: 0; /* Anula el padding por defecto de Bootstrap */
+}
+
+    .permission-switch .form-check-input {
+        margin-left: 0;
+        margin-right: 0.75rem; /* Espacio entre el switch y la etiqueta */
+    }
+
+    .permission-switch .form-check-label {
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+
+/* Mejora la apariencia de las tarjetas de permisos */
+.card-header {
+    background-color: rgba(0, 0, 0, 0.03);
+    padding: 0.5rem 1rem;
+}

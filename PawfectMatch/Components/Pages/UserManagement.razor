@@ -1,16 +1,16 @@
 ﻿@page "/user-management"
 @attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
 
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
 @using System.Security.Claims
 @using System.ComponentModel.DataAnnotations
 @using PawfectMatch.Data
+@using PawfectMatch.Constants
 
 @inject UserManager<ApplicationUser> UserManager
 @inject RoleManager<IdentityRole> RoleManager
-@inject NavigationManager NavigationManager
-
-@rendermode InteractiveServer
 
 <h3>Gestión de Usuarios</h3>
 
@@ -24,7 +24,7 @@ else
         <i class="oi oi-plus"></i> Crear Nuevo Usuario
     </button>
 
-    <table class="table table-striped">
+    <table class="table table-striped table-hover">
         <thead>
             <tr>
                 <th>Email</th>
@@ -38,7 +38,7 @@ else
                 <tr>
                     <td>@user.Email</td>
                     <td>
-                        <span class="badge bg-primary">@user.Role</span>
+                        <span class="badge bg-primary fs-6">@user.Role</span>
                     </td>
                     <td>
                         <button class="btn btn-primary btn-sm" @onclick="() => StartEditUser(user)">
@@ -55,7 +55,8 @@ else
 @if (showModal)
 {
     <div class="modal fade show" tabindex="-1" style="display: block;" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
+            @* --- CAMBIO: Modal más grande para los permisos --- *@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">@(isNewUser ? "Crear Nuevo Usuario" : $"Editar Usuario: {editUserModel.Email}")</h5>
@@ -64,11 +65,35 @@ else
                 <div class="modal-body">
                     <EditForm Model="@editUserModel" OnValidSubmit="HandleSaveUser">
                         <DataAnnotationsValidator />
-                        <ValidationSummary />
 
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <InputText id="email" class="form-control" @bind-Value="editUserModel.Email" disabled="@(!isNewUser)" />
+                        @if (formErrors.Any())
+                        {
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach (var error in formErrors)
+                                    {
+                                        <li>@error</li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <InputText id="email" class="form-control" @bind-Value="editUserModel.Email" disabled="@(!isNewUser)" />
+                                <ValidationMessage For="@(() => editUserModel.Email)" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="role" class="form-label">Rol</label>
+                                <InputSelect id="role" class="form-select" @bind-Value="editUserModel.RoleId">
+                                    <option value="">-- Sin Rol --</option>
+                                    @foreach (var role in allRoles)
+                                    {
+                                        <option value="@role.Id">@role.Name</option>
+                                    }
+                                </InputSelect>
+                            </div>
                         </div>
 
                         @if (isNewUser)
@@ -76,43 +101,39 @@ else
                             <div class="mb-3">
                                 <label for="password" class="form-label">Contraseña</label>
                                 <InputText id="password" type="password" class="form-control" @bind-Value="editUserModel.Password" />
+                                <ValidationMessage For="@(() => editUserModel.Password)" />
                             </div>
                         }
 
-                        <div class="mb-3">
-                            <label for="role" class="form-label">Rol</label>
-                            <InputSelect id="role" class="form-select" @bind-Value="editUserModel.RoleId">
-                                <option value="">-- Sin Rol --</option>
-                                @foreach (var role in allRoles)
-                                {
-                                    <option value="@role.Id">@role.Name</option>
-                                }
-                            </InputSelect>
-                        </div>
-
                         <hr />
-                        <h5>Policies / Claims Especiales</h5>
+                        <h5>Gestión de Permisos (Claims)</h5>
 
-                        @if (editUserModel.Claims.Any())
-                        {
-                            <ul class="list-group mb-3">
-                                @foreach (var claim in editUserModel.Claims)
-                                {
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <code>@claim.Type = @claim.Value</code>
-                                        <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveClaim(claim)">Quitar</button>
-                                    </li>
-                                }
-                            </ul>
-                        }
-
-                        <div class="input-group mb-3">
-                            <InputText @bind-Value="newClaimType" class="form-control" placeholder="Tipo de Claim (ej. CanEditPosts)" />
-                            <InputText @bind-Value="newClaimValue" class="form-control" placeholder="Valor (ej. true)" />
-                            <button type="button" class="btn btn-outline-secondary" @onclick="AddClaim">Añadir Claim</button>
+                        @* --- CAMBIO: Interfaz de permisos interactiva --- *@
+                        <div class="row">
+                            @foreach (var moduleGroup in permissionsModel.GroupBy(p => p.Module))
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <strong>@moduleGroup.Key</strong>
+                                        </div>
+                                        <div class="card-body">
+                                            @foreach (var permission in moduleGroup)
+                                            {
+                                                <div class="form-check form-switch permission-switch">
+                                                    <InputCheckbox id="@permission.Permission" class="form-check-input" @bind-Value="permission.IsEnabled" />
+                                                    <label class="form-check-label" for="@permission.Permission">
+                                                        @permission.DisplayName
+                                                    </label>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         </div>
 
-                        <div class="modal-footer">
+                        <div class="modal-footer mt-4">
                             <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancelar</button>
                             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                         </div>
@@ -123,8 +144,6 @@ else
     </div>
     <div class="modal-backdrop fade show"></div>
 }
-
-
 
 @code {
     // ---- Modelos de Vista ----
@@ -138,38 +157,44 @@ else
     private class EditUserModel
     {
         public string Id { get; set; }
-        [Required]
-        [EmailAddress]
+        [Required, EmailAddress]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "La contraseña es requerida.")]
-        [StringLength(100, ErrorMessage = "La {0} debe tener al menos {2} y como máximo {1} caracteres.", MinimumLength = 6)]
-        public string Password { get; set; } = "123456A";
+        // La contraseña solo es relevante al crear, la validación se hará manualmente
+        public string Password { get; set; }
 
-        public string RoleId { get; set; } // El ID del rol seleccionado
-        public List<Claim> Claims { get; set; } = new List<Claim>();
+        public string RoleId { get; set; }
+    }
+
+    // --- CAMBIO: Nuevo modelo para la UI de permisos ---
+    private class PermissionViewModel
+    {
+        public string Module { get; set; }
+        public string Permission { get; set; } // El valor real del claim, ej: "Permissions.Pets.Create"
+        public string DisplayName { get; set; } // El nombre a mostrar, ej: "Create"
+        public bool IsEnabled { get; set; }
     }
 
     // ---- Propiedades del Componente ----
-    private List<UserViewModel>? userList { get; set; }
-    private List<IdentityRole>? allRoles { get; set; }
-    private EditUserModel editUserModel = new EditUserModel();
-    private string newClaimType { get; set; } = string.Empty;
-    private string newClaimValue { get; set; } = string.Empty;
-
+    private List<UserViewModel>? userList;
+    private List<IdentityRole>? allRoles;
+    private EditUserModel editUserModel = new();
+    private List<PermissionViewModel> permissionsModel = new();
+    private List<string> formErrors = new();
     private bool showModal = false;
     private bool isNewUser = false;
 
     // ---- Ciclo de Vida ----
     protected override async Task OnInitializedAsync()
     {
-        allRoles = RoleManager.Roles.ToList();
+        allRoles = await RoleManager.Roles.ToListAsync();
         await LoadUsers();
     }
 
     // ---- Lógica de Carga y UI ----
     private async Task LoadUsers()
     {
+
         userList = new List<UserViewModel>();
         var users = UserManager.Users.ToList();
         foreach (var user in users)
@@ -184,12 +209,33 @@ else
         }
     }
 
+    // --- CAMBIO: Lógica para inicializar los checkboxes de permisos ---
+    private void InitializePermissionsModel(IList<Claim> existingClaims)
+    {
+        permissionsModel.Clear();
+        var allPermissions = Permissions.GetAllPermissions();
+
+        foreach (var permissionValue in allPermissions)
+        {
+            var parts = permissionValue.Split('.');
+            if (parts.Length != 3) continue; // Asegura que el formato es "Permissions.Modulo.Accion"
+
+            permissionsModel.Add(new PermissionViewModel
+            {
+                Module = parts[1], // Ej: "Pets"
+                DisplayName = parts[2], // Ej: "Create"
+                Permission = permissionValue,
+                IsEnabled = existingClaims?.Any(c => c.Type == permissionValue && c.Value == "true") ?? false
+            });
+        }
+    }
+
     private void StartCreateUser()
     {
         isNewUser = true;
         editUserModel = new EditUserModel();
-        newClaimType = string.Empty;
-        newClaimValue = string.Empty;
+        formErrors.Clear();
+        InitializePermissionsModel(null); // Inicializa todos los permisos como deshabilitados
         showModal = true;
     }
 
@@ -201,88 +247,86 @@ else
 
         var userRoles = await UserManager.GetRolesAsync(user);
         var role = allRoles.FirstOrDefault(r => r.Name == userRoles.FirstOrDefault());
+        var userClaims = await UserManager.GetClaimsAsync(user);
 
         editUserModel = new EditUserModel
         {
             Id = user.Id,
             Email = user.Email,
-            RoleId = role?.Id,
-            Claims = (await UserManager.GetClaimsAsync(user)).ToList()
+            RoleId = role?.Id
         };
-        newClaimType = string.Empty;
-        newClaimValue = string.Empty;
+        formErrors.Clear();
+        InitializePermissionsModel(userClaims); // Inicializa los permisos según los del usuario
         showModal = true;
     }
 
-    private void CloseModal()
-    {
-        showModal = false;
-    }
+    private void CloseModal() => showModal = false;
 
     // ---- Lógica de Guardado (CRUD) ----
     private async Task HandleSaveUser()
     {
+        formErrors.Clear();
+        ApplicationUser user;
+
         if (isNewUser)
         {
-            // Crear usuario
-            var newUser = new ApplicationUser { UserName = editUserModel.Email, Email = editUserModel.Email, EmailConfirmed = true };
-            var result = await UserManager.CreateAsync(newUser, editUserModel.Password);
-            if (result.Succeeded)
+            if (string.IsNullOrWhiteSpace(editUserModel.Password) || editUserModel.Password.Length < 6)
             {
-                await AssignRoleAndClaims(newUser);
+                formErrors.Add("La contraseña debe tener al menos 6 caracteres.");
+                return;
             }
-            // Aquí deberías manejar los errores de `result.Errors`
+            user = new ApplicationUser { UserName = editUserModel.Email, Email = editUserModel.Email, EmailConfirmed = true };
+            var result = await UserManager.CreateAsync(user, editUserModel.Password);
+            if (!result.Succeeded)
+            {
+                formErrors.AddRange(result.Errors.Select(e => e.Description));
+                return;
+            }
         }
         else
         {
-            // Editar usuario
-            var user = await UserManager.FindByIdAsync(editUserModel.Id);
-            if (user != null)
+            user = await UserManager.FindByIdAsync(editUserModel.Id);
+            if (user == null)
             {
-                await AssignRoleAndClaims(user);
+                formErrors.Add("Usuario no encontrado.");
+                return;
             }
         }
 
+        await AssignRoleAndClaims(user);
         CloseModal();
-        await LoadUsers(); // Recargar la lista de usuarios
-        StateHasChanged(); // Forzar re-renderizado
+        await LoadUsers();
     }
 
+    // --- CAMBIO: Lógica de guardado de permisos actualizada ---
     private async Task AssignRoleAndClaims(ApplicationUser user)
     {
-        // Gestionar Rol
+        // Gestionar Rol (sin cambios)
         var currentRoles = await UserManager.GetRolesAsync(user);
-        await UserManager.RemoveFromRolesAsync(user, currentRoles); // Quitar roles viejos
+        await UserManager.RemoveFromRolesAsync(user, currentRoles);
         if (!string.IsNullOrEmpty(editUserModel.RoleId))
         {
             var newRole = await RoleManager.FindByIdAsync(editUserModel.RoleId);
-            if (newRole != null)
+            if (newRole != null) await UserManager.AddToRoleAsync(user, newRole.Name);
+        }
+
+        // Gestionar Claims (lógica mejorada)
+        var existingClaims = await UserManager.GetClaimsAsync(user);
+
+        foreach (var permission in permissionsModel)
+        {
+            var userHasClaim = existingClaims.Any(c => c.Type == permission.Permission);
+
+            if (permission.IsEnabled && !userHasClaim)
             {
-                await UserManager.AddToRoleAsync(user, newRole.Name); // Añadir rol nuevo
+                // El checkbox está marcado, pero el usuario no tiene el claim -> Añadirlo
+                await UserManager.AddClaimAsync(user, new Claim(permission.Permission, "true"));
+            }
+            else if (!permission.IsEnabled && userHasClaim)
+            {
+                // El checkbox no está marcado, pero el usuario sí tiene el claim -> Quitarlo
+                await UserManager.RemoveClaimAsync(user, existingClaims.First(c => c.Type == permission.Permission));
             }
         }
-
-        // Gestionar Claims
-        var currentClaims = await UserManager.GetClaimsAsync(user);
-        var claimsToRemove = currentClaims.Where(c => !editUserModel.Claims.Any(ec => ec.Type == c.Type && ec.Value == c.Value)).ToList();
-        var claimsToAdd = editUserModel.Claims.Where(ec => !currentClaims.Any(c => c.Type == ec.Type && c.Value == ec.Value)).ToList();
-
-        if (claimsToRemove.Any()) await UserManager.RemoveClaimsAsync(user, claimsToRemove);
-        if (claimsToAdd.Any()) await UserManager.AddClaimsAsync(user, claimsToAdd);
-    }
-
-    private void AddClaim()
-    {
-        if (!string.IsNullOrWhiteSpace(newClaimType) && !editUserModel.Claims.Any(c => c.Type == newClaimType))
-        {
-            editUserModel.Claims.Add(new Claim(newClaimType, newClaimValue ?? "true"));
-            newClaimType = string.Empty;
-            newClaimValue = string.Empty;
-        }
-    }
-
-    private void RemoveClaim(Claim claim)
-    {
-        editUserModel.Claims.Remove(claim);
     }
 }

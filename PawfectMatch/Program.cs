@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PawfectMatch.Components;
 using PawfectMatch.Components.Account;
+using PawfectMatch.Constants;
 using PawfectMatch.Data;
 using PawfectMatch.Models;
 using PawfectMatch.Services;
@@ -76,7 +77,6 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
-    //.AddUserManager<UserManager>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -85,15 +85,14 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 #endregion
 
+// --- CONFIGURACION DE AUTORIZACION ACTUALIZADA ---
 builder.Services.AddAuthorization(options =>
 {
-    // Política basada en un Claim
-    // El usuario debe tener el claim "CanEditPosts" con el valor "true"
-    options.AddPolicy("CanEditPets", policy =>
-        policy.RequireClaim("CanEditPets", "true"));
-
-    // También puedes crear políticas basadas en roles, aunque es más común usar el parámetro Roles directamente
-    // options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+    foreach (var permission in Permissions.GetAllPermissions())
+    {
+        options.AddPolicy(permission, policy =>
+            policy.RequireClaim(permission, "true"));
+    }
 });
 
 var app = builder.Build();

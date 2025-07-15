@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static PawfectMatch.Urls;
+using static PawfectMatch.Constants.Urls;
 
 namespace PawfectMatch.Models.Adopciones
 {
