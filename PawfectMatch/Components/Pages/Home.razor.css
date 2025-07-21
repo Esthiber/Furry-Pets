@@ -5,14 +5,86 @@
     padding: 2rem;
 }
 
+.home-main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 1rem 2rem 1rem;
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+.empresa-info-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2.5rem;
+}
+
+.empresa-logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 1.2rem;
+    background: #fff;
+    border: 1px solid #eee;
+}
+
+.empresa-datos {
+    text-align: center;
+}
+
+.empresa-nombre {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #0052cc;
+}
+
+.empresa-direccion,
+.empresa-telefono {
+    font-size: 1.1rem;
+    color: #444;
+    margin-bottom: 0.2rem;
+}
+
+.home-options-section {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.home-card-grid {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
 .home-card {
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border-radius: 1rem;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    min-width: 260px;
+    max-width: 320px;
+    flex: 1 1 260px;
+    background: #fff;
 }
 
-    .home-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-    }
+.home-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.card-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.icon-style {
+    color: #0052cc;
+}

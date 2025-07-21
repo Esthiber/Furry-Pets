@@ -1,44 +1,64 @@
 ﻿@page "/"
 @using PawfectMatch.Components.Pages
 @using PawfectMatch.Constants
-
 @inject NavigationManager NavigationManager
+@inject ConfiguracionEmpresaService ConfiguracionEmpresaService
 
 @rendermode InteractiveServer
 
 <PageTitle>Furry-Pets | Adop-Veterinaria</PageTitle>
 
-<div class="home-container">
-    <div class="card text-center home-card" @onclick="gotoAdopciones">
-        <div class="card-body">
-            <i class="fas fa-dog fa-2x mb-2 icon-style"></i>
-            <h5 class="card-title">Adopta una mascota</h5>
-            <p class="card-text">Descubre nuestras adorables mascotas en adopción.</p>
-            <button class="btn btn-primary">Ver Adopciones</button>
+<div class="home-main-container">
+    <!-- Logo y datos de la empresa -->
+    <div class="empresa-info-block">
+        <img src="img/logo/logo0.png" alt="Logo Empresa" class="empresa-logo" />
+        <div class="empresa-datos">
+            <h2 class="empresa-nombre">@empresa.Nombre</h2>
+            <div class="empresa-direccion">@empresa.Direccion</div>
+            <div class="empresa-telefono">📞 @empresa.Telefono</div>
         </div>
     </div>
 
-    <div class="card text-center home-card" @onclick="gotoVeterinaria">
-        <div class="card-body">
-            <i class="fas fa-stethoscope fa-2x mb-2 icon-style"></i>
-            <h5 class="card-title">POS</h5>
-            <p class="card-text">Venta de Productos de Calidad</p>
-            <button class="btn btn-primary">Ver POS</button>
-        </div>
-    </div>
-
-
-    <div class="card text-center home-card" @onclick="gotoUserManagement">
-        <div class="card-body">
-            <i class="fas fa-stethoscope fa-2x mb-2 icon-style"></i>
-            <h5 class="card-title">UserManagement</h5>
-            <p class="card-text">Consultar Usuarios, Roles y Permisos</p>
-            <button class="btn btn-primary">Ver Usuarios</button>
+    <!-- Opciones principales -->
+    <div class="home-options-section">
+        <div class="home-card-grid">
+            <div class="card text-center home-card" @onclick="gotoVeterinaria">
+                <div class="card-body">
+                    <i class="fas fa-stethoscope fa-2x mb-2 icon-style"></i>
+                    <h5 class="card-title">POS</h5>
+                    <p class="card-text">Venta de Productos de Calidad</p>
+                    <button class="btn btn-primary">Ver POS</button>
+                </div>
+            </div>
+            <div class="card text-center home-card" @onclick="gotoAdopciones">
+                <div class="card-body">
+                    <i class="fas fa-dog fa-2x mb-2 icon-style"></i>
+                    <h5 class="card-title">Mascotas para adopción</h5>
+                    <p class="card-text">Descubre nuestras adorables mascotas en adopción.</p>
+                    <button class="btn btn-primary">Ver Adopciones</button>
+                </div>
+            </div>
+            <div class="card text-center home-card" @onclick="gotoUserManagement">
+                <div class="card-body">
+                    <i class="fas fa-users fa-2x mb-2 icon-style"></i>
+                    <h5 class="card-title">Usuarios</h5>
+                    <p class="card-text">Consultar Usuarios, Roles y Permisos</p>
+                    <button class="btn btn-primary">Ver Usuarios</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 @code {
+    private PawfectMatch.Models.ConfiguracionEmpresa empresa = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var lista = await ConfiguracionEmpresaService.ListAsync(e => true);
+        empresa = lista.FirstOrDefault() ?? new PawfectMatch.Models.ConfiguracionEmpresa();
+    }
+
     void gotoVeterinaria()
     {
         NavigationManager.NavigateTo("/pos");

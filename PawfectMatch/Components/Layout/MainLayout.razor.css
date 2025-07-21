@@ -9,7 +9,7 @@
 /* Columna principal para el contenido de la página (@Body ) */
 .main-content {
     flex: 1; /* Hace que esta columna ocupe todo el espacio sobrante */
-    padding: 2rem; /* Espacio interno para que el contenido no pegue a los bordes */
+    /*padding: 2rem;*/ /* Espacio interno para que el contenido no pegue a los bordes */
     overflow-y: auto; /* Si el contenido es muy largo, solo esta columna tendrá scroll */
 }
 
