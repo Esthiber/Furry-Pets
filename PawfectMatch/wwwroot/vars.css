@@ -1,6 +1,5 @@
 /* 
  * Archivo reorganizado: solo variables y custom properties globales.
- * El resto de estilos deben ir en archivos separados por feature o componente.
  */
 :root {
   /* Colors */
@@ -9,8 +8,18 @@
   --thirdcolor: #5e3023;
   --fourthcolor: #895737;
   --fifthcolor: #dab49d;
-
+  /* Admin Dashboard */
+  --primary-color: #0052cc;
+  --primary-hover: #0041a3;
+  --text-color: #343a40;
+  --text-muted: #6c757d;
+  --bg-color: #f8f9fa;
+  --card-bg: #ffffff;
+  --border-color: #dee2e6;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --border-radius: 8px;
   /* Fonts */
+  --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --titulo-1-font-family: Jaro-Regular, sans-serif;
   --titulo-1-font-size: 48px;
   --titulo-1-line-height: normal;
