@@ -1,0 +1,29 @@
+.empresa-info-container {
+    max-width: 500px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.empresa-info-container h3 {
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+.form-group {
+    margin-bottom: 1.2rem;
+}
+.logo-preview {
+    margin-top: 1rem;
+    text-align: center;
+}
+.logo-preview img {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+.btn-primary {
+    min-width: 140px;
+}
+.alert-info {
+    margin-top: 1rem;
+}

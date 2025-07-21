@@ -1,0 +1,35 @@
+@page "/settings"
+@using PawfectMatch.Components.Empresa
+
+@rendermode InteractiveServer
+
+<h2 class="settings-title">Configuraciones del Sistema</h2>
+
+<button class="btn btn-primary" @onclick="AbrirModalEmpresa">
+    <i class="bi bi-pencil-square"></i> Editar información de la empresa
+</button>
+
+@if (mostrarModalEmpresa)
+{
+    <div class="modal-backdrop"></div>
+    <div class="modal settings-modal show" tabindex="-1" style="display:block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Información de la Empresa</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModalEmpresa"></button>
+                </div>
+                <div class="modal-body">
+                    <EditEmpresaInfo />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool mostrarModalEmpresa = false;
+
+    private void AbrirModalEmpresa() => mostrarModalEmpresa = true;
+    private void CerrarModalEmpresa() => mostrarModalEmpresa = false;
+}

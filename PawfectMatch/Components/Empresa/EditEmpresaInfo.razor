@@ -1,0 +1,90 @@
+@using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager NavigationManager
+@inject ConfiguracionEmpresaService ConfiguracionEmpresaService
+
+@rendermode InteractiveServer
+
+<div class="empresa-info-container">
+    <h3>Editar Información de la Empresa</h3>
+    <EditForm Model="@empresa" OnValidSubmit="GuardarEmpresa">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group">
+            <label for="nombre">Nombre de la Empresa</label>
+            <InputText id="nombre" class="form-control" @bind-Value="empresa.Nombre" />
+        </div>
+        <div class="form-group">
+            <label for="telefono">Teléfono</label>
+            <InputText id="telefono" class="form-control" @bind-Value="empresa.Telefono" />
+        </div>
+        <div class="form-group">
+            <label for="rnc">RNC</label>
+            <InputText id="rnc" class="form-control" @bind-Value="empresa.RNC" />
+        </div>
+        <div class="form-group">
+            <label for="direccion">Dirección</label>
+            <InputText id="direccion" class="form-control" @bind-Value="empresa.Direccion" />
+        </div>
+        <div class="form-group">
+            <label for="logo">Logo (PNG)</label>
+            <InputFile id="logo" OnChange="OnLogoChange" accept="image/png" />
+            <div class="logo-preview">
+                <img src="@previewUrl" alt="Logo Preview" style="max-width:150px;max-height:150px;" />
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    </EditForm>
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <div class="alert alert-info mt-2">@mensaje</div>
+    }
+</div>
+
+@code {
+    private PawfectMatch.Models.ConfiguracionEmpresa empresa = new();
+    private IBrowserFile? logoFile;
+    private string? previewUrl;
+    private string mensaje = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var lista = await ConfiguracionEmpresaService.ListAsync(e => true);
+        empresa = lista.FirstOrDefault() ?? new PawfectMatch.Models.ConfiguracionEmpresa();
+        // Mostrar el logo actual
+        previewUrl = NavigationManager.BaseUri + "img/logo/logo0.png";
+    }
+
+    private async Task OnLogoChange(InputFileChangeEventArgs e)
+    {
+        logoFile = e.File;
+        if (logoFile != null)
+        {
+            var buffer = new byte[logoFile.Size];
+            await logoFile.OpenReadStream().ReadAsync(buffer);
+            previewUrl = $"data:{logoFile.ContentType};base64,{Convert.ToBase64String(buffer)}";
+        }
+    }
+
+    private async Task GuardarEmpresa()
+    {
+        // Guardar logo si se seleccionó
+        if (logoFile != null)
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "logo", "logo0.png");
+            using var stream = new FileStream(path, FileMode.Create);
+            await logoFile.OpenReadStream().CopyToAsync(stream);
+        }
+        // Actualizar la información de la empresa
+        var exito = await ConfiguracionEmpresaService.UpdateAsync(empresa);
+        mensaje = exito ? "Información de la empresa actualizada correctamente." : "No se pudo actualizar la información.";
+        // Si se guardó un nuevo logo, refrescar la previsualización
+        if (logoFile != null)
+        {
+            previewUrl = NavigationManager.BaseUri + "img/logo/logo0.png?" + Guid.NewGuid();
+        }
+
+        // Redirigir a la página de configuración
+        NavigationManager.NavigateTo("/", forceLoad: true);
+
+    }
+}
