@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PawfectMatch.Models;
 using PawfectMatch.Models.Adopciones;
-using PawfectMatch.Models.Adopciones._Presentacion;
 using PawfectMatch.Models.POS;
 using PawfectMatch.Models.Servicios;
 
@@ -63,8 +62,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<VetasTabs> VetasTabs { get; set; }
     public DbSet<ProductosInTabs> ProductosInTabs { get; set; }
 
-    // Sugerencias
-    public DbSet<Sugerencias> Sugerencias { get; set; }
     #endregion
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
