@@ -2,126 +2,234 @@
 @using PawfectMatch.Models.POS
 @inject ProductosService ProductosService
 @inject NavigationManager NavigationManager
+@inject CategoriasProductosService CategoriasProductosService
+@inject ProveedoresService ProveedoresService
 @rendermode InteractiveServer
 
-<h3>Productos</h3>
+<div class="productos-admin-container">
+    <div class="header-section">
+        <div>
+            <h2>Productos</h2>
+            <p class="subtitle">Panel administrativo de productos en inventario</p>
+        </div>
+        <div class="summary-cards">
+            <div class="summary-card total">
+                <span class="summary-label">Total</span>
+                <span class="summary-value">@productos.Count</span>
+            </div>
+            @foreach (var cat in categorias)
+            {
+                <div class="summary-card">
+                    <span class="summary-label">@cat.Nombre</span>
+                    <span class="summary-value">@productos.Count(p => p.CategoriasProductosID == cat.CategoriasProductosID)</span>
+                </div>
+            }
+        </div>
+        <button class="btn btn-primary" @onclick="CrearProducto">
+            <i class="bi bi-plus-circle"></i> Nuevo Producto
+        </button>
+    </div>
 
-<!-- Buscador -->
-<div class="mb-3">
-    <input type="text" class="form-control" @bind="filtro" placeholder="Buscar por ID o Nombre..." @oninput="FiltrarProductos" />
-</div>
+    <div class="filters-section">
+        <div class="search-group">
+            <input type="text" class="form-control" placeholder="Buscar por ID o Nombre..." @bind="filtro" @bind:event="oninput" />
+            <button class="btn btn-outline-secondary" @onclick="LimpiarFiltro" title="Limpiar búsqueda">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        </div>
+        <select class="form-select" @bind="filtroCategoria">
+            <option value="">Categoría</option>
+            @foreach (var cat in categorias)
+            {
+                <option value="@cat.CategoriasProductosID">@cat.Nombre</option>
+            }
+        </select>
+        <select class="form-select" @bind="filtroProveedor">
+            <option value="">Proveedor</option>
+            @foreach (var prov in proveedores)
+            {
+                <option value="@prov.ProveedoresID">@prov.Nombre</option>
+            }
+        </select>
+        <select class="form-select" @bind="filtroStock">
+            <option value="">Stock</option>
+            <option value="0">Sin stock</option>
+            <option value="1-10">1-10</option>
+            <option value="10-50">10-50</option>
+            <option value="50+">50+</option>
+        </select>
+    </div>
 
-<!-- Botón de crear producto -->
-<div class="mb-3">
-    <button class="btn btn-primary" @onclick="CrearProducto">Crear Nuevo Producto</button>
-</div>
-
-<!-- Grid de tarjetas de productos -->
-<div class="row">
-    @if (productosFiltrados == null)
-    {
-        <p>Cargando productos...</p>
-    }
-    else if (productosFiltrados.Count == 0)
-    {
-        <p>No se encontraron productos.</p>
-    }
-    else
-    {
-        @foreach (var producto in productosFiltrados)
+    <div class="productos-grid">
+        @if (productosFiltrados == null)
         {
-            <div class="col-md-4 mb-3">
-                <div class="card" style="width: 18rem; cursor: pointer;" @onclick="() => AbrirModal(producto)">
-                    <img src="@(producto.ImagenUrl ?? "https://via.placeholder.com/150")" class="card-img-top" alt="@producto.Nombre" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">@producto.ProductosID | @producto.Nombre</h5>
-                        <p class="card-text">Precio: $@producto.Precio</p>
-                        <p class="card-text">Stock: @producto.Stock</p>
+            <div class="loading">Cargando productos...</div>
+        }
+        else if (!productosFiltrados.Any())
+        {
+            <div class="empty-state">
+                <i class="bi bi-emoji-frown"></i>
+                <p>No se encontraron productos con los filtros seleccionados.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var producto in productosFiltrados)
+            {
+                <div class="producto-card" @onclick="() => AbrirModal(producto)">
+                    <div class="producto-img">
+                        <img src="@(producto.ImagenUrl ?? "https://via.placeholder.com/150")" alt="@producto.Nombre" />
+                    </div>
+                    <div class="producto-info">
+                        <div class="producto-header">
+                            <span class="producto-id">#@producto.ProductosID</span>
+                            <span class="producto-stock">Stock: @producto.Stock</span>
+                        </div>
+                        <h4 class="producto-nombre">@producto.Nombre</h4>
+                        <div class="producto-categoria">
+                            <i class="bi bi-bookmark-heart"></i> @categorias.FirstOrDefault(c => c.CategoriasProductosID == producto.CategoriasProductosID)?.Nombre
+                        </div>
+                        <div class="producto-details">
+                            <span><i class="bi bi-currency-dollar"></i> @producto.Precio.ToString("N2")</span>
+                            <span><i class="bi bi-truck"></i> @proveedores.FirstOrDefault(p => p.ProveedoresID == producto.ProveedoresID)?.Nombre</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    @if (productoSeleccionado != null)
+    {
+        <div class="modal-backdrop"></div>
+        <div class="modal show" style="display: block;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Producto: @productoSeleccionado.Nombre</h5>
+                        <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <EditForm Model="@productoSeleccionado" OnValidSubmit="GuardarCambios">
+                            <DataAnnotationsValidator />
+                            <div class="form-row">
+                                <div>
+                                    <label>Nombre</label>
+                                    <InputText class="form-control" @bind-Value="productoSeleccionado.Nombre" />
+                                    <ValidationMessage For="@(() => productoSeleccionado.Nombre)" />
+                                </div>
+                                <div>
+                                    <label>Categoría</label>
+                                    <InputSelect class="form-control" @bind-Value="productoSeleccionado.CategoriasProductosID">
+                                        @foreach (var cat in categorias)
+                                        {
+                                            <option value="@cat.CategoriasProductosID">@cat.Nombre</option>
+                                        }
+                                    </InputSelect>
+                                </div>
+                                <div>
+                                    <label>Proveedor</label>
+                                    <InputSelect class="form-control" @bind-Value="productoSeleccionado.ProveedoresID">
+                                        @foreach (var prov in proveedores)
+                                        {
+                                            <option value="@prov.ProveedoresID">@prov.Nombre</option>
+                                        }
+                                    </InputSelect>
+                                </div>
+                                <div>
+                                    <label>Precio</label>
+                                    <InputNumber class="form-control" @bind-Value="productoSeleccionado.Precio" />
+                                    <ValidationMessage For="@(() => productoSeleccionado.Precio)" />
+                                </div>
+                                <div>
+                                    <label>Costo</label>
+                                    <InputNumber class="form-control" @bind-Value="productoSeleccionado.Costo" />
+                                    <ValidationMessage For="@(() => productoSeleccionado.Costo)" />
+                                </div>
+                                <div>
+                                    <label>Stock</label>
+                                    <InputNumber class="form-control" @bind-Value="productoSeleccionado.Stock" />
+                                    <ValidationMessage For="@(() => productoSeleccionado.Stock)" />
+                                </div>
+                                <div>
+                                    <label>URL de Imagen</label>
+                                    <InputText class="form-control" @bind-Value="productoSeleccionado.ImagenUrl" />
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <label>Descripción</label>
+                                <InputTextArea class="form-control" @bind-Value="productoSeleccionado.Descripcion" />
+                            </div>
+                            <div class="modal-actions">
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                            </div>
+                        </EditForm>
                     </div>
                 </div>
             </div>
-        }
+        </div>
     }
 </div>
-
-<!-- Modal para editar producto -->
-@if (productoSeleccionado != null)
-{
-    <div class="modal fade show" style="display: block;" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Producto: @productoSeleccionado.Nombre</h5>
-                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
-                </div>
-                <div class="modal-body">
-                    <EditForm Model="@productoSeleccionado" OnValidSubmit="GuardarCambios">
-                        <DataAnnotationsValidator />
-                        <div class="mb-3">
-                            <label class="form-label">Nombre</label>
-                            <InputText class="form-control" @bind-Value="productoSeleccionado.Nombre" />
-                            <ValidationMessage For="@(() => productoSeleccionado.Nombre)" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Descripción</label>
-                            <InputTextArea class="form-control" @bind-Value="productoSeleccionado.Descripcion" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Costo</label>
-                            <InputNumber class="form-control" @bind-Value="productoSeleccionado.Costo" />
-                            <ValidationMessage For="@(() => productoSeleccionado.Costo)" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Precio</label>
-                            <InputNumber class="form-control" @bind-Value="productoSeleccionado.Precio" />
-                            <ValidationMessage For="@(() => productoSeleccionado.Precio)" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Stock</label>
-                            <InputNumber class="form-control" @bind-Value="productoSeleccionado.Stock" />
-                            <ValidationMessage For="@(() => productoSeleccionado.Stock)" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">URL de Imagen</label>
-                            <InputText class="form-control" @bind-Value="productoSeleccionado.ImagenUrl" />
-                        </div>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                        <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
-                    </EditForm>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal-backdrop fade show"></div>
-}
 
 @code {
     private List<Productos> productos = new();
     private List<Productos> productosFiltrados = new();
     private Productos? productoSeleccionado = null;
-    private string filtro = string.Empty;
+    private List<CategoriasProductos> categorias = new();
+    private List<Proveedores> proveedores = new();
 
     protected override async Task OnInitializedAsync()
     {
-        // Cargar todos los productos que no estén eliminados
         productos = await ProductosService.ListAsync(p => !p.IsDeleted);
-        productosFiltrados = productos;
+        categorias = await CategoriasProductosService.ListAsync(c => !c.IsDeleted);
+        proveedores = await ProveedoresService.ListAsync(p => !p.IsDeleted);
+        FiltrarProductos();
     }
 
-    private void FiltrarProductos(ChangeEventArgs e)
+    private void FiltrarProductos()
     {
-        filtro = e.Value?.ToString() ?? string.Empty;
-        if (string.IsNullOrWhiteSpace(filtro))
+        IEnumerable<Productos> query = productos;
+
+        // Filtro por texto
+        if (!string.IsNullOrWhiteSpace(filtro))
         {
-            productosFiltrados = productos;
+            query = query.Where(p =>
+                p.ProductosID.ToString().Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
+                p.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase));
         }
-        else
+
+        // Filtro por categoría
+        if (!string.IsNullOrWhiteSpace(filtroCategoria) && int.TryParse(filtroCategoria, out var catId))
+            query = query.Where(p => p.CategoriasProductosID == catId);
+
+        // Filtro por proveedor
+        if (!string.IsNullOrWhiteSpace(filtroProveedor) && int.TryParse(filtroProveedor, out var provId))
+            query = query.Where(p => p.ProveedoresID == provId);
+
+        // Filtro por stock
+        if (!string.IsNullOrWhiteSpace(filtroStock))
         {
-            productosFiltrados = productos
-                .Where(p => p.ProductosID.ToString().Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
-                           p.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            query = filtroStock switch
+            {
+                "0" => query.Where(p => p.Stock == 0),
+                "1-10" => query.Where(p => p.Stock >= 1 && p.Stock <= 10),
+                "10-50" => query.Where(p => p.Stock > 10 && p.Stock <= 50),
+                "50+" => query.Where(p => p.Stock > 50),
+                _ => query
+            };
         }
+
+        productosFiltrados = query.OrderByDescending(p => p.ProductosID).ToList();
+    }
+
+    private void LimpiarFiltro()
+    {
+        filtro = string.Empty;
+        filtroCategoria = string.Empty;
+        filtroProveedor = string.Empty;
+        filtroStock = string.Empty;
+        FiltrarProductos();
     }
 
     private void CrearProducto()
@@ -158,19 +266,41 @@
             var result = await ProductosService.SaveAsync(productoSeleccionado);
             if (result)
             {
-                // Actualizar la lista de productos
                 var index = productos.FindIndex(p => p.ProductosID == productoSeleccionado.ProductosID);
                 if (index >= 0)
                 {
                     productos[index] = productoSeleccionado;
                 }
-                productosFiltrados = productos
-                    .Where(p => string.IsNullOrWhiteSpace(filtro) ||
-                               p.ProductosID.ToString().Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
-                               p.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                FiltrarProductos();
                 CerrarModal();
             }
         }
+    }
+
+    // Reactividad para filtros
+    private string _filtro;
+    private string _filtroCategoria;
+    private string _filtroProveedor;
+    private string _filtroStock;
+
+    private string filtro
+    {
+        get => _filtro;
+        set { _filtro = value; FiltrarProductos(); }
+    }
+    private string filtroCategoria
+    {
+        get => _filtroCategoria;
+        set { _filtroCategoria = value; FiltrarProductos(); }
+    }
+    private string filtroProveedor
+    {
+        get => _filtroProveedor;
+        set { _filtroProveedor = value; FiltrarProductos(); }
+    }
+    private string filtroStock
+    {
+        get => _filtroStock;
+        set { _filtroStock = value; FiltrarProductos(); }
     }
 }
