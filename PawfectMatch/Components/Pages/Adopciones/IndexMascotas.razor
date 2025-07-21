@@ -23,7 +23,7 @@
                 </div>
             }
         </div>
-        <button class="btn btn-primary" @onclick="CrearMascota">
+        <button class="btn btn-primary" @onclick="AbrirModalNuevaMascota">
             <i class="bi bi-plus-circle"></i> Nueva Mascota
         </button>
     </div>
@@ -113,7 +113,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Editar Mascota: @mascotaSeleccionada.Nombre</h5>
+                        <h5 class="modal-title">@(mascotaSeleccionada.MascotasAdopcionID == 0 ? "Crear Nueva Mascota" : $"Editar Mascota: {mascotaSeleccionada.Nombre}")</h5>
                         <button type="button" class="btn-close" @onclick="CerrarModal"></button>
                     </div>
                     <div class="modal-body">
@@ -164,7 +164,7 @@
                                 <InputTextArea class="form-control" @bind-Value="mascotaSeleccionada.Descripcion" />
                             </div>
                             <div class="modal-actions">
-                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                <button type="submit" class="btn btn-primary">@(mascotaSeleccionada.MascotasAdopcionID == 0 ? "Crear Mascota" : "Guardar Cambios")</button>
                                 <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
                             </div>
                         </EditForm>
@@ -178,13 +178,7 @@
 @code {
     private List<MascotasAdopcion> mascotas { get; set; } = new();
     private List<MascotasAdopcion> mascotasFiltradas { get; set; } = new();
-    private MascotasAdopcion? mascotaSeleccionada { get; set; } 
-    // private string filtro = string.Empty;
-    // private string filtroSexo = string.Empty;
-    // private string filtroEstado = string.Empty;
-    // private string filtroEdad = string.Empty;
-    // private string categoriaSeleccionada = "Todas";
-
+    private MascotasAdopcion? mascotaSeleccionada { get; set; }
     private List<Razas> razas = new();
     private List<Estados> estados = new();
     private List<Especies> categorias = new();
@@ -255,9 +249,25 @@
         FiltrarMascotas();
     }
 
-    private void CrearMascota()
+    private void AbrirModalNuevaMascota()
     {
-        NavigationManager.NavigateTo("/mascotas/crear");
+        mascotaSeleccionada = new MascotasAdopcion
+        {
+            MascotasAdopcionID = 0,
+            Nombre = string.Empty,
+            Descripcion = string.Empty,
+            Tamanio = 0,
+            FechaNacimiento = null,
+            FotoURL = string.Empty,
+            RazasID = razas.FirstOrDefault()?.RazasID ?? 0,
+            EstadoID = estados.FirstOrDefault()?.EstadoID ?? 0,
+            RelacionSizeID = 0,
+            Sexo = 'u',
+            IsDeleted = false,
+            Razas = razas.FirstOrDefault(),
+            Estado = estados.FirstOrDefault(),
+            RelacionSize = null
+        };
     }
 
     private void AbrirModal(MascotasAdopcion mascota)
@@ -290,17 +300,29 @@
     {
         if (mascotaSeleccionada != null)
         {
-            var result = await MascotasAdopcionService.SaveAsync(mascotaSeleccionada);
-            if (result)
+            bool result;
+            if (mascotaSeleccionada.MascotasAdopcionID == 0)
             {
-                var index = mascotas.FindIndex(m => m.MascotasAdopcionID == mascotaSeleccionada.MascotasAdopcionID);
-                if (index >= 0)
+                result = await MascotasAdopcionService.InsertAsync(mascotaSeleccionada);
+                if (result)
                 {
-                    mascotas[index] = mascotaSeleccionada;
+                    mascotas.Add(mascotaSeleccionada);
                 }
-                FiltrarMascotas();
-                CerrarModal();
             }
+            else
+            {
+                result = await MascotasAdopcionService.SaveAsync(mascotaSeleccionada);
+                if (result)
+                {
+                    var index = mascotas.FindIndex(m => m.MascotasAdopcionID == mascotaSeleccionada.MascotasAdopcionID);
+                    if (index >= 0)
+                    {
+                        mascotas[index] = mascotaSeleccionada;
+                    }
+                }
+            }
+            FiltrarMascotas();
+            CerrarModal();
         }
         else
         {
