@@ -25,7 +25,7 @@
                 </div>
             }
         </div>
-        <button class="btn btn-primary" @onclick="CrearProducto">
+        <button class="btn btn-primary" @onclick="AbrirModalNuevoProducto">
             <i class="bi bi-plus-circle"></i> Nuevo Producto
         </button>
     </div>
@@ -106,7 +106,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Editar Producto: @productoSeleccionado.Nombre</h5>
+                        <h5 class="modal-title">@(productoSeleccionado.ProductosID == 0 ? "Crear Nuevo Producto" : $"Editar Producto: {productoSeleccionado.Nombre}")</h5>
                         <button type="button" class="btn-close" @onclick="CerrarModal"></button>
                     </div>
                     <div class="modal-body">
@@ -161,7 +161,7 @@
                                 <InputTextArea class="form-control" @bind-Value="productoSeleccionado.Descripcion" />
                             </div>
                             <div class="modal-actions">
-                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                <button type="submit" class="btn btn-primary">@(productoSeleccionado.ProductosID == 0 ? "Crear Producto" : "Guardar Cambios")</button>
                                 <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
                             </div>
                         </EditForm>
@@ -232,9 +232,21 @@
         FiltrarProductos();
     }
 
-    private void CrearProducto()
+    private void AbrirModalNuevoProducto()
     {
-        NavigationManager.NavigateTo("/ventas/crear");
+        productoSeleccionado = new Productos
+        {
+            ProductosID = 0,
+            Nombre = string.Empty,
+            Descripcion = string.Empty,
+            Costo = 0,
+            Precio = 0,
+            Stock = 0,
+            ImagenUrl = string.Empty,
+            CategoriasProductosID = categorias.FirstOrDefault()?.CategoriasProductosID ?? 0,
+            ProveedoresID = proveedores.FirstOrDefault()?.ProveedoresID ?? 0,
+            IsDeleted = false
+        };
     }
 
     private void AbrirModal(Productos producto)
@@ -263,17 +275,29 @@
     {
         if (productoSeleccionado != null)
         {
-            var result = await ProductosService.SaveAsync(productoSeleccionado);
-            if (result)
+            bool result;
+            if (productoSeleccionado.ProductosID == 0)
             {
-                var index = productos.FindIndex(p => p.ProductosID == productoSeleccionado.ProductosID);
-                if (index >= 0)
+                result = await ProductosService.InsertAsync(productoSeleccionado);
+                if (result)
                 {
-                    productos[index] = productoSeleccionado;
+                    productos.Add(productoSeleccionado);
                 }
-                FiltrarProductos();
-                CerrarModal();
             }
+            else
+            {
+                result = await ProductosService.SaveAsync(productoSeleccionado);
+                if (result)
+                {
+                    var index = productos.FindIndex(p => p.ProductosID == productoSeleccionado.ProductosID);
+                    if (index >= 0)
+                    {
+                        productos[index] = productoSeleccionado;
+                    }
+                }
+            }
+            FiltrarProductos();
+            CerrarModal();
         }
     }
 
