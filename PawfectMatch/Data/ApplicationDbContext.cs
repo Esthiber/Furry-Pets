@@ -367,6 +367,18 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
 
         #region Initial Seed
 
+        // Persona Default
+        modelBuilder.Entity<Personas>().HasData(
+            new Personas
+            {
+                PersonasID = 1,
+                Nombre = "Cliente Default",
+                Email = "cliente@default.com",
+                Telefono = "123-456-7890",
+                Direccion = "Calle 123, Ciudad"
+            }
+        );
+
         // Roles
         modelBuilder.Entity<IdentityRole>().HasData(
           new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
