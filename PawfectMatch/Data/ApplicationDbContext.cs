@@ -743,10 +743,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     new Proveedores
     {
         ProveedoresID = 1,
-        Nombre = "Distribuidora PetZone",
+        Nombre = "Proveedor Default",
         RNC = "132456789",
         Telefono = "809-888-5555",
-        Email = "ventas@petzone.com",
+        Email = "proveedor@default.com",
         IsDeleted = false
     },
     new Proveedores
