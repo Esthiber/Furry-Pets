@@ -6,10 +6,11 @@
 @inject ProductosInTabsService ProductosInTabsService
 @inject VetasTabsService VetasTabsService
 @inject ProductosService ProductosService
+@inject PersonasService PersonasService
 @layout VentasLayout
 @rendermode InteractiveServer
 
-@attribute [Authorize(Roles = "Admin,User")]
+@* @attribute [Authorize(Roles = "Admin,User")] *@
 
 <div class="tabs">
     @foreach (var tab in VetasTabsDisponibles)
@@ -48,110 +49,25 @@
     </div>
 </div>
 
-<!-- Modal Cliente -->
-@if (mostrarModalCliente)
-{
-    <div class="modal-overlay" @onclick="CerrarModal">
-        <div class="modal-content" @onclick:stopPropagation="true">
-            <div class="modal-header">
-                <h2>Información del Cliente</h2>
-                <button class="modal-close" @onclick="CerrarModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" class="form-control" @bind="clienteTemp.Nombre" placeholder="Ingrese el nombre del cliente" />
-                </div>
-                <div class="form-group">
-                    <label for="telefono">Teléfono</label>
-                    <input type="tel" id="telefono" class="form-control" @bind="clienteTemp.Telefono" placeholder="Ingrese el teléfono" />
-                </div>
-                <div class="form-group">
-                    <label for="direccion">Dirección</label>
-                    <textarea id="direccion" class="form-control" @bind="clienteTemp.Direccion" placeholder="Ingrese la dirección" rows="3"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" @onclick="CerrarModal">Cancelar</button>
-                <button class="btn-save" @onclick="GuardarCliente">Guardar Cliente</button>
-            </div>
-        </div>
-    </div>
-}
+<!-- Modal Cliente extraído a componente -->
+<ModalCliente Mostrar="mostrarModalCliente"
+              ClientesFiltrados="clientesFiltrados"
+              Busqueda="busquedaCliente"
+              ClienteTemp="Cliente"
+              Cerrar="CerrarModal"
+              OnGuardar="GuardarCliente"
+              OnSeleccionar="SeleccionarCliente" />
 
-<!-- Modal Pago -->
-@if (mostrarModalPago)
-{
-    <div class="modal-overlay" @onclick="CerrarModalPago">
-        <div class="modal-pago-content" @onclick:stopPropagation="true">
-            <div class="modal-header">
-                <h2>Procesar Pago</h2>
-                <button class="modal-close" @onclick="CerrarModalPago">&times;</button>
-            </div>
-            <div class="modal-pago-body">
-                <div class="pago-section">
-                    <h3>Cliente</h3>
-                    <p class="cliente-info">@(Cliente?.Nombre ?? "No especificado")</p>
-                </div>
-                <div class="pago-section">
-                    <h3>Resumen de Compra</h3>
-                    <div class="productos-resumen">
-                        @foreach (var grupo in productosAgrupados)
-                        {
-                            <div class="producto-linea">
-                                <span class="producto-nombre">@grupo.Producto.Nombre</span>
-                                <span class="producto-cantidad">$@grupo.Producto.Precio x @grupo.Cantidad</span>
-                                <span class="producto-subtotal">$@((grupo.Producto.Precio * grupo.Cantidad).ToString("F2"))</span>
-                            </div>
-                        }
-                    </div>
-                </div>
-                <div class="pago-section totales">
-                    <div class="total-linea">
-                        <span>Subtotal:</span>
-                        <span>$@subtotal.ToString("F2")</span>
-                    </div>
-                    <div class="total-linea total-final">
-                        <span>Total:</span>
-                        <span>$@total.ToString("F2")</span>
-                    </div>
-                </div>
-                <div class="pago-section">
-                    <h3>Método de Pago</h3>
-                    <select class="form-control" @bind="metodoPago">
-                        <option value="Efectivo">Efectivo</option>
-                        <option value="Tarjeta">Tarjeta</option>
-                        <option value="Transferencia">Transferencia</option>
-                    </select>
-                </div>
-                @if (metodoPago == "Efectivo")
-                {
-                    <div class="pago-section">
-                        <h3>Monto Recibido</h3>
-                        <div class="monto-input-group">
-                            <input type="number" class="form-control monto-input" @bind="montoPagado" @bind:event="oninput"
-                                   placeholder="0.00" step="0.01" min="0" />
-                            <button class="btn-monto-exacto" @onclick="EstablecerMontoExacto">Monto Exacto</button>
-                        </div>
-                        @if (montoPagado > 0)
-                        {
-                            <div class="cambio-info">
-                                <span>Cambio a devolver:</span>
-                                <span class="@(cambio < 0 ? "cambio-negativo" : "cambio-positivo")">
-                                    $@Math.Abs(cambio).ToString("F2")
-                                </span>
-                            </div>
-                        }
-                    </div>
-                }
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" @onclick="CerrarModalPago">Cancelar</button>
-                <button class="btn-pay" @onclick="EfectuarPago" disabled="@(!PuedeEfectuarPago())">Efectuar Pago</button>
-            </div>
-        </div>
-    </div>
-}
+<!-- Modal Pago extraído a componente -->
+<ModalPago Mostrar="mostrarModalPago"
+           Cliente="Cliente"
+           ProductosAgrupados="productosAgrupados"
+           Subtotal="subtotal"
+           Total="total"
+           MetodoPago="metodoPago"
+           MontoPagado="montoPagado"
+           Cerrar="CerrarModalPago"
+           OnEfectuarPago="EfectuarPago" />
 
 @code {
     List<VetasTabs> VetasTabsDisponibles = new();
@@ -168,22 +84,28 @@
     decimal montoPagado = 0;
     decimal subtotal => Carrito.Sum(p => p.Precio);
     decimal total => subtotal;
-    decimal cambio => montoPagado - total;
 
     List<(Productos Producto, int Cantidad)> productosAgrupados =>
         Carrito.GroupBy(p => p.ProductosID)
                .Select(g => (g.First(), g.Count()))
                .ToList();
 
+    // --- NUEVO PARA BUSQUEDA Y SELECCION DE CLIENTES ---
+    List<Personas> clientes = new();
+    List<Personas> clientesFiltrados = new();
+    string busquedaCliente = "";
+
     protected override async Task OnInitializedAsync()
     {
-        Cliente = new Personas();
+        Cliente = await PersonasService.SearchByIdAsync(1); // Cliente default
         VetasTabsDisponibles = await VetasTabsService.ListAsync(t => !t.IsDeleted);
         if (VetasTabsDisponibles.Count > 0)
         {
             activeTabId = VetasTabsDisponibles.First().VetasTabsID;
             await CargarProductos();
         }
+        clientes = await PersonasService.ListAsync(p => !p.IsDeleted);
+        FiltrarClientes();
     }
 
     async Task cambiarTab(int tabId)
@@ -201,6 +123,12 @@
             .ToList();
     }
 
+    async Task ReloadClientes()
+    {
+        clientes = await PersonasService.ListAsync(p => !p.IsDeleted);
+        FiltrarClientes();
+    }
+
     void AgregarProducto(Productos producto)
     {
         Carrito.Add(producto);
@@ -215,29 +143,51 @@
 
     void OnIngresarCliente()
     {
-        clienteTemp = new Personas();
+        if (Cliente.PersonasID == 1) Cliente = new Personas();
+        busquedaCliente = "";
+        ReloadClientes();
         mostrarModalCliente = true;
     }
 
-    void GuardarCliente()
+    void FiltrarClientes()
     {
-        // if (string.IsNullOrWhiteSpace(clienteTemp.Nombre) ||
-        //     string.IsNullOrWhiteSpace(clienteTemp.Telefono) ||
-        //     string.IsNullOrWhiteSpace(clienteTemp.Direccion)) return;
 
-        Cliente = new Personas
+        if (string.IsNullOrWhiteSpace(busquedaCliente))
         {
-            Nombre = clienteTemp.Nombre,
-            Telefono = clienteTemp.Telefono,
-            Direccion = clienteTemp.Direccion,
-            Sexo = 'u',
-            Identificacion = string.Empty,
-            Email = string.Empty,
-            Nacionalidad = string.Empty,
-            EstadoCivil = string.Empty
-        };
+            clientesFiltrados = clientes.ToList();
+        }
+        else
+        {
+            var filtro = busquedaCliente.Trim().ToLower();
+            clientesFiltrados = clientes.Where(c =>
+                (!string.IsNullOrWhiteSpace(c.Nombre) && c.Nombre.ToLower().Contains(filtro)) ||
+                (!string.IsNullOrWhiteSpace(c.Telefono) && c.Telefono.ToLower().Contains(filtro))
+            ).ToList();
+        }
+    }
+
+    async Task SeleccionarCliente(Personas persona)
+    {
+        Cliente = persona;
+        // mostrarModalCliente = false;
+        await ReloadClientes();
+        StateHasChanged();
+    }
+
+    async Task GuardarCliente()
+    {
+        // Si no se selecciona ni se llena nada, usar cliente default
+        // if (string.IsNullOrWhiteSpace(Cliente.Nombre) && string.IsNullOrWhiteSpace(Cliente.Telefono))
+        // {
+        //     Cliente = clientes.FirstOrDefault(c => c.PersonasID == 1) ?? new Personas();
+        // }
+        // else
+        // {
+        await PersonasService.SaveAsync(Cliente);
+        // }
 
         mostrarModalCliente = false;
+        await ReloadClientes();
         StateHasChanged();
     }
 
@@ -245,11 +195,11 @@
     {
         if (Carrito.Count == 0) return;
 
-        if (Cliente == null || string.IsNullOrEmpty(Cliente.Nombre))
+        if (string.IsNullOrWhiteSpace(Cliente.Nombre) && string.IsNullOrWhiteSpace(Cliente.Telefono))
         {
-            OnIngresarCliente();
-            return;
+            Cliente = clientes.FirstOrDefault(c => c.PersonasID == 1) ?? new Personas();
         }
+
 
         montoPagado = 0;
         metodoPago = "Efectivo";
@@ -264,17 +214,12 @@
         montoPagado = 0;
     }
 
-    void EstablecerMontoExacto() => montoPagado = total;
-
-    bool PuedeEfectuarPago() =>
-        metodoPago == "Efectivo" ? montoPagado >= total : true;
-
     async Task EfectuarPago()
     {
         // TODO: Implementar lógica real de facturación
         CerrarModalPago();
         Carrito.Clear();
-        Cliente = new Personas();
+        Cliente = await PersonasService.SearchByIdAsync(1);
         StateHasChanged();
     }
 }

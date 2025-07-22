@@ -185,7 +185,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        mascotas = await MascotasAdopcionService.ListAsync(m => !m.IsDeleted);
+        mascotas = await MascotasAdopcionService.ListAsync(m => true);
+
         razas = mascotas.Select(m => m.Razas).Where(r => r != null).DistinctBy(r => r.RazasID).ToList()!;
         estados = mascotas.Select(m => m.Estado).Where(e => e != null).DistinctBy(e => e.EstadoID).ToList()!;
         categorias = mascotas.Select(m => m.Razas?.Especie).Where(e => e != null).DistinctBy(e => e.EspeciesID).ToList()!;

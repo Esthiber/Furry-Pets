@@ -1,0 +1,149 @@
+@* ModalCliente.razor: Modal para búsqueda y selección de cliente con submodal de lista y guardado en base de datos *@
+@using PawfectMatch.Models
+@inject PawfectMatch.Services.PersonasService PersonasService
+
+@if (Mostrar)
+{
+    <div class="modal-overlay" @onclick="Cerrar">
+        <div class="modal-content modal-cliente" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <h2>Datos del Cliente</h2>
+                <button class="modal-close" @onclick="Cerrar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" class="form-control" @bind="ClienteTemp.Nombre" placeholder="Ingrese el nombre del cliente" />
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" class="form-control" @bind="ClienteTemp.Telefono" placeholder="Ingrese el teléfono" />
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <textarea id="direccion" class="form-control" @bind="ClienteTemp.Direccion" placeholder="Ingrese la dirección" rows="3"></textarea>
+                </div>
+                <div class="form-group text-end">
+                    <button class="btn-buscar-cliente" @onclick="AbrirBuscarModal"><i class="bi bi-search"></i> Buscar</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" @onclick="Cerrar">Cancelar</button>
+                <button class="btn-save" @onclick="GuardarClienteAsync">Guardar Cliente</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (MostrarBuscar)
+{
+    <div class="modal-overlay" @onclick="CerrarBuscarModal">
+        <div class="modal-content modal-buscar-cliente" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <h2>Buscar Cliente</h2>
+                <button class="modal-close" @onclick="CerrarBuscarModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="busquedaCliente" >Buscar por nombre o teléfono</label>
+                    <input type="text" id="busquedaCliente" class="form-control" @bind="Busqueda" @bind:event="oninput" placeholder="Nombre o teléfono..." />
+                </div>
+                <div class="clientes-lista">
+                    @if (ClientesFiltrados == null)
+                    {
+                        <div>Cargando clientes...</div>
+                    }
+                    else if (!ClientesFiltrados.Any())
+                    {
+                        <div>No se encontraron clientes.</div>
+                    }
+                    else
+                    {
+                        <ul class="list-group">
+                            @foreach (var persona in ClientesFiltrados)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>@persona.Nombre (@persona.Telefono)</span>
+                                    <button class="btn btn-sm btn-success" @onclick="() => SeleccionarYCopiar(persona)">Seleccionar</button>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" @onclick="CerrarBuscarModal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Mostrar { get; set; }
+    [Parameter] public List<Personas> ClientesFiltrados { get; set; } = new();
+    [Parameter] public string Busqueda { get; set; } = "";
+    [Parameter] public Personas ClienteTemp { get; set; } = new();
+    [Parameter] public EventCallback Cerrar { get; set; }
+    [Parameter] public EventCallback OnGuardar { get; set; }
+    [Parameter] public EventCallback<Personas> OnSeleccionar { get; set; }
+
+    bool MostrarBuscar = false;
+    Personas? ClienteOriginal;
+
+    void AbrirBuscarModal() => MostrarBuscar = true;
+    void CerrarBuscarModal() => MostrarBuscar = false;
+
+    void CopiarCliente(Personas origen, Personas destino)
+    {
+        destino.PersonasID = origen.PersonasID;
+        destino.Nombre = origen.Nombre;
+        destino.Telefono = origen.Telefono;
+        destino.Direccion = origen.Direccion;
+        destino.Sexo = origen.Sexo;
+        destino.Identificacion = origen.Identificacion;
+        destino.Email = origen.Email;
+        destino.Nacionalidad = origen.Nacionalidad;
+        destino.EstadoCivil = origen.EstadoCivil;
+        destino.FechaNacimiento = origen.FechaNacimiento;
+    }
+
+    async Task SeleccionarYCopiar(Personas persona)
+    {
+        CopiarCliente(persona, ClienteTemp);
+        ClienteOriginal = new Personas();
+        CopiarCliente(persona, ClienteOriginal);
+        await OnSeleccionar.InvokeAsync(persona);
+        MostrarBuscar = false;
+    }
+
+    async Task GuardarClienteAsync()
+    {
+        // Si no hay nombre ni teléfono, no guardar
+        if (string.IsNullOrWhiteSpace(ClienteTemp.Nombre) && string.IsNullOrWhiteSpace(ClienteTemp.Telefono))
+        {
+            await Cerrar.InvokeAsync();
+            return;
+        }
+
+        bool cambios = ClienteOriginal == null || !EsIgual(ClienteTemp, ClienteOriginal);
+        if (cambios)
+        {
+            await PersonasService.SaveAsync(ClienteTemp);
+        }
+        await OnGuardar.InvokeAsync();
+        await Cerrar.InvokeAsync();
+    }
+
+    bool EsIgual(Personas a, Personas b)
+    {
+        return a.Nombre == b.Nombre &&
+               a.Telefono == b.Telefono &&
+               a.Direccion == b.Direccion &&
+               a.Sexo == b.Sexo &&
+               a.Identificacion == b.Identificacion &&
+               a.Email == b.Email &&
+               a.Nacionalidad == b.Nacionalidad &&
+               a.EstadoCivil == b.EstadoCivil &&
+               a.FechaNacimiento == b.FechaNacimiento;
+    }
+}

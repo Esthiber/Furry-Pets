@@ -1,0 +1,158 @@
+@* ModalPago.razor: Modal para procesar pago y registrar factura correctamente *@
+@using PawfectMatch.Models
+@using PawfectMatch.Models.POS
+@inject PawfectMatch.Services.FacturasService FacturasService
+@inject PawfectMatch.Services.DetallesFacturasService DetallesFacturasService
+
+@rendermode InteractiveServer
+
+@if (Mostrar)
+{
+    <div class="modal-overlay" @onclick="Cerrar">
+        <div class="modal-pago-content" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <h2>Procesar Pago</h2>
+                <button class="modal-close" @onclick="Cerrar">&times;</button>
+            </div>
+            <div class="modal-pago-body">
+                <div class="pago-section">
+                    <h3>Cliente</h3>
+                    <p class="cliente-info">@(Cliente?.Nombre ?? "No especificado")</p>
+                </div>
+                <div class="pago-section">
+                    <h3>Resumen de Compra</h3>
+                    <div class="productos-resumen">
+                        @foreach (var grupo in ProductosAgrupados)
+                        {
+                            <div class="producto-linea">
+                                <span class="producto-nombre">@grupo.Producto.Nombre</span>
+                                <span class="producto-cantidad">$@grupo.Producto.Precio x @grupo.Cantidad</span>
+                                <span class="producto-subtotal">$@((grupo.Producto.Precio * grupo.Cantidad).ToString("F2"))</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="pago-section totales">
+                    <div class="total-linea">
+                        <span>Subtotal:</span>
+                        <span>$@Subtotal.ToString("F2")</span>
+                    </div>
+                    <div class="total-linea total-final">
+                        <span>Total:</span>
+                        <span>$@Total.ToString("F2")</span>
+                    </div>
+                </div>
+                <div class="pago-section">
+                    <h3>Método de Pago</h3>
+                    <select class="form-control" @bind="MetodoPago">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                        <option value="Transferencia">Transferencia</option>
+                    </select>
+                </div>
+                @if (MetodoPago == "Efectivo")
+                {
+                    <div class="pago-section">
+                        <h3>Monto Recibido</h3>
+                        <div class="monto-input-group">
+                            <input type="number" class="form-control monto-input" @bind="MontoPagado" @bind:event="oninput"
+                                   placeholder="0.00" step="0.01" min="0" />
+                            <button class="btn-monto-exacto" @onclick="EstablecerMontoExacto">Monto Exacto</button>
+                        </div>
+                        <div class="monto-rapido-group">
+                            @foreach (var cantidad in MontosRapidos)
+                            {
+                                <button class="btn btn-sm btn-outline-primary monto-rapido-btn" @onclick="() => SumarMonto(cantidad)">+@cantidad</button>
+                            }
+                        </div>
+                        @if (MontoPagado > 0)
+                        {
+                            <div class="cambio-info">
+                                <span>Cambio a devolver:</span>
+                                <span class="@(Cambio < 0 ? "cambio-negativo" : "cambio-positivo")">
+                                    $@Math.Abs(Cambio).ToString("F2")
+                                </span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" @onclick="Cerrar">Cancelar</button>
+                <button class="btn-pay" @onclick="EfectuarPagoAsync" disabled="@(!PuedeEfectuarPago())">Efectuar Pago</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Mostrar { get; set; }
+    [Parameter] public Personas? Cliente { get; set; }
+    [Parameter] public List<(Productos Producto, int Cantidad)> ProductosAgrupados { get; set; } = new();
+    [Parameter] public decimal Subtotal { get; set; }
+    [Parameter] public decimal Total { get; set; }
+    [Parameter] public string MetodoPago { get; set; } = "Efectivo";
+    [Parameter] public decimal MontoPagado { get; set; }
+    [Parameter] public EventCallback Cerrar { get; set; }
+    [Parameter] public EventCallback OnEfectuarPago { get; set; }
+
+    int[] MontosRapidos = new[] { 5, 10, 25, 50, 100, 200, 500, 1000, 2000 };
+
+    void SumarMonto(int cantidad)
+    {
+        MontoPagado += cantidad;
+    }
+
+    void EstablecerMontoExacto()
+    {
+        MontoPagado = Total;
+    }
+
+    decimal Cambio => MontoPagado - Total;
+
+    bool PuedeEfectuarPago()
+    {
+        return MetodoPago == "Efectivo" ? MontoPagado >= Total : true;
+    }
+
+    async Task EfectuarPagoAsync()
+    {
+        if (MetodoPago == "Efectivo" && Cliente != null && PuedeEfectuarPago())
+        {
+            // Crear factura principal
+            var factura = new Facturas
+            {
+                PersonasID = Cliente.PersonasID,
+                Fecha = DateTime.Now,
+                Total = Total,
+                EstadoPagoID = 1, // Asume 1 = Pagado
+                IsDeleted = false
+            };
+            var facturaGuardada = await FacturasService.InsertAsync(factura);
+            if (facturaGuardada)
+            {
+                // Buscar la última factura creada para obtener el ID
+                var facturasCliente = await FacturasService.ListAsync(f => f.PersonasID == Cliente.PersonasID && !f.IsDeleted);
+                var facturaCreada = facturasCliente.OrderByDescending(f => f.Fecha).FirstOrDefault();
+                if (facturaCreada != null)
+                {
+                    foreach (var grupo in ProductosAgrupados)
+                    {
+                        var detalle = new DetallesFacturas
+                        {
+                            FacturasID = facturaCreada.FacturasID,
+                            TiposItemsID = 1, // 1 = Producto
+                            ItemID = grupo.Producto.ProductosID,
+                            Cantidad = grupo.Cantidad,
+                            PrecioUnitario = grupo.Producto.Precio,
+                            IsDeleted = false
+                        };
+                        await DetallesFacturasService.InsertAsync(detalle);
+                    }
+                }
+            }
+        }
+        await OnEfectuarPago.InvokeAsync();
+        await Cerrar.InvokeAsync();
+    }
+}
