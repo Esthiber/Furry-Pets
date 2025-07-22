@@ -554,139 +554,147 @@ namespace PawfectMatch.Migrations
                             RelacionSizeID = 1,
                             Sexo = "f",
                             Tamanio = 4
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 11,
+                            Descripcion = "Perro juguetón",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2022, 1, 1),
+                            FotoURL = "",
+                            IsDeleted = false,
+                            Nombre = "Toby",
+                            RazasID = 1,
+                            RelacionSizeID = 1,
+                            Sexo = "m",
+                            Tamanio = 1
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 12,
+                            Descripcion = "Perra tranquila",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2021, 2, 2),
+                            FotoURL = "",
+                            IsDeleted = false,
+                            Nombre = "Bella",
+                            RazasID = 2,
+                            RelacionSizeID = 2,
+                            Sexo = "f",
+                            Tamanio = 2
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 13,
+                            Descripcion = "Gato curioso",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2020, 3, 3),
+                            FotoURL = "",
+                            IsDeleted = false,
+                            Nombre = "Tom",
+                            RazasID = 3,
+                            RelacionSizeID = 1,
+                            Sexo = "m",
+                            Tamanio = 3
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 14,
+                            Descripcion = "Perra activa",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2019, 4, 4),
+                            FotoURL = "",
+                            IsDeleted = false,
+                            Nombre = "Lola",
+                            RazasID = 1,
+                            RelacionSizeID = 2,
+                            Sexo = "f",
+                            Tamanio = 2
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 15,
+                            Descripcion = "Perro guardián",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2018, 5, 5),
+                            FotoURL = "",
+                            IsDeleted = false,
+                            Nombre = "Rex",
+                            RazasID = 2,
+                            RelacionSizeID = 3,
+                            Sexo = "m",
+                            Tamanio = 3
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 16,
+                            Descripcion = "Gata cariñosa",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2017, 6, 6),
+                            FotoURL = "",
+                            IsDeleted = false,
+                            Nombre = "Nina",
+                            RazasID = 3,
+                            RelacionSizeID = 1,
+                            Sexo = "f",
+                            Tamanio = 1
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 17,
+                            Descripcion = "Perro inteligente",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2016, 7, 7),
+                            FotoURL = "",
+                            IsDeleted = false,
+                            Nombre = "Leo",
+                            RazasID = 1,
+                            RelacionSizeID = 2,
+                            Sexo = "m",
+                            Tamanio = 2
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 18,
+                            Descripcion = "Perra fiel",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2015, 8, 8),
+                            FotoURL = "",
+                            IsDeleted = false,
+                            Nombre = "Maya",
+                            RazasID = 2,
+                            RelacionSizeID = 3,
+                            Sexo = "f",
+                            Tamanio = 3
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 19,
+                            Descripcion = "Gato dormilón",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2014, 9, 9),
+                            FotoURL = "",
+                            IsDeleted = false,
+                            Nombre = "Simón",
+                            RazasID = 3,
+                            RelacionSizeID = 1,
+                            Sexo = "m",
+                            Tamanio = 1
+                        },
+                        new
+                        {
+                            MascotasAdopcionID = 20,
+                            Descripcion = "Perra juguetona",
+                            EstadoID = 2,
+                            FechaNacimiento = new DateOnly(2013, 10, 10),
+                            FotoURL = "",
+                            IsDeleted = false,
+                            Nombre = "Daisy",
+                            RazasID = 1,
+                            RelacionSizeID = 2,
+                            Sexo = "f",
+                            Tamanio = 2
                         });
-                });
-
-            modelBuilder.Entity("PawfectMatch.Models.Adopciones.Sugerencias", b =>
-                {
-                    b.Property<int>("SugerenciaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SugerenciaId"));
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserMail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SugerenciaId");
-
-                    b.ToTable("Sugerencias");
-                });
-
-            modelBuilder.Entity("PawfectMatch.Models.Adopciones._Presentacion.Diapositivas", b =>
-                {
-                    b.Property<int>("DiapositivaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DiapositivaId"));
-
-                    b.Property<string>("Animacion")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsButtonLeftActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsButtonRightActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsTituloLeftActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsTituloRightActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LinkButton_Left")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LinkButton_Right")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Orden")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SubTitulo_Left")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SubTitulo_Right")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TextButton_Left")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TextButton_Right")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Titulo_Left")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Titulo_Right")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DiapositivaId");
-
-                    b.ToTable("Diapositivas");
-                });
-
-            modelBuilder.Entity("PawfectMatch.Models.Adopciones._Presentacion.Presentaciones", b =>
-                {
-                    b.Property<int>("PresentacionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PresentacionId"));
-
-                    b.Property<string>("Descripcion")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EsActiva")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("PresentacionId");
-
-                    b.ToTable("Presentaciones");
-                });
-
-            modelBuilder.Entity("PawfectMatch.Models.Adopciones._Presentacion.PresentacionesDiapositivas", b =>
-                {
-                    b.Property<int>("PresentacionDiapositivaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PresentacionDiapositivaId"));
-
-                    b.Property<int>("DiapositivaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Orden")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PresentacionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PresentacionDiapositivaId");
-
-                    b.HasIndex("DiapositivaId");
-
-                    b.HasIndex("PresentacionId");
-
-                    b.ToTable("PresentacionesDiapositivas");
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.Citas", b =>
@@ -759,16 +767,6 @@ namespace PawfectMatch.Migrations
                     b.HasKey("EmpresaID");
 
                     b.ToTable("ConfiguracionEmpresa");
-
-                    b.HasData(
-                        new
-                        {
-                            EmpresaID = 1,
-                            Direccion = "Av. Principal 123, Ciudad",
-                            Nombre = "Veterinaria PawfectMatch",
-                            RNC = "101000099",
-                            Telefono = "809-123-4567"
-                        });
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.Especies", b =>
@@ -837,7 +835,7 @@ namespace PawfectMatch.Migrations
                         {
                             EstadoSolicitudID = 2,
                             IsDeleted = false,
-                            Nombre = "En Revisi�n"
+                            Nombre = "En Revision"
                         },
                         new
                         {
@@ -1200,7 +1198,7 @@ namespace PawfectMatch.Migrations
                             CategoriasProductosID = 1,
                             Costo = 10.00m,
                             Descripcion = "Croquetas nutritivas para perros adultos.",
-                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
                             IsDeleted = false,
                             Nombre = "Croquetas Premium",
                             Precio = 18.99m,
@@ -1213,7 +1211,7 @@ namespace PawfectMatch.Migrations
                             CategoriasProductosID = 1,
                             Costo = 2.50m,
                             Descripcion = "Lata de comida gourmet para gatos exigentes.",
-                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
                             IsDeleted = false,
                             Nombre = "Comida Húmeda para Gato",
                             Precio = 4.99m,
@@ -1226,7 +1224,7 @@ namespace PawfectMatch.Migrations
                             CategoriasProductosID = 2,
                             Costo = 15.00m,
                             Descripcion = "Collar rastreador para mascotas medianas.",
-                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
                             IsDeleted = false,
                             Nombre = "Collar con GPS",
                             Precio = 29.99m,
@@ -1239,7 +1237,7 @@ namespace PawfectMatch.Migrations
                             CategoriasProductosID = 2,
                             Costo = 12.00m,
                             Descripcion = "Cama acolchonada ideal para gatos y perros pequeños.",
-                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
                             IsDeleted = false,
                             Nombre = "Cama para Mascotas",
                             Precio = 24.99m,
@@ -1252,7 +1250,7 @@ namespace PawfectMatch.Migrations
                             CategoriasProductosID = 1,
                             Costo = 3.00m,
                             Descripcion = "Galletas orgánicas para entrenamiento.",
-                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
                             IsDeleted = false,
                             Nombre = "Snack Natural",
                             Precio = 6.50m,
@@ -1265,7 +1263,7 @@ namespace PawfectMatch.Migrations
                             CategoriasProductosID = 2,
                             Costo = 1.80m,
                             Descripcion = "Pelota para perros que emite sonidos al morderla.",
-                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
                             IsDeleted = false,
                             Nombre = "Juguete Pelota Sonora",
                             Precio = 4.00m,
@@ -1278,7 +1276,7 @@ namespace PawfectMatch.Migrations
                             CategoriasProductosID = 1,
                             Costo = 5.00m,
                             Descripcion = "Suplemento lácteo para crías sin madre.",
-                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
                             IsDeleted = false,
                             Nombre = "Leche para Cachorros",
                             Precio = 9.99m,
@@ -1291,7 +1289,7 @@ namespace PawfectMatch.Migrations
                             CategoriasProductosID = 2,
                             Costo = 6.00m,
                             Descripcion = "Correa extensible hasta 5 metros.",
-                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
                             IsDeleted = false,
                             Nombre = "Correa Retráctil",
                             Precio = 12.99m,
@@ -1304,7 +1302,7 @@ namespace PawfectMatch.Migrations
                             CategoriasProductosID = 2,
                             Costo = 8.00m,
                             Descripcion = "Rascador vertical de sisal natural.",
-                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
                             IsDeleted = false,
                             Nombre = "Rascador para Gato",
                             Precio = 15.50m,
@@ -1317,12 +1315,532 @@ namespace PawfectMatch.Migrations
                             CategoriasProductosID = 1,
                             Costo = 4.00m,
                             Descripcion = "Complemento vitamínico para perros y gatos.",
-                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+                            ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
                             IsDeleted = false,
                             Nombre = "Vitaminas para Mascotas",
                             Precio = 8.50m,
                             ProveedoresID = 1,
                             Stock = 70
+                        },
+                        new
+                        {
+                            ProductosID = 11,
+                            CategoriasProductosID = 1,
+                            Costo = 12.00m,
+                            Descripcion = "Croquetas de alta calidad para perros deportivos.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Croquetas Superiores",
+                            Precio = 22.50m,
+                            ProveedoresID = 1,
+                            Stock = 40
+                        },
+                        new
+                        {
+                            ProductosID = 12,
+                            CategoriasProductosID = 1,
+                            Costo = 3.00m,
+                            Descripcion = "Deliciosa pasta de atún para consentir a tu gato.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Pasta de Atún para Gato",
+                            Precio = 6.00m,
+                            ProveedoresID = 1,
+                            Stock = 90
+                        },
+                        new
+                        {
+                            ProductosID = 13,
+                            CategoriasProductosID = 2,
+                            Costo = 15.00m,
+                            Descripcion = "Arnés ajustable y cómodo para perros de todos los tamaños.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Arnés para Perro",
+                            Precio = 28.50m,
+                            ProveedoresID = 1,
+                            Stock = 35
+                        },
+                        new
+                        {
+                            ProductosID = 14,
+                            CategoriasProductosID = 2,
+                            Costo = 5.00m,
+                            Descripcion = "Entretenido juguete para mantener activo a tu gato.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Juguete Interactivo para Gato",
+                            Precio = 10.99m,
+                            ProveedoresID = 1,
+                            Stock = 25
+                        },
+                        new
+                        {
+                            ProductosID = 15,
+                            CategoriasProductosID = 1,
+                            Costo = 2.50m,
+                            Descripcion = "Deliciosos snacks de pollo para premiar a tu perro.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Snacks de Pollo para Perro",
+                            Precio = 5.50m,
+                            ProveedoresID = 1,
+                            Stock = 100
+                        },
+                        new
+                        {
+                            ProductosID = 16,
+                            CategoriasProductosID = 2,
+                            Costo = 8.00m,
+                            Descripcion = "Cepillo de masaje para perros y gatos.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Cepillo para Mascotas",
+                            Precio = 15.00m,
+                            ProveedoresID = 1,
+                            Stock = 60
+                        },
+                        new
+                        {
+                            ProductosID = 17,
+                            CategoriasProductosID = 1,
+                            Costo = 25.00m,
+                            Descripcion = "Suplemento para mejorar la salud articular de tu perro.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Suplemento Articular para Perros",
+                            Precio = 40.00m,
+                            ProveedoresID = 1,
+                            Stock = 20
+                        },
+                        new
+                        {
+                            ProductosID = 18,
+                            CategoriasProductosID = 2,
+                            Costo = 10.00m,
+                            Descripcion = "Protege a tu mascota de pulgas y garrapatas.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Collar anti pulgas y garrapatas",
+                            Precio = 18.00m,
+                            ProveedoresID = 1,
+                            Stock = 15
+                        },
+                        new
+                        {
+                            ProductosID = 19,
+                            CategoriasProductosID = 1,
+                            Costo = 30.00m,
+                            Descripcion = "Nutrición completa en un formato deshidratado fácil de servir.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Alimento Deshidratado para Perros",
+                            Precio = 50.00m,
+                            ProveedoresID = 1,
+                            Stock = 10
+                        },
+                        new
+                        {
+                            ProductosID = 20,
+                            CategoriasProductosID = 2,
+                            Costo = 7.50m,
+                            Descripcion = "Arena absorbente y control de olores para gatos.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Arena sanitaria para gatos",
+                            Precio = 15.00m,
+                            ProveedoresID = 1,
+                            Stock = 55
+                        },
+                        new
+                        {
+                            ProductosID = 21,
+                            CategoriasProductosID = 1,
+                            Costo = 20.00m,
+                            Descripcion = "Elimina y previene pulgas en perros.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Tratamiento Antipulgas Spot-On Perros",
+                            Precio = 35.00m,
+                            ProveedoresID = 1,
+                            Stock = 25
+                        },
+                        new
+                        {
+                            ProductosID = 22,
+                            CategoriasProductosID = 2,
+                            Costo = 5.00m,
+                            Descripcion = "Escapulario con protección contra los malos espíritus.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Escapulario para Perros",
+                            Precio = 10.00m,
+                            ProveedoresID = 1,
+                            Stock = 75
+                        },
+                        new
+                        {
+                            ProductosID = 23,
+                            CategoriasProductosID = 1,
+                            Costo = 35.00m,
+                            Descripcion = "Antibióticos de amplio espectro para infecciones en mascotas.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Antibióticos para Mascotas",
+                            Precio = 55.00m,
+                            ProveedoresID = 1,
+                            Stock = 5
+                        },
+                        new
+                        {
+                            ProductosID = 24,
+                            CategoriasProductosID = 2,
+                            Costo = 15.00m,
+                            Descripcion = "Suplemento de Omega 3 para piel y pelaje saludable.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Cápsulas de Omega 3 para Mascotas",
+                            Precio = 25.00m,
+                            ProveedoresID = 1,
+                            Stock = 30
+                        },
+                        new
+                        {
+                            ProductosID = 25,
+                            CategoriasProductosID = 1,
+                            Costo = 18.00m,
+                            Descripcion = "Mejora la salud digestiva y el sistema inmunológico.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Suplemento Probiótico para Perros",
+                            Precio = 32.00m,
+                            ProveedoresID = 1,
+                            Stock = 20
+                        },
+                        new
+                        {
+                            ProductosID = 26,
+                            CategoriasProductosID = 2,
+                            Costo = 4.00m,
+                            Descripcion = "Rascador de cartón reciclable, atrae gatos por su olor.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Rascador de Cartón para Gato",
+                            Precio = 8.50m,
+                            ProveedoresID = 1,
+                            Stock = 100
+                        },
+                        new
+                        {
+                            ProductosID = 27,
+                            CategoriasProductosID = 1,
+                            Costo = 7.00m,
+                            Descripcion = "Solución limpiadora para oídos de perros.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Limpiador de Oídos para Perros",
+                            Precio = 15.00m,
+                            ProveedoresID = 1,
+                            Stock = 45
+                        },
+                        new
+                        {
+                            ProductosID = 28,
+                            CategoriasProductosID = 2,
+                            Costo = 6.00m,
+                            Descripcion = "Reduce la caída del pelo en gatos de pelo largo.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Peine Deshedding para Gato",
+                            Precio = 12.00m,
+                            ProveedoresID = 1,
+                            Stock = 55
+                        },
+                        new
+                        {
+                            ProductosID = 29,
+                            CategoriasProductosID = 1,
+                            Costo = 11.00m,
+                            Descripcion = "Champú efectivo contra pulgas, garrapatas y mosquitos.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Champú Antiinsectos para Mascotas",
+                            Precio = 22.00m,
+                            ProveedoresID = 1,
+                            Stock = 35
+                        },
+                        new
+                        {
+                            ProductosID = 30,
+                            CategoriasProductosID = 2,
+                            Costo = 20.00m,
+                            Descripcion = "Bolsa transportadora cómoda y segura para mascotas pequeñas.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Bolsa de Transporte para Mascotas",
+                            Precio = 35.00m,
+                            ProveedoresID = 1,
+                            Stock = 15
+                        },
+                        new
+                        {
+                            ProductosID = 31,
+                            CategoriasProductosID = 1,
+                            Costo = 28.00m,
+                            Descripcion = "Nutrición balanceada para perros mayores de 7 años.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Alimento Balanceado para Perro Mayor",
+                            Precio = 48.00m,
+                            ProveedoresID = 1,
+                            Stock = 10
+                        },
+                        new
+                        {
+                            ProductosID = 32,
+                            CategoriasProductosID = 1,
+                            Costo = 4.00m,
+                            Descripcion = "Snack para ayudar a mantener los dientes limpios.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Snack Dental para Perros",
+                            Precio = 7.50m,
+                            ProveedoresID = 1,
+                            Stock = 85
+                        },
+                        new
+                        {
+                            ProductosID = 33,
+                            CategoriasProductosID = 2,
+                            Costo = 50.00m,
+                            Descripcion = "Transportín resistente con doble puerta para fácil acceso.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Transportin Doble Puerta",
+                            Precio = 85.00m,
+                            ProveedoresID = 1,
+                            Stock = 8
+                        },
+                        new
+                        {
+                            ProductosID = 34,
+                            CategoriasProductosID = 2,
+                            Costo = 15.00m,
+                            Descripcion = "Manta que proporciona calor y confort a tu mascota.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Manta Térmica para Perros",
+                            Precio = 25.00m,
+                            ProveedoresID = 1,
+                            Stock = 40
+                        },
+                        new
+                        {
+                            ProductosID = 35,
+                            CategoriasProductosID = 1,
+                            Costo = 14.00m,
+                            Descripcion = "Alta en proteínas, especial para gatos carnívoros.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Comida Carnivora para Gato",
+                            Precio = 28.00m,
+                            ProveedoresID = 1,
+                            Stock = 20
+                        },
+                        new
+                        {
+                            ProductosID = 36,
+                            CategoriasProductosID = 1,
+                            Costo = 6.50m,
+                            Descripcion = "Batido complemento alimenticio para mascotas.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Batido Nutricional para Mascotas",
+                            Precio = 14.00m,
+                            ProveedoresID = 1,
+                            Stock = 50
+                        },
+                        new
+                        {
+                            ProductosID = 37,
+                            CategoriasProductosID = 2,
+                            Costo = 5.50m,
+                            Descripcion = "Ideal para desenredar pelajes largos y gruesos.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Peine de Dientes Anchos",
+                            Precio = 11.00m,
+                            ProveedoresID = 1,
+                            Stock = 75
+                        },
+                        new
+                        {
+                            ProductosID = 38,
+                            CategoriasProductosID = 2,
+                            Costo = 10.00m,
+                            Descripcion = "Fragancia especial para el pelaje de tus mascotas.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Perfume para Mascotas",
+                            Precio = 18.00m,
+                            ProveedoresID = 1,
+                            Stock = 30
+                        },
+                        new
+                        {
+                            ProductosID = 39,
+                            CategoriasProductosID = 1,
+                            Costo = 20.00m,
+                            Descripcion = "Especial para gatos esterilizados, control de peso.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Alimento Seco para Gato Esterilizado",
+                            Precio = 35.00m,
+                            ProveedoresID = 1,
+                            Stock = 15
+                        },
+                        new
+                        {
+                            ProductosID = 40,
+                            CategoriasProductosID = 2,
+                            Costo = 3.00m,
+                            Descripcion = "Juguete interactivo para estimular el ejercicio en gatos.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Juguete de Plumas para Gato",
+                            Precio = 7.00m,
+                            ProveedoresID = 1,
+                            Stock = 95
+                        },
+                        new
+                        {
+                            ProductosID = 41,
+                            CategoriasProductosID = 1,
+                            Costo = 8.00m,
+                            Descripcion = "Fortalece los huesos y dientes de tu mascota.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Suplemento de Calcio para Mascotas",
+                            Precio = 15.00m,
+                            ProveedoresID = 1,
+                            Stock = 40
+                        },
+                        new
+                        {
+                            ProductosID = 42,
+                            CategoriasProductosID = 2,
+                            Costo = 55.00m,
+                            Descripcion = "Transportín aprobado por aerolíneas, seguro y cómodo.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Transportín Airline Approved",
+                            Precio = 95.00m,
+                            ProveedoresID = 1,
+                            Stock = 12
+                        },
+                        new
+                        {
+                            ProductosID = 43,
+                            CategoriasProductosID = 1,
+                            Costo = 4.00m,
+                            Descripcion = "Delicioso y saludable snack de cordero.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Snack de Cordero para Perros",
+                            Precio = 8.00m,
+                            ProveedoresID = 1,
+                            Stock = 85
+                        },
+                        new
+                        {
+                            ProductosID = 44,
+                            CategoriasProductosID = 2,
+                            Costo = 45.00m,
+                            Descripcion = "Cama ortopédica para el cuidado de las articulaciones.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Cama ortopédica para Mascotas",
+                            Precio = 75.00m,
+                            ProveedoresID = 1,
+                            Stock = 20
+                        },
+                        new
+                        {
+                            ProductosID = 45,
+                            CategoriasProductosID = 1,
+                            Costo = 18.00m,
+                            Descripcion = "Alimento natural y balanceado para gatos.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Comida para Gato de Palmas",
+                            Precio = 30.00m,
+                            ProveedoresID = 1,
+                            Stock = 15
+                        },
+                        new
+                        {
+                            ProductosID = 46,
+                            CategoriasProductosID = 2,
+                            Costo = 12.00m,
+                            Descripcion = "Protege a tu mascota de la lluvia y la humedad.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Bolsa de Transporte Impermeable",
+                            Precio = 22.00m,
+                            ProveedoresID = 1,
+                            Stock = 30
+                        },
+                        new
+                        {
+                            ProductosID = 47,
+                            CategoriasProductosID = 1,
+                            Costo = 5.00m,
+                            Descripcion = "Snacks hipoalergénicos de arroz para perros sensibles.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Galletas de Arroz para Perros",
+                            Precio = 10.00m,
+                            ProveedoresID = 1,
+                            Stock = 100
+                        },
+                        new
+                        {
+                            ProductosID = 48,
+                            CategoriasProductosID = 2,
+                            Costo = 10.50m,
+                            Descripcion = "Juguete dispensador de comida para mantener a tu perro entretenido.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Juguete para Perro con Comida Seca",
+                            Precio = 19.99m,
+                            ProveedoresID = 1,
+                            Stock = 25
+                        },
+                        new
+                        {
+                            ProductosID = 49,
+                            CategoriasProductosID = 1,
+                            Costo = 8.00m,
+                            Descripcion = "Pañales desechables para perros machos y hembras.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Pañales Desechables para Perros",
+                            Precio = 15.00m,
+                            ProveedoresID = 1,
+                            Stock = 60
+                        },
+                        new
+                        {
+                            ProductosID = 50,
+                            CategoriasProductosID = 2,
+                            Costo = 9.00m,
+                            Descripcion = "Correa resistente para perros de razas grandes.",
+                            ImagenUrl = "https://via.placeholder.com/150",
+                            IsDeleted = false,
+                            Nombre = "Correa de Mano para Perros Grande",
+                            Precio = 17.00m,
+                            ProveedoresID = 1,
+                            Stock = 35
                         });
                 });
 
@@ -1394,6 +1912,366 @@ namespace PawfectMatch.Migrations
                             Orden = 5,
                             ProductosID = 5,
                             VetasTabsID = 1
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 6,
+                            IsDeleted = false,
+                            Orden = 6,
+                            ProductosID = 6,
+                            VetasTabsID = 2
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 7,
+                            IsDeleted = false,
+                            Orden = 7,
+                            ProductosID = 7,
+                            VetasTabsID = 2
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 8,
+                            IsDeleted = false,
+                            Orden = 8,
+                            ProductosID = 8,
+                            VetasTabsID = 2
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 9,
+                            IsDeleted = false,
+                            Orden = 9,
+                            ProductosID = 9,
+                            VetasTabsID = 2
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 10,
+                            IsDeleted = false,
+                            Orden = 10,
+                            ProductosID = 10,
+                            VetasTabsID = 2
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 11,
+                            IsDeleted = false,
+                            Orden = 11,
+                            ProductosID = 11,
+                            VetasTabsID = 3
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 12,
+                            IsDeleted = false,
+                            Orden = 12,
+                            ProductosID = 12,
+                            VetasTabsID = 3
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 13,
+                            IsDeleted = false,
+                            Orden = 13,
+                            ProductosID = 13,
+                            VetasTabsID = 3
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 14,
+                            IsDeleted = false,
+                            Orden = 14,
+                            ProductosID = 14,
+                            VetasTabsID = 3
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 15,
+                            IsDeleted = false,
+                            Orden = 15,
+                            ProductosID = 15,
+                            VetasTabsID = 3
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 16,
+                            IsDeleted = false,
+                            Orden = 16,
+                            ProductosID = 16,
+                            VetasTabsID = 4
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 17,
+                            IsDeleted = false,
+                            Orden = 17,
+                            ProductosID = 17,
+                            VetasTabsID = 4
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 18,
+                            IsDeleted = false,
+                            Orden = 18,
+                            ProductosID = 18,
+                            VetasTabsID = 4
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 19,
+                            IsDeleted = false,
+                            Orden = 19,
+                            ProductosID = 19,
+                            VetasTabsID = 4
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 20,
+                            IsDeleted = false,
+                            Orden = 20,
+                            ProductosID = 20,
+                            VetasTabsID = 4
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 21,
+                            IsDeleted = false,
+                            Orden = 21,
+                            ProductosID = 21,
+                            VetasTabsID = 5
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 22,
+                            IsDeleted = false,
+                            Orden = 22,
+                            ProductosID = 22,
+                            VetasTabsID = 5
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 23,
+                            IsDeleted = false,
+                            Orden = 23,
+                            ProductosID = 23,
+                            VetasTabsID = 5
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 24,
+                            IsDeleted = false,
+                            Orden = 24,
+                            ProductosID = 24,
+                            VetasTabsID = 5
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 25,
+                            IsDeleted = false,
+                            Orden = 25,
+                            ProductosID = 25,
+                            VetasTabsID = 5
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 26,
+                            IsDeleted = false,
+                            Orden = 26,
+                            ProductosID = 26,
+                            VetasTabsID = 1
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 27,
+                            IsDeleted = false,
+                            Orden = 27,
+                            ProductosID = 27,
+                            VetasTabsID = 1
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 28,
+                            IsDeleted = false,
+                            Orden = 28,
+                            ProductosID = 28,
+                            VetasTabsID = 1
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 29,
+                            IsDeleted = false,
+                            Orden = 29,
+                            ProductosID = 29,
+                            VetasTabsID = 1
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 30,
+                            IsDeleted = false,
+                            Orden = 30,
+                            ProductosID = 30,
+                            VetasTabsID = 1
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 31,
+                            IsDeleted = false,
+                            Orden = 31,
+                            ProductosID = 31,
+                            VetasTabsID = 2
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 32,
+                            IsDeleted = false,
+                            Orden = 32,
+                            ProductosID = 32,
+                            VetasTabsID = 2
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 33,
+                            IsDeleted = false,
+                            Orden = 33,
+                            ProductosID = 33,
+                            VetasTabsID = 2
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 34,
+                            IsDeleted = false,
+                            Orden = 34,
+                            ProductosID = 34,
+                            VetasTabsID = 2
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 35,
+                            IsDeleted = false,
+                            Orden = 35,
+                            ProductosID = 35,
+                            VetasTabsID = 2
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 36,
+                            IsDeleted = false,
+                            Orden = 36,
+                            ProductosID = 36,
+                            VetasTabsID = 3
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 37,
+                            IsDeleted = false,
+                            Orden = 37,
+                            ProductosID = 37,
+                            VetasTabsID = 3
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 38,
+                            IsDeleted = false,
+                            Orden = 38,
+                            ProductosID = 38,
+                            VetasTabsID = 3
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 39,
+                            IsDeleted = false,
+                            Orden = 39,
+                            ProductosID = 39,
+                            VetasTabsID = 3
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 40,
+                            IsDeleted = false,
+                            Orden = 40,
+                            ProductosID = 40,
+                            VetasTabsID = 3
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 41,
+                            IsDeleted = false,
+                            Orden = 41,
+                            ProductosID = 41,
+                            VetasTabsID = 4
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 42,
+                            IsDeleted = false,
+                            Orden = 42,
+                            ProductosID = 42,
+                            VetasTabsID = 4
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 43,
+                            IsDeleted = false,
+                            Orden = 43,
+                            ProductosID = 43,
+                            VetasTabsID = 4
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 44,
+                            IsDeleted = false,
+                            Orden = 44,
+                            ProductosID = 44,
+                            VetasTabsID = 4
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 45,
+                            IsDeleted = false,
+                            Orden = 45,
+                            ProductosID = 45,
+                            VetasTabsID = 4
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 46,
+                            IsDeleted = false,
+                            Orden = 46,
+                            ProductosID = 46,
+                            VetasTabsID = 5
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 47,
+                            IsDeleted = false,
+                            Orden = 47,
+                            ProductosID = 47,
+                            VetasTabsID = 5
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 48,
+                            IsDeleted = false,
+                            Orden = 48,
+                            ProductosID = 48,
+                            VetasTabsID = 5
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 49,
+                            IsDeleted = false,
+                            Orden = 49,
+                            ProductosID = 49,
+                            VetasTabsID = 5
+                        },
+                        new
+                        {
+                            ProductosInTabsID = 50,
+                            IsDeleted = false,
+                            Orden = 50,
+                            ProductosID = 50,
+                            VetasTabsID = 5
                         });
                 });
 
@@ -1466,10 +2344,46 @@ namespace PawfectMatch.Migrations
                         {
                             VetasTabsID = 1,
                             Color = "#FF5733",
-                            Icono = "fas fa-home",
+                            Icono = "home",
                             IsDeleted = false,
                             Nombre = "Inicio",
                             Orden = 1
+                        },
+                        new
+                        {
+                            VetasTabsID = 2,
+                            Color = "#33FF57",
+                            Icono = "paw",
+                            IsDeleted = false,
+                            Nombre = "Mascotas",
+                            Orden = 2
+                        },
+                        new
+                        {
+                            VetasTabsID = 3,
+                            Color = "#3357FF",
+                            Icono = "cart",
+                            IsDeleted = false,
+                            Nombre = "Productos",
+                            Orden = 3
+                        },
+                        new
+                        {
+                            VetasTabsID = 4,
+                            Color = "#F3FF33",
+                            Icono = "star",
+                            IsDeleted = false,
+                            Nombre = "Favoritos",
+                            Orden = 4
+                        },
+                        new
+                        {
+                            VetasTabsID = 5,
+                            Color = "#FF33F3",
+                            Icono = "gift",
+                            IsDeleted = false,
+                            Nombre = "Ofertas",
+                            Orden = 5
                         });
                 });
 
@@ -1529,6 +2443,151 @@ namespace PawfectMatch.Migrations
                     b.HasKey("PersonasID");
 
                     b.ToTable("Personas");
+
+                    b.HasData(
+                        new
+                        {
+                            PersonasID = 1,
+                            Direccion = "Calle 123, Ciudad",
+                            Email = "cliente@default.com",
+                            EstadoCivil = "",
+                            Identificacion = "",
+                            IsDeleted = false,
+                            Nacionalidad = "",
+                            Nombre = "Cliente Default",
+                            Sexo = "u",
+                            Telefono = "123-456-7890"
+                        },
+                        new
+                        {
+                            PersonasID = 2,
+                            Direccion = "Calle 2",
+                            Email = "ana@correo.com",
+                            EstadoCivil = "",
+                            Identificacion = "",
+                            IsDeleted = false,
+                            Nacionalidad = "",
+                            Nombre = "Ana Pérez",
+                            Sexo = "u",
+                            Telefono = "809-111-2222"
+                        },
+                        new
+                        {
+                            PersonasID = 3,
+                            Direccion = "Calle 3",
+                            Email = "luis@correo.com",
+                            EstadoCivil = "",
+                            Identificacion = "",
+                            IsDeleted = false,
+                            Nacionalidad = "",
+                            Nombre = "Luis Gómez",
+                            Sexo = "u",
+                            Telefono = "809-333-4444"
+                        },
+                        new
+                        {
+                            PersonasID = 4,
+                            Direccion = "Calle 4",
+                            Email = "maria@correo.com",
+                            EstadoCivil = "",
+                            Identificacion = "",
+                            IsDeleted = false,
+                            Nacionalidad = "",
+                            Nombre = "María López",
+                            Sexo = "u",
+                            Telefono = "809-555-6666"
+                        },
+                        new
+                        {
+                            PersonasID = 5,
+                            Direccion = "Calle 5",
+                            Email = "carlos@correo.com",
+                            EstadoCivil = "",
+                            Identificacion = "",
+                            IsDeleted = false,
+                            Nacionalidad = "",
+                            Nombre = "Carlos Ruiz",
+                            Sexo = "u",
+                            Telefono = "809-777-8888"
+                        },
+                        new
+                        {
+                            PersonasID = 6,
+                            Direccion = "Calle 6",
+                            Email = "sofia@correo.com",
+                            EstadoCivil = "",
+                            Identificacion = "",
+                            IsDeleted = false,
+                            Nacionalidad = "",
+                            Nombre = "Sofía Torres",
+                            Sexo = "u",
+                            Telefono = "809-999-0000"
+                        },
+                        new
+                        {
+                            PersonasID = 7,
+                            Direccion = "Calle 7",
+                            Email = "pedro@correo.com",
+                            EstadoCivil = "",
+                            Identificacion = "",
+                            IsDeleted = false,
+                            Nacionalidad = "",
+                            Nombre = "Pedro Sánchez",
+                            Sexo = "u",
+                            Telefono = "809-121-2121"
+                        },
+                        new
+                        {
+                            PersonasID = 8,
+                            Direccion = "Calle 8",
+                            Email = "lucia@correo.com",
+                            EstadoCivil = "",
+                            Identificacion = "",
+                            IsDeleted = false,
+                            Nacionalidad = "",
+                            Nombre = "Lucía Fernández",
+                            Sexo = "u",
+                            Telefono = "809-232-3232"
+                        },
+                        new
+                        {
+                            PersonasID = 9,
+                            Direccion = "Calle 9",
+                            Email = "miguel@correo.com",
+                            EstadoCivil = "",
+                            Identificacion = "",
+                            IsDeleted = false,
+                            Nacionalidad = "",
+                            Nombre = "Miguel Castro",
+                            Sexo = "u",
+                            Telefono = "809-343-4343"
+                        },
+                        new
+                        {
+                            PersonasID = 10,
+                            Direccion = "Calle 10",
+                            Email = "valeria@correo.com",
+                            EstadoCivil = "",
+                            Identificacion = "",
+                            IsDeleted = false,
+                            Nacionalidad = "",
+                            Nombre = "Valeria Jiménez",
+                            Sexo = "u",
+                            Telefono = "809-454-5454"
+                        },
+                        new
+                        {
+                            PersonasID = 11,
+                            Direccion = "Calle 11",
+                            Email = "javier@correo.com",
+                            EstadoCivil = "",
+                            Identificacion = "",
+                            IsDeleted = false,
+                            Nacionalidad = "",
+                            Nombre = "Javier Ramírez",
+                            Sexo = "u",
+                            Telefono = "809-565-6565"
+                        });
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.PersonasRoles", b =>
@@ -1594,29 +2653,11 @@ namespace PawfectMatch.Migrations
                         new
                         {
                             ProveedoresID = 1,
-                            Email = "ventas@petzone.com",
+                            Email = "proveedor@default.com",
                             IsDeleted = false,
-                            Nombre = "Distribuidora PetZone",
-                            RNC = "132456789",
-                            Telefono = "809-888-5555"
-                        },
-                        new
-                        {
-                            ProveedoresID = 2,
-                            Email = "contacto@petplus.com",
-                            IsDeleted = false,
-                            Nombre = "PetPlus Suplidores",
-                            RNC = "101112233",
-                            Telefono = "809-777-4444"
-                        },
-                        new
-                        {
-                            ProveedoresID = 3,
-                            Email = "info@mascotienda.com",
-                            IsDeleted = false,
-                            Nombre = "Mascotienda SRL",
-                            RNC = "110220330",
-                            Telefono = "809-666-3333"
+                            Nombre = "Proveedor Default",
+                            RNC = "000000000",
+                            Telefono = "809-000-0000"
                         });
                 });
 
@@ -1694,7 +2735,7 @@ namespace PawfectMatch.Migrations
                         {
                             RelacionSizeID = 1,
                             IsDeleted = false,
-                            Nombre = "Peque�o"
+                            Nombre = "Pequeño"
                         },
                         new
                         {
@@ -1789,6 +2830,98 @@ namespace PawfectMatch.Migrations
                     b.HasIndex("RazasID");
 
                     b.ToTable("MascotasPersonas");
+
+                    b.HasData(
+                        new
+                        {
+                            MascotasPersonasID = 1,
+                            IsDeleted = false,
+                            Nombre = "Toby",
+                            PersonasID = 2,
+                            RazasID = 1,
+                            Sexo = "m"
+                        },
+                        new
+                        {
+                            MascotasPersonasID = 2,
+                            IsDeleted = false,
+                            Nombre = "Bella",
+                            PersonasID = 3,
+                            RazasID = 2,
+                            Sexo = "f"
+                        },
+                        new
+                        {
+                            MascotasPersonasID = 3,
+                            IsDeleted = false,
+                            Nombre = "Tom",
+                            PersonasID = 4,
+                            RazasID = 3,
+                            Sexo = "m"
+                        },
+                        new
+                        {
+                            MascotasPersonasID = 4,
+                            IsDeleted = false,
+                            Nombre = "Lola",
+                            PersonasID = 5,
+                            RazasID = 1,
+                            Sexo = "f"
+                        },
+                        new
+                        {
+                            MascotasPersonasID = 5,
+                            IsDeleted = false,
+                            Nombre = "Rex",
+                            PersonasID = 6,
+                            RazasID = 2,
+                            Sexo = "m"
+                        },
+                        new
+                        {
+                            MascotasPersonasID = 6,
+                            IsDeleted = false,
+                            Nombre = "Nina",
+                            PersonasID = 7,
+                            RazasID = 3,
+                            Sexo = "f"
+                        },
+                        new
+                        {
+                            MascotasPersonasID = 7,
+                            IsDeleted = false,
+                            Nombre = "Leo",
+                            PersonasID = 8,
+                            RazasID = 1,
+                            Sexo = "m"
+                        },
+                        new
+                        {
+                            MascotasPersonasID = 8,
+                            IsDeleted = false,
+                            Nombre = "Maya",
+                            PersonasID = 9,
+                            RazasID = 2,
+                            Sexo = "f"
+                        },
+                        new
+                        {
+                            MascotasPersonasID = 9,
+                            IsDeleted = false,
+                            Nombre = "Simón",
+                            PersonasID = 10,
+                            RazasID = 3,
+                            Sexo = "m"
+                        },
+                        new
+                        {
+                            MascotasPersonasID = 10,
+                            IsDeleted = false,
+                            Nombre = "Daisy",
+                            PersonasID = 11,
+                            RazasID = 1,
+                            Sexo = "f"
+                        });
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.Servicios.Servicios", b =>
@@ -1855,7 +2988,7 @@ namespace PawfectMatch.Migrations
                         {
                             TiposServiciosID = 2,
                             IsDeleted = false,
-                            Nombre = "Vacunaci�n"
+                            Nombre = "Vacunación"
                         });
                 });
 
@@ -1891,6 +3024,98 @@ namespace PawfectMatch.Migrations
                     b.HasIndex("PersonasID");
 
                     b.ToTable("SolicitudesAdopciones");
+
+                    b.HasData(
+                        new
+                        {
+                            SolicitudesAdopcionesID = 1,
+                            EstadoSolicitudID = 1,
+                            Fecha = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MascotasAdopcionID = 11,
+                            PersonasID = 2
+                        },
+                        new
+                        {
+                            SolicitudesAdopcionesID = 2,
+                            EstadoSolicitudID = 2,
+                            Fecha = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MascotasAdopcionID = 12,
+                            PersonasID = 3
+                        },
+                        new
+                        {
+                            SolicitudesAdopcionesID = 3,
+                            EstadoSolicitudID = 3,
+                            Fecha = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MascotasAdopcionID = 13,
+                            PersonasID = 4
+                        },
+                        new
+                        {
+                            SolicitudesAdopcionesID = 4,
+                            EstadoSolicitudID = 4,
+                            Fecha = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MascotasAdopcionID = 14,
+                            PersonasID = 5
+                        },
+                        new
+                        {
+                            SolicitudesAdopcionesID = 5,
+                            EstadoSolicitudID = 1,
+                            Fecha = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MascotasAdopcionID = 15,
+                            PersonasID = 6
+                        },
+                        new
+                        {
+                            SolicitudesAdopcionesID = 6,
+                            EstadoSolicitudID = 2,
+                            Fecha = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MascotasAdopcionID = 16,
+                            PersonasID = 7
+                        },
+                        new
+                        {
+                            SolicitudesAdopcionesID = 7,
+                            EstadoSolicitudID = 3,
+                            Fecha = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MascotasAdopcionID = 17,
+                            PersonasID = 8
+                        },
+                        new
+                        {
+                            SolicitudesAdopcionesID = 8,
+                            EstadoSolicitudID = 4,
+                            Fecha = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MascotasAdopcionID = 18,
+                            PersonasID = 9
+                        },
+                        new
+                        {
+                            SolicitudesAdopcionesID = 9,
+                            EstadoSolicitudID = 1,
+                            Fecha = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MascotasAdopcionID = 19,
+                            PersonasID = 10
+                        },
+                        new
+                        {
+                            SolicitudesAdopcionesID = 10,
+                            EstadoSolicitudID = 2,
+                            Fecha = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MascotasAdopcionID = 20,
+                            PersonasID = 11
+                        });
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.TipoViviendas", b =>
@@ -2048,25 +3273,6 @@ namespace PawfectMatch.Migrations
                     b.Navigation("Razas");
 
                     b.Navigation("RelacionSize");
-                });
-
-            modelBuilder.Entity("PawfectMatch.Models.Adopciones._Presentacion.PresentacionesDiapositivas", b =>
-                {
-                    b.HasOne("PawfectMatch.Models.Adopciones._Presentacion.Diapositivas", "Diapositiva")
-                        .WithMany()
-                        .HasForeignKey("DiapositivaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PawfectMatch.Models.Adopciones._Presentacion.Presentaciones", "Presentacion")
-                        .WithMany("PresentacionesDiapositivas")
-                        .HasForeignKey("PresentacionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Diapositiva");
-
-                    b.Navigation("Presentacion");
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.Citas", b =>
@@ -2309,11 +3515,6 @@ namespace PawfectMatch.Migrations
             modelBuilder.Entity("PawfectMatch.Models.Adopciones.EstadoMascota", b =>
                 {
                     b.Navigation("Seguimientos");
-                });
-
-            modelBuilder.Entity("PawfectMatch.Models.Adopciones._Presentacion.Presentaciones", b =>
-                {
-                    b.Navigation("PresentacionesDiapositivas");
                 });
 
             modelBuilder.Entity("PawfectMatch.Models.Especies", b =>

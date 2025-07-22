@@ -14,6 +14,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         : base(options)
     {
     }
+
     #region DbSets
     // Adopciones y Seguimiento
     public DbSet<SolicitudesAdopciones> SolicitudesAdopciones { get; set; }
@@ -368,433 +369,69 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         #region Initial Seed
 
         // Persona Default
-        modelBuilder.Entity<Personas>().HasData(
-            new Personas
-            {
-                PersonasID = 1,
-                Nombre = "Cliente Default",
-                Email = "cliente@default.com",
-                Telefono = "123-456-7890",
-                Direccion = "Calle 123, Ciudad"
-            }
-        );
+        modelBuilder.Entity<Personas>().HasData(ApplicationSeedData.seedPersonas);
 
         // Roles
-        modelBuilder.Entity<IdentityRole>().HasData(
-          new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
-          new IdentityRole { Id = "2", Name = "User", NormalizedName = "USER" }
-        );
+        modelBuilder.Entity<IdentityRole>().HasData(ApplicationSeedData.seedIdentityRoles);
 
         // Estados (MascotasAdopcion)
-        modelBuilder.Entity<Estados>().HasData(
-            new Estados { EstadoID = 1, Nombre = "Adoptado", IsDeleted = false },
-            new Estados { EstadoID = 2, Nombre = "Disponible", IsDeleted = false },
-            new Estados { EstadoID = 3, Nombre = "No Disponible", IsDeleted = false }
-        );
+        modelBuilder.Entity<Estados>().HasData(ApplicationSeedData.seedEstadosMascotas);
 
         // EstadoSolicitud
-        modelBuilder.Entity<EstadoSolicitud>().HasData(
-            new EstadoSolicitud { EstadoSolicitudID = 1, Nombre = "Aprobada", IsDeleted = false },
-            new EstadoSolicitud { EstadoSolicitudID = 2, Nombre = "En Revisi�n", IsDeleted = false },
-            new EstadoSolicitud { EstadoSolicitudID = 3, Nombre = "Rechazada", IsDeleted = false },
-            new EstadoSolicitud { EstadoSolicitudID = 4, Nombre = "En Espera", IsDeleted = false }
+        modelBuilder.Entity<EstadoSolicitud>().HasData(ApplicationSeedData.seedEstadoSolicitud
         );
 
         // EstadoMascota
-        modelBuilder.Entity<EstadoMascota>().HasData(
-            new EstadoMascota { EstadoMascotaID = 1, Nombre = "Sano", IsDeleted = false },
-            new EstadoMascota { EstadoMascotaID = 2, Nombre = "Enfermo", IsDeleted = false }
-        );
+        modelBuilder.Entity<EstadoMascota>().HasData(ApplicationSeedData.seedEstadoMascota);
 
         // EstadosPagos
-        modelBuilder.Entity<EstadosPagos>().HasData(
-            new EstadosPagos { EstadosPagosID = 1, Nombre = "Pagado", IsDeleted = false },
-            new EstadosPagos { EstadosPagosID = 2, Nombre = "Pendiente", IsDeleted = false }
-        );
+        modelBuilder.Entity<EstadosPagos>().HasData(ApplicationSeedData.seedEstadosPagos);
 
         // TiposItems
-        modelBuilder.Entity<TiposItems>().HasData(
-            new TiposItems { TiposItemsID = 1, Nombre = "Producto", IsDeleted = false },
-            new TiposItems { TiposItemsID = 2, Nombre = "Servicio", IsDeleted = false }
-        );
+        modelBuilder.Entity<TiposItems>().HasData(ApplicationSeedData.seedTiposItems);
 
         // TiposServicios
-        modelBuilder.Entity<TiposServicios>().HasData(
-            new TiposServicios { TiposServiciosID = 1, Nombre = "Consulta Veterinaria", IsDeleted = false },
-            new TiposServicios { TiposServiciosID = 2, Nombre = "Vacunaci�n", IsDeleted = false }
-        );
+        modelBuilder.Entity<TiposServicios>().HasData(ApplicationSeedData.seedTiposServicios);
 
         // TipoViviendas
-        modelBuilder.Entity<TipoViviendas>().HasData(
-            new TipoViviendas { TipoViviendasID = 1, Nombre = "Casa", IsDeleted = false },
-            new TipoViviendas { TipoViviendasID = 2, Nombre = "Apartamento", IsDeleted = false }
-        );
+        modelBuilder.Entity<TipoViviendas>().HasData(ApplicationSeedData.seedTipoViviendas);
 
         // Especies y Razas
-        modelBuilder.Entity<Especies>().HasData(
-            new Especies { EspeciesID = 1, Nombre = "Gato", IsDeleted = false },
-            new Especies { EspeciesID = 2, Nombre = "Perro", IsDeleted = false }
-        );
+        modelBuilder.Entity<Especies>().HasData(ApplicationSeedData.seedEspecies);
 
-        modelBuilder.Entity<RelacionSize>().HasData(
-            new RelacionSize { RelacionSizeID = 1, Nombre = "Peque�o", IsDeleted = false },
-            new RelacionSize { RelacionSizeID = 2, Nombre = "Mediano", IsDeleted = false },
-            new RelacionSize { RelacionSizeID = 3, Nombre = "Grande", IsDeleted = false }
-        );
+        modelBuilder.Entity<RelacionSize>().HasData(ApplicationSeedData.seedRelacionSize);
 
-        modelBuilder.Entity<Razas>().HasData(
-            new Razas { RazasID = 1, EspeciesID = 2, Nombre = "Chihuahua", IsDeleted = false },
-            new Razas { RazasID = 2, EspeciesID = 2, Nombre = "Bulldog", IsDeleted = false },
-            new Razas { RazasID = 3, EspeciesID = 1, Nombre = "Gato Naranja", IsDeleted = false }
-        );
+        modelBuilder.Entity<Razas>().HasData(ApplicationSeedData.seedRazas);
 
         // Categor�as de productos
-        modelBuilder.Entity<CategoriasProductos>().HasData(
-            new CategoriasProductos { CategoriasProductosID = 1, Nombre = "Alimentos", IsDeleted = false },
-            new CategoriasProductos { CategoriasProductosID = 2, Nombre = "Accesorios", IsDeleted = false }
-        );
+        modelBuilder.Entity<CategoriasProductos>().HasData(ApplicationSeedData.seedCategoriasProductos);
 
         // Estados de la cita
-        modelBuilder.Entity<EstadosCitas>().HasData(
-            new EstadosCitas { EstadosCitasID = 1, Nombre = "Pendiente", IsDeleted = false },
-            new EstadosCitas { EstadosCitasID = 2, Nombre = "Confirmada", IsDeleted = false },
-            new EstadosCitas { EstadosCitasID = 3, Nombre = "Cancelada", IsDeleted = false }
-        );
+        modelBuilder.Entity<EstadosCitas>().HasData(ApplicationSeedData.seedEstadosCitas);
 
-        modelBuilder.Entity<MascotasAdopcion>().HasData(
-    new MascotasAdopcion
-    {
-        MascotasAdopcionID = 1,
-        RazasID = 1,
-        RelacionSizeID = 1,
-        Tamanio = 1,
-        Nombre = "Luna",
-        FechaNacimiento = new DateOnly(2023, 5, 10),
-        Descripcion = "Cachorrita juguetona y muy cariñosa con niños.",
-        FotoURL = "https://images.unsplash.com/photo-1583511655826-05700d52f4ae",
-        EstadoID = 2,
-        Sexo = 'f',
-        IsDeleted = false
-    },
-    new MascotasAdopcion
-    {
-        MascotasAdopcionID = 2,
-        RazasID = 2,
-        RelacionSizeID = 2,
-        Tamanio = 2,
-        Nombre = "Rocky",
-        FechaNacimiento = new DateOnly(2022, 11, 15),
-        Descripcion = "Perro guardián y muy leal. Ideal para casas grandes.",
-        FotoURL = "https://images.unsplash.com/photo-1601758123927-196f76f75097",
-        EstadoID = 2,
-        Sexo = 'm',
-        IsDeleted = false
-    },
-    new MascotasAdopcion
-    {
-        MascotasAdopcionID = 3,
-        RazasID = 3,
-        RelacionSizeID = 1,
-        Tamanio = 3,
-        Nombre = "Mia",
-        FechaNacimiento = new DateOnly(2024, 2, 1),
-        Descripcion = "Gatita rescatada muy tranquila y sociable.",
-        FotoURL = "https://images.unsplash.com/photo-1592194996308-7b43878e84a6",
-        EstadoID = 2,
-        Sexo = 'f',
-        IsDeleted = false
-    },
-    new MascotasAdopcion
-    {
-        MascotasAdopcionID = 4,
-        RazasID = 2,
-        RelacionSizeID = 3,
-        Tamanio = 5,
-        Nombre = "Zeus",
-        FechaNacimiento = new DateOnly(2021, 8, 20),
-        Descripcion = "Perro fuerte, entrenado y excelente para seguridad.",
-        FotoURL = "https://images.unsplash.com/photo-1583511655826-05700d52f4ae",
-        EstadoID = 2,
-        Sexo = 'm',
-        IsDeleted = false
-    },
-    new MascotasAdopcion
-    {
-        MascotasAdopcionID = 5,
-        RazasID = 1,
-        RelacionSizeID = 2,
-        Tamanio = 5,
-        Nombre = "Nala",
-        FechaNacimiento = new DateOnly(2023, 1, 30),
-        Descripcion = "Muy energética y necesita mucho ejercicio diario.",
-        FotoURL = "https://images.unsplash.com/photo-1601758003122-58eacb8e3ed1",
-        EstadoID = 2,
-        Sexo = 'f',
-        IsDeleted = false
-    },
-    new MascotasAdopcion
-    {
-        MascotasAdopcionID = 6,
-        RazasID = 3,
-        RelacionSizeID = 1,
-        Tamanio = 2,
-        Nombre = "Simba",
-        FechaNacimiento = new DateOnly(2024, 4, 15),
-        Descripcion = "Gatito curioso y muy juguetón.",
-        FotoURL = "https://images.unsplash.com/photo-1592194996308-7b43878e84a6",
-        EstadoID = 2,
-        Sexo = 'm',
-        IsDeleted = false
-    },
-    new MascotasAdopcion
-    {
-        MascotasAdopcionID = 7,
-        RazasID = 2,
-        RelacionSizeID = 3,
-        Tamanio = 4,
-        Nombre = "Thor",
-        FechaNacimiento = new DateOnly(2022, 6, 18),
-        Descripcion = "Gran danés amoroso y obediente.",
-        FotoURL = "https://images.unsplash.com/photo-1583511655826-05700d52f4ae",
-        EstadoID = 2,
-        Sexo = 'm',
-        IsDeleted = false
-    },
-    new MascotasAdopcion
-    {
-        MascotasAdopcionID = 8,
-        RazasID = 3,
-        RelacionSizeID = 1,
-        Tamanio = 5,
-        Nombre = "Lili",
-        FechaNacimiento = new DateOnly(2023, 7, 9),
-        Descripcion = "Gatita blanca, ideal para compañía.",
-        FotoURL = "https://images.unsplash.com/photo-1580377969203-4ec1eac6d5fe",
-        EstadoID = 2,
-        Sexo = 'f',
-        IsDeleted = false
-    },
-    new MascotasAdopcion
-    {
-        MascotasAdopcionID = 9,
-        RazasID = 1,
-        RelacionSizeID = 2,
-        Tamanio = 5,
-        Nombre = "Max",
-        FechaNacimiento = new DateOnly(2021, 9, 12),
-        Descripcion = "Obediente y perfecto para familias con niños.",
-        FotoURL = "https://images.unsplash.com/photo-1558788353-f76d92427f16",
-        EstadoID = 2,
-        Sexo = 'm',
-        IsDeleted = false
-    },
-    new MascotasAdopcion
-    {
-        MascotasAdopcionID = 10,
-        RazasID = 3,
-        RelacionSizeID = 1,
-        Tamanio = 4,
-        Nombre = "Cleo",
-        FechaNacimiento = new DateOnly(2024, 3, 22),
-        Descripcion = "Gatita siamesa muy elegante.",
-        FotoURL = "https://images.unsplash.com/photo-1574158622682-e40e69881006",
-        EstadoID = 2,
-        Sexo = 'f',
-        IsDeleted = false
-    }
-);
+        modelBuilder.Entity<MascotasAdopcion>().HasData(ApplicationSeedData.seedMascotasAdopcion);
+
+        // Proveedor Default para productos
+        modelBuilder.Entity<Proveedores>().HasData(ApplicationSeedData.seedProveedores);
 
         // Productos
-        modelBuilder.Entity<Productos>().HasData(
-    new Productos
-    {
-        ProductosID = 1,
-        CategoriasProductosID = 1,
-        ProveedoresID = 1,
-        Nombre = "Croquetas Premium",
-        Descripcion = "Croquetas nutritivas para perros adultos.",
-        Costo = 10.00m,
-        Precio = 18.99m,
-        Stock = 50,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
-        IsDeleted = false
-    },
-    new Productos
-    {
-        ProductosID = 2,
-        CategoriasProductosID = 1,
-        ProveedoresID = 1,
-        Nombre = "Comida Húmeda para Gato",
-        Descripcion = "Lata de comida gourmet para gatos exigentes.",
-        Costo = 2.50m,
-        Precio = 4.99m,
-        Stock = 100,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
-        IsDeleted = false
-    },
-    new Productos
-    {
-        ProductosID = 3,
-        CategoriasProductosID = 2,
-        ProveedoresID = 1,
-        Nombre = "Collar con GPS",
-        Descripcion = "Collar rastreador para mascotas medianas.",
-        Costo = 15.00m,
-        Precio = 29.99m,
-        Stock = 25,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
-        IsDeleted = false
-    },
-    new Productos
-    {
-        ProductosID = 4,
-        CategoriasProductosID = 2,
-        ProveedoresID = 1,
-        Nombre = "Cama para Mascotas",
-        Descripcion = "Cama acolchonada ideal para gatos y perros pequeños.",
-        Costo = 12.00m,
-        Precio = 24.99m,
-        Stock = 30,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
-        IsDeleted = false
-    },
-    new Productos
-    {
-        ProductosID = 5,
-        CategoriasProductosID = 1,
-        ProveedoresID = 1,
-        Nombre = "Snack Natural",
-        Descripcion = "Galletas orgánicas para entrenamiento.",
-        Costo = 3.00m,
-        Precio = 6.50m,
-        Stock = 80,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
-        IsDeleted = false
-    },
-    new Productos
-    {
-        ProductosID = 6,
-        CategoriasProductosID = 2,
-        ProveedoresID = 1,
-        Nombre = "Juguete Pelota Sonora",
-        Descripcion = "Pelota para perros que emite sonidos al morderla.",
-        Costo = 1.80m,
-        Precio = 4.00m,
-        Stock = 60,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
-        IsDeleted = false
-    },
-    new Productos
-    {
-        ProductosID = 7,
-        CategoriasProductosID = 1,
-        ProveedoresID = 1,
-        Nombre = "Leche para Cachorros",
-        Descripcion = "Suplemento lácteo para crías sin madre.",
-        Costo = 5.00m,
-        Precio = 9.99m,
-        Stock = 45,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
-        IsDeleted = false
-    },
-    new Productos
-    {
-        ProductosID = 8,
-        CategoriasProductosID = 2,
-        ProveedoresID = 1,
-        Nombre = "Correa Retráctil",
-        Descripcion = "Correa extensible hasta 5 metros.",
-        Costo = 6.00m,
-        Precio = 12.99m,
-        Stock = 40,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
-        IsDeleted = false
-    },
-    new Productos
-    {
-        ProductosID = 9,
-        CategoriasProductosID = 2,
-        ProveedoresID = 1,
-        Nombre = "Rascador para Gato",
-        Descripcion = "Rascador vertical de sisal natural.",
-        Costo = 8.00m,
-        Precio = 15.50m,
-        Stock = 20,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
-        IsDeleted = false
-    },
-    new Productos
-    {
-        ProductosID = 10,
-        CategoriasProductosID = 1,
-        ProveedoresID = 1,
-        Nombre = "Vitaminas para Mascotas",
-        Descripcion = "Complemento vitamínico para perros y gatos.",
-        Costo = 4.00m,
-        Precio = 8.50m,
-        Stock = 70,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
-        IsDeleted = false
-    }
-);
-
-        // Proveedores
-        modelBuilder.Entity<Proveedores>().HasData(
-    new Proveedores
-    {
-        ProveedoresID = 1,
-        Nombre = "Proveedor Default",
-        RNC = "132456789",
-        Telefono = "809-888-5555",
-        Email = "proveedor@default.com",
-        IsDeleted = false
-    },
-    new Proveedores
-    {
-        ProveedoresID = 2,
-        Nombre = "PetPlus Suplidores",
-        RNC = "101112233",
-        Telefono = "809-777-4444",
-        Email = "contacto@petplus.com",
-        IsDeleted = false
-    },
-    new Proveedores
-    {
-        ProveedoresID = 3,
-        Nombre = "Mascotienda SRL",
-        RNC = "110220330",
-        Telefono = "809-666-3333",
-        Email = "info@mascotienda.com",
-        IsDeleted = false
-    }
-);
-
-        // Tabs 
-        modelBuilder.Entity<VetasTabs>().HasData(
-            new VetasTabs { VetasTabsID = 1, Color = "#FF5733", Icono = "fas fa-home", Nombre = "Inicio", Orden = 1, IsDeleted = false }
-            );
+        modelBuilder.Entity<Productos>().HasData(ApplicationSeedData.seedProductos);
 
         // Productos In Tabs
-        modelBuilder.Entity<ProductosInTabs>().HasData(
-            new ProductosInTabs { ProductosInTabsID = 1, ProductosID = 1, VetasTabsID = 1, Orden = 1, IsDeleted = false },
-            new ProductosInTabs { ProductosInTabsID = 2, ProductosID = 2, VetasTabsID = 1, Orden = 2, IsDeleted = false },
-            new ProductosInTabs { ProductosInTabsID = 3, ProductosID = 3, VetasTabsID = 1, Orden = 3, IsDeleted = false },
-            new ProductosInTabs { ProductosInTabsID = 4, ProductosID = 4, VetasTabsID = 1, Orden = 4, IsDeleted = false },
-            new ProductosInTabs { ProductosInTabsID = 5, ProductosID = 5, VetasTabsID = 1, Orden = 5, IsDeleted = false }
-        );
+        modelBuilder.Entity<ProductosInTabs>().HasData(ApplicationSeedData.seedProductosInTabs);
 
-        // Configuracion de empresa: Solo se admite un registro
-        modelBuilder.Entity<ConfiguracionEmpresa>().HasData(
-            new ConfiguracionEmpresa
-            {
-                EmpresaID = 1,
-                Nombre = "Veterinaria PawfectMatch",
-                Telefono = "809-123-4567",
-                RNC = "101000099",
-                Direccion = "Av. Principal 123, Ciudad"
-            }
-        );
+        // 5 Tabs
+        modelBuilder.Entity<VetasTabs>().HasData(ApplicationSeedData.seedVetasTabs);
+
+        // 10 MascotasPersonas
+        modelBuilder.Entity<MascotasPersonas>().HasData(ApplicationSeedData.seedMascotasPersonas);
+
+        // 10 SolicitudesAdopciones
+        modelBuilder.Entity<SolicitudesAdopciones>().HasData(ApplicationSeedData.seedSolicitudesAdopciones);
+
+        // Puedes a�adir datos iniciales o de prueba para tus entidades aquí.
 
         #endregion
+
     }
 }

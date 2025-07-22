@@ -83,33 +83,6 @@ namespace PawfectMatch.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Diapositivas",
-                columns: table => new
-                {
-                    DiapositivaId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IsTituloLeftActive = table.Column<bool>(type: "bit", nullable: false),
-                    Titulo_Left = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SubTitulo_Left = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsTituloRightActive = table.Column<bool>(type: "bit", nullable: false),
-                    Titulo_Right = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SubTitulo_Right = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsButtonLeftActive = table.Column<bool>(type: "bit", nullable: false),
-                    TextButton_Left = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LinkButton_Left = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsButtonRightActive = table.Column<bool>(type: "bit", nullable: false),
-                    TextButton_Right = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LinkButton_Right = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Orden = table.Column<int>(type: "int", nullable: false),
-                    Animacion = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Diapositivas", x => x.DiapositivaId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Especies",
                 columns: table => new
                 {
@@ -216,22 +189,6 @@ namespace PawfectMatch.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Presentaciones",
-                columns: table => new
-                {
-                    PresentacionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Titulo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EsActiva = table.Column<bool>(type: "bit", nullable: false),
-                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Presentaciones", x => x.PresentacionId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Proveedores",
                 columns: table => new
                 {
@@ -260,20 +217,6 @@ namespace PawfectMatch.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RelacionSize", x => x.RelacionSizeID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sugerencias",
-                columns: table => new
-                {
-                    SugerenciaId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserMail = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sugerencias", x => x.SugerenciaId);
                 });
 
             migrationBuilder.CreateTable(
@@ -316,6 +259,23 @@ namespace PawfectMatch.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TipoViviendas", x => x.TipoViviendasID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VetasTabs",
+                columns: table => new
+                {
+                    VetasTabsID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Icono = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Orden = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VetasTabs", x => x.VetasTabsID);
                 });
 
             migrationBuilder.CreateTable(
@@ -491,33 +451,6 @@ namespace PawfectMatch.Migrations
                         column: x => x.PersonasID,
                         principalTable: "Personas",
                         principalColumn: "PersonasID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PresentacionesDiapositivas",
-                columns: table => new
-                {
-                    PresentacionDiapositivaId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PresentacionId = table.Column<int>(type: "int", nullable: false),
-                    DiapositivaId = table.Column<int>(type: "int", nullable: false),
-                    Orden = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PresentacionesDiapositivas", x => x.PresentacionDiapositivaId);
-                    table.ForeignKey(
-                        name: "FK_PresentacionesDiapositivas_Diapositivas_DiapositivaId",
-                        column: x => x.DiapositivaId,
-                        principalTable: "Diapositivas",
-                        principalColumn: "DiapositivaId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PresentacionesDiapositivas_Presentaciones_PresentacionId",
-                        column: x => x.PresentacionId,
-                        principalTable: "Presentaciones",
-                        principalColumn: "PresentacionId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -744,6 +677,34 @@ namespace PawfectMatch.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProductosInTabs",
+                columns: table => new
+                {
+                    ProductosInTabsID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VetasTabsID = table.Column<int>(type: "int", nullable: false),
+                    ProductosID = table.Column<int>(type: "int", nullable: false),
+                    Orden = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductosInTabs", x => x.ProductosInTabsID);
+                    table.ForeignKey(
+                        name: "FK_ProductosInTabs_Productos_ProductosID",
+                        column: x => x.ProductosID,
+                        principalTable: "Productos",
+                        principalColumn: "ProductosID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductosInTabs_VetasTabs_VetasTabsID",
+                        column: x => x.VetasTabsID,
+                        principalTable: "VetasTabs",
+                        principalColumn: "VetasTabsID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SeguimientoMascotas",
                 columns: table => new
                 {
@@ -936,11 +897,6 @@ namespace PawfectMatch.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "ConfiguracionEmpresa",
-                columns: new[] { "EmpresaID", "Direccion", "Nombre", "RNC", "Telefono" },
-                values: new object[] { 1, "Av. Principal 123, Ciudad", "Veterinaria PawfectMatch", "101000099", "809-123-4567" });
-
-            migrationBuilder.InsertData(
                 table: "Especies",
                 columns: new[] { "EspeciesID", "IsDeleted", "Nombre" },
                 values: new object[,]
@@ -964,7 +920,7 @@ namespace PawfectMatch.Migrations
                 values: new object[,]
                 {
                     { 1, false, "Aprobada" },
-                    { 2, false, "En Revisi�n" },
+                    { 2, false, "En Revision" },
                     { 3, false, "Rechazada" },
                     { 4, false, "En Espera" }
                 });
@@ -999,21 +955,34 @@ namespace PawfectMatch.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Proveedores",
-                columns: new[] { "ProveedoresID", "Email", "IsDeleted", "Nombre", "RNC", "Telefono" },
+                table: "Personas",
+                columns: new[] { "PersonasID", "Direccion", "Email", "EstadoCivil", "FechaNacimiento", "Identificacion", "IsDeleted", "Nacionalidad", "Nombre", "Sexo", "Telefono" },
                 values: new object[,]
                 {
-                    { 1, "ventas@petzone.com", false, "Distribuidora PetZone", "132456789", "809-888-5555" },
-                    { 2, "contacto@petplus.com", false, "PetPlus Suplidores", "101112233", "809-777-4444" },
-                    { 3, "info@mascotienda.com", false, "Mascotienda SRL", "110220330", "809-666-3333" }
+                    { 1, "Calle 123, Ciudad", "cliente@default.com", "", null, "", false, "", "Cliente Default", "u", "123-456-7890" },
+                    { 2, "Calle 2", "ana@correo.com", "", null, "", false, "", "Ana Pérez", "u", "809-111-2222" },
+                    { 3, "Calle 3", "luis@correo.com", "", null, "", false, "", "Luis Gómez", "u", "809-333-4444" },
+                    { 4, "Calle 4", "maria@correo.com", "", null, "", false, "", "María López", "u", "809-555-6666" },
+                    { 5, "Calle 5", "carlos@correo.com", "", null, "", false, "", "Carlos Ruiz", "u", "809-777-8888" },
+                    { 6, "Calle 6", "sofia@correo.com", "", null, "", false, "", "Sofía Torres", "u", "809-999-0000" },
+                    { 7, "Calle 7", "pedro@correo.com", "", null, "", false, "", "Pedro Sánchez", "u", "809-121-2121" },
+                    { 8, "Calle 8", "lucia@correo.com", "", null, "", false, "", "Lucía Fernández", "u", "809-232-3232" },
+                    { 9, "Calle 9", "miguel@correo.com", "", null, "", false, "", "Miguel Castro", "u", "809-343-4343" },
+                    { 10, "Calle 10", "valeria@correo.com", "", null, "", false, "", "Valeria Jiménez", "u", "809-454-5454" },
+                    { 11, "Calle 11", "javier@correo.com", "", null, "", false, "", "Javier Ramírez", "u", "809-565-6565" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Proveedores",
+                columns: new[] { "ProveedoresID", "Email", "IsDeleted", "Nombre", "RNC", "Telefono" },
+                values: new object[] { 1, "proveedor@default.com", false, "Proveedor Default", "000000000", "809-000-0000" });
 
             migrationBuilder.InsertData(
                 table: "RelacionSize",
                 columns: new[] { "RelacionSizeID", "IsDeleted", "Nombre" },
                 values: new object[,]
                 {
-                    { 1, false, "Peque�o" },
+                    { 1, false, "Pequeño" },
                     { 2, false, "Mediano" },
                     { 3, false, "Grande" }
                 });
@@ -1042,7 +1011,19 @@ namespace PawfectMatch.Migrations
                 values: new object[,]
                 {
                     { 1, false, "Consulta Veterinaria" },
-                    { 2, false, "Vacunaci�n" }
+                    { 2, false, "Vacunación" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "VetasTabs",
+                columns: new[] { "VetasTabsID", "Color", "Icono", "IsDeleted", "Nombre", "Orden" },
+                values: new object[,]
+                {
+                    { 1, "#FF5733", "home", false, "Inicio", 1 },
+                    { 2, "#33FF57", "paw", false, "Mascotas", 2 },
+                    { 3, "#3357FF", "cart", false, "Productos", 3 },
+                    { 4, "#F3FF33", "star", false, "Favoritos", 4 },
+                    { 5, "#FF33F3", "gift", false, "Ofertas", 5 }
                 });
 
             migrationBuilder.InsertData(
@@ -1050,16 +1031,56 @@ namespace PawfectMatch.Migrations
                 columns: new[] { "ProductosID", "CategoriasProductosID", "Costo", "Descripcion", "ImagenUrl", "IsDeleted", "Nombre", "Precio", "ProveedoresID", "Stock" },
                 values: new object[,]
                 {
-                    { 1, 1, 10.00m, "Croquetas nutritivas para perros adultos.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Croquetas Premium", 18.99m, 1, 50 },
-                    { 2, 1, 2.50m, "Lata de comida gourmet para gatos exigentes.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Comida Húmeda para Gato", 4.99m, 1, 100 },
-                    { 3, 2, 15.00m, "Collar rastreador para mascotas medianas.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Collar con GPS", 29.99m, 1, 25 },
-                    { 4, 2, 12.00m, "Cama acolchonada ideal para gatos y perros pequeños.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Cama para Mascotas", 24.99m, 1, 30 },
-                    { 5, 1, 3.00m, "Galletas orgánicas para entrenamiento.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Snack Natural", 6.50m, 1, 80 },
-                    { 6, 2, 1.80m, "Pelota para perros que emite sonidos al morderla.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Juguete Pelota Sonora", 4.00m, 1, 60 },
-                    { 7, 1, 5.00m, "Suplemento lácteo para crías sin madre.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Leche para Cachorros", 9.99m, 1, 45 },
-                    { 8, 2, 6.00m, "Correa extensible hasta 5 metros.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Correa Retráctil", 12.99m, 1, 40 },
-                    { 9, 2, 8.00m, "Rascador vertical de sisal natural.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Rascador para Gato", 15.50m, 1, 20 },
-                    { 10, 1, 4.00m, "Complemento vitamínico para perros y gatos.", "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Vitaminas para Mascotas", 8.50m, 1, 70 }
+                    { 1, 1, 10.00m, "Croquetas nutritivas para perros adultos.", "https://images.rawpixel.com/image_800/cHJpbmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Croquetas Premium", 18.99m, 1, 50 },
+                    { 2, 1, 2.50m, "Lata de comida gourmet para gatos exigentes.", "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Comida Húmeda para Gato", 4.99m, 1, 100 },
+                    { 3, 2, 15.00m, "Collar rastreador para mascotas medianas.", "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Collar con GPS", 29.99m, 1, 25 },
+                    { 4, 2, 12.00m, "Cama acolchonada ideal para gatos y perros pequeños.", "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Cama para Mascotas", 24.99m, 1, 30 },
+                    { 5, 1, 3.00m, "Galletas orgánicas para entrenamiento.", "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Snack Natural", 6.50m, 1, 80 },
+                    { 6, 2, 1.80m, "Pelota para perros que emite sonidos al morderla.", "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Juguete Pelota Sonora", 4.00m, 1, 60 },
+                    { 7, 1, 5.00m, "Suplemento lácteo para crías sin madre.", "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Leche para Cachorros", 9.99m, 1, 45 },
+                    { 8, 2, 6.00m, "Correa extensible hasta 5 metros.", "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Correa Retráctil", 12.99m, 1, 40 },
+                    { 9, 2, 8.00m, "Rascador vertical de sisal natural.", "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Rascador para Gato", 15.50m, 1, 20 },
+                    { 10, 1, 4.00m, "Complemento vitamínico para perros y gatos.", "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg", false, "Vitaminas para Mascotas", 8.50m, 1, 70 },
+                    { 11, 1, 12.00m, "Croquetas de alta calidad para perros deportivos.", "https://via.placeholder.com/150", false, "Croquetas Superiores", 22.50m, 1, 40 },
+                    { 12, 1, 3.00m, "Deliciosa pasta de atún para consentir a tu gato.", "https://via.placeholder.com/150", false, "Pasta de Atún para Gato", 6.00m, 1, 90 },
+                    { 13, 2, 15.00m, "Arnés ajustable y cómodo para perros de todos los tamaños.", "https://via.placeholder.com/150", false, "Arnés para Perro", 28.50m, 1, 35 },
+                    { 14, 2, 5.00m, "Entretenido juguete para mantener activo a tu gato.", "https://via.placeholder.com/150", false, "Juguete Interactivo para Gato", 10.99m, 1, 25 },
+                    { 15, 1, 2.50m, "Deliciosos snacks de pollo para premiar a tu perro.", "https://via.placeholder.com/150", false, "Snacks de Pollo para Perro", 5.50m, 1, 100 },
+                    { 16, 2, 8.00m, "Cepillo de masaje para perros y gatos.", "https://via.placeholder.com/150", false, "Cepillo para Mascotas", 15.00m, 1, 60 },
+                    { 17, 1, 25.00m, "Suplemento para mejorar la salud articular de tu perro.", "https://via.placeholder.com/150", false, "Suplemento Articular para Perros", 40.00m, 1, 20 },
+                    { 18, 2, 10.00m, "Protege a tu mascota de pulgas y garrapatas.", "https://via.placeholder.com/150", false, "Collar anti pulgas y garrapatas", 18.00m, 1, 15 },
+                    { 19, 1, 30.00m, "Nutrición completa en un formato deshidratado fácil de servir.", "https://via.placeholder.com/150", false, "Alimento Deshidratado para Perros", 50.00m, 1, 10 },
+                    { 20, 2, 7.50m, "Arena absorbente y control de olores para gatos.", "https://via.placeholder.com/150", false, "Arena sanitaria para gatos", 15.00m, 1, 55 },
+                    { 21, 1, 20.00m, "Elimina y previene pulgas en perros.", "https://via.placeholder.com/150", false, "Tratamiento Antipulgas Spot-On Perros", 35.00m, 1, 25 },
+                    { 22, 2, 5.00m, "Escapulario con protección contra los malos espíritus.", "https://via.placeholder.com/150", false, "Escapulario para Perros", 10.00m, 1, 75 },
+                    { 23, 1, 35.00m, "Antibióticos de amplio espectro para infecciones en mascotas.", "https://via.placeholder.com/150", false, "Antibióticos para Mascotas", 55.00m, 1, 5 },
+                    { 24, 2, 15.00m, "Suplemento de Omega 3 para piel y pelaje saludable.", "https://via.placeholder.com/150", false, "Cápsulas de Omega 3 para Mascotas", 25.00m, 1, 30 },
+                    { 25, 1, 18.00m, "Mejora la salud digestiva y el sistema inmunológico.", "https://via.placeholder.com/150", false, "Suplemento Probiótico para Perros", 32.00m, 1, 20 },
+                    { 26, 2, 4.00m, "Rascador de cartón reciclable, atrae gatos por su olor.", "https://via.placeholder.com/150", false, "Rascador de Cartón para Gato", 8.50m, 1, 100 },
+                    { 27, 1, 7.00m, "Solución limpiadora para oídos de perros.", "https://via.placeholder.com/150", false, "Limpiador de Oídos para Perros", 15.00m, 1, 45 },
+                    { 28, 2, 6.00m, "Reduce la caída del pelo en gatos de pelo largo.", "https://via.placeholder.com/150", false, "Peine Deshedding para Gato", 12.00m, 1, 55 },
+                    { 29, 1, 11.00m, "Champú efectivo contra pulgas, garrapatas y mosquitos.", "https://via.placeholder.com/150", false, "Champú Antiinsectos para Mascotas", 22.00m, 1, 35 },
+                    { 30, 2, 20.00m, "Bolsa transportadora cómoda y segura para mascotas pequeñas.", "https://via.placeholder.com/150", false, "Bolsa de Transporte para Mascotas", 35.00m, 1, 15 },
+                    { 31, 1, 28.00m, "Nutrición balanceada para perros mayores de 7 años.", "https://via.placeholder.com/150", false, "Alimento Balanceado para Perro Mayor", 48.00m, 1, 10 },
+                    { 32, 1, 4.00m, "Snack para ayudar a mantener los dientes limpios.", "https://via.placeholder.com/150", false, "Snack Dental para Perros", 7.50m, 1, 85 },
+                    { 33, 2, 50.00m, "Transportín resistente con doble puerta para fácil acceso.", "https://via.placeholder.com/150", false, "Transportin Doble Puerta", 85.00m, 1, 8 },
+                    { 34, 2, 15.00m, "Manta que proporciona calor y confort a tu mascota.", "https://via.placeholder.com/150", false, "Manta Térmica para Perros", 25.00m, 1, 40 },
+                    { 35, 1, 14.00m, "Alta en proteínas, especial para gatos carnívoros.", "https://via.placeholder.com/150", false, "Comida Carnivora para Gato", 28.00m, 1, 20 },
+                    { 36, 1, 6.50m, "Batido complemento alimenticio para mascotas.", "https://via.placeholder.com/150", false, "Batido Nutricional para Mascotas", 14.00m, 1, 50 },
+                    { 37, 2, 5.50m, "Ideal para desenredar pelajes largos y gruesos.", "https://via.placeholder.com/150", false, "Peine de Dientes Anchos", 11.00m, 1, 75 },
+                    { 38, 2, 10.00m, "Fragancia especial para el pelaje de tus mascotas.", "https://via.placeholder.com/150", false, "Perfume para Mascotas", 18.00m, 1, 30 },
+                    { 39, 1, 20.00m, "Especial para gatos esterilizados, control de peso.", "https://via.placeholder.com/150", false, "Alimento Seco para Gato Esterilizado", 35.00m, 1, 15 },
+                    { 40, 2, 3.00m, "Juguete interactivo para estimular el ejercicio en gatos.", "https://via.placeholder.com/150", false, "Juguete de Plumas para Gato", 7.00m, 1, 95 },
+                    { 41, 1, 8.00m, "Fortalece los huesos y dientes de tu mascota.", "https://via.placeholder.com/150", false, "Suplemento de Calcio para Mascotas", 15.00m, 1, 40 },
+                    { 42, 2, 55.00m, "Transportín aprobado por aerolíneas, seguro y cómodo.", "https://via.placeholder.com/150", false, "Transportín Airline Approved", 95.00m, 1, 12 },
+                    { 43, 1, 4.00m, "Delicioso y saludable snack de cordero.", "https://via.placeholder.com/150", false, "Snack de Cordero para Perros", 8.00m, 1, 85 },
+                    { 44, 2, 45.00m, "Cama ortopédica para el cuidado de las articulaciones.", "https://via.placeholder.com/150", false, "Cama ortopédica para Mascotas", 75.00m, 1, 20 },
+                    { 45, 1, 18.00m, "Alimento natural y balanceado para gatos.", "https://via.placeholder.com/150", false, "Comida para Gato de Palmas", 30.00m, 1, 15 },
+                    { 46, 2, 12.00m, "Protege a tu mascota de la lluvia y la humedad.", "https://via.placeholder.com/150", false, "Bolsa de Transporte Impermeable", 22.00m, 1, 30 },
+                    { 47, 1, 5.00m, "Snacks hipoalergénicos de arroz para perros sensibles.", "https://via.placeholder.com/150", false, "Galletas de Arroz para Perros", 10.00m, 1, 100 },
+                    { 48, 2, 10.50m, "Juguete dispensador de comida para mantener a tu perro entretenido.", "https://via.placeholder.com/150", false, "Juguete para Perro con Comida Seca", 19.99m, 1, 25 },
+                    { 49, 1, 8.00m, "Pañales desechables para perros machos y hembras.", "https://via.placeholder.com/150", false, "Pañales Desechables para Perros", 15.00m, 1, 60 },
+                    { 50, 2, 9.00m, "Correa resistente para perros de razas grandes.", "https://via.placeholder.com/150", false, "Correa de Mano para Perros Grande", 17.00m, 1, 35 }
                 });
 
             migrationBuilder.InsertData(
@@ -1086,7 +1107,108 @@ namespace PawfectMatch.Migrations
                     { 7, "Gran danés amoroso y obediente.", null, 2, new DateOnly(2022, 6, 18), "https://images.unsplash.com/photo-1583511655826-05700d52f4ae", false, "Thor", 2, 3, "m", 4 },
                     { 8, "Gatita blanca, ideal para compañía.", null, 2, new DateOnly(2023, 7, 9), "https://images.unsplash.com/photo-1580377969203-4ec1eac6d5fe", false, "Lili", 3, 1, "f", 5 },
                     { 9, "Obediente y perfecto para familias con niños.", null, 2, new DateOnly(2021, 9, 12), "https://images.unsplash.com/photo-1558788353-f76d92427f16", false, "Max", 1, 2, "m", 5 },
-                    { 10, "Gatita siamesa muy elegante.", null, 2, new DateOnly(2024, 3, 22), "https://images.unsplash.com/photo-1574158622682-e40e69881006", false, "Cleo", 3, 1, "f", 4 }
+                    { 10, "Gatita siamesa muy elegante.", null, 2, new DateOnly(2024, 3, 22), "https://images.unsplash.com/photo-1574158622682-e40e69881006", false, "Cleo", 3, 1, "f", 4 },
+                    { 11, "Perro juguetón", null, 2, new DateOnly(2022, 1, 1), "", false, "Toby", 1, 1, "m", 1 },
+                    { 12, "Perra tranquila", null, 2, new DateOnly(2021, 2, 2), "", false, "Bella", 2, 2, "f", 2 },
+                    { 13, "Gato curioso", null, 2, new DateOnly(2020, 3, 3), "", false, "Tom", 3, 1, "m", 3 },
+                    { 14, "Perra activa", null, 2, new DateOnly(2019, 4, 4), "", false, "Lola", 1, 2, "f", 2 },
+                    { 15, "Perro guardián", null, 2, new DateOnly(2018, 5, 5), "", false, "Rex", 2, 3, "m", 3 },
+                    { 16, "Gata cariñosa", null, 2, new DateOnly(2017, 6, 6), "", false, "Nina", 3, 1, "f", 1 },
+                    { 17, "Perro inteligente", null, 2, new DateOnly(2016, 7, 7), "", false, "Leo", 1, 2, "m", 2 },
+                    { 18, "Perra fiel", null, 2, new DateOnly(2015, 8, 8), "", false, "Maya", 2, 3, "f", 3 },
+                    { 19, "Gato dormilón", null, 2, new DateOnly(2014, 9, 9), "", false, "Simón", 3, 1, "m", 1 },
+                    { 20, "Perra juguetona", null, 2, new DateOnly(2013, 10, 10), "", false, "Daisy", 1, 2, "f", 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "MascotasPersonas",
+                columns: new[] { "MascotasPersonasID", "EspeciesID", "FechaNacimiento", "IsDeleted", "Nombre", "PersonasID", "RazasID", "Sexo" },
+                values: new object[,]
+                {
+                    { 1, null, null, false, "Toby", 2, 1, "m" },
+                    { 2, null, null, false, "Bella", 3, 2, "f" },
+                    { 3, null, null, false, "Tom", 4, 3, "m" },
+                    { 4, null, null, false, "Lola", 5, 1, "f" },
+                    { 5, null, null, false, "Rex", 6, 2, "m" },
+                    { 6, null, null, false, "Nina", 7, 3, "f" },
+                    { 7, null, null, false, "Leo", 8, 1, "m" },
+                    { 8, null, null, false, "Maya", 9, 2, "f" },
+                    { 9, null, null, false, "Simón", 10, 3, "m" },
+                    { 10, null, null, false, "Daisy", 11, 1, "f" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProductosInTabs",
+                columns: new[] { "ProductosInTabsID", "IsDeleted", "Orden", "ProductosID", "VetasTabsID" },
+                values: new object[,]
+                {
+                    { 1, false, 1, 1, 1 },
+                    { 2, false, 2, 2, 1 },
+                    { 3, false, 3, 3, 1 },
+                    { 4, false, 4, 4, 1 },
+                    { 5, false, 5, 5, 1 },
+                    { 6, false, 6, 6, 2 },
+                    { 7, false, 7, 7, 2 },
+                    { 8, false, 8, 8, 2 },
+                    { 9, false, 9, 9, 2 },
+                    { 10, false, 10, 10, 2 },
+                    { 11, false, 11, 11, 3 },
+                    { 12, false, 12, 12, 3 },
+                    { 13, false, 13, 13, 3 },
+                    { 14, false, 14, 14, 3 },
+                    { 15, false, 15, 15, 3 },
+                    { 16, false, 16, 16, 4 },
+                    { 17, false, 17, 17, 4 },
+                    { 18, false, 18, 18, 4 },
+                    { 19, false, 19, 19, 4 },
+                    { 20, false, 20, 20, 4 },
+                    { 21, false, 21, 21, 5 },
+                    { 22, false, 22, 22, 5 },
+                    { 23, false, 23, 23, 5 },
+                    { 24, false, 24, 24, 5 },
+                    { 25, false, 25, 25, 5 },
+                    { 26, false, 26, 26, 1 },
+                    { 27, false, 27, 27, 1 },
+                    { 28, false, 28, 28, 1 },
+                    { 29, false, 29, 29, 1 },
+                    { 30, false, 30, 30, 1 },
+                    { 31, false, 31, 31, 2 },
+                    { 32, false, 32, 32, 2 },
+                    { 33, false, 33, 33, 2 },
+                    { 34, false, 34, 34, 2 },
+                    { 35, false, 35, 35, 2 },
+                    { 36, false, 36, 36, 3 },
+                    { 37, false, 37, 37, 3 },
+                    { 38, false, 38, 38, 3 },
+                    { 39, false, 39, 39, 3 },
+                    { 40, false, 40, 40, 3 },
+                    { 41, false, 41, 41, 4 },
+                    { 42, false, 42, 42, 4 },
+                    { 43, false, 43, 43, 4 },
+                    { 44, false, 44, 44, 4 },
+                    { 45, false, 45, 45, 4 },
+                    { 46, false, 46, 46, 5 },
+                    { 47, false, 47, 47, 5 },
+                    { 48, false, 48, 48, 5 },
+                    { 49, false, 49, 49, 5 },
+                    { 50, false, 50, 50, 5 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SolicitudesAdopciones",
+                columns: new[] { "SolicitudesAdopcionesID", "EstadoSolicitudID", "Fecha", "IsDeleted", "MascotasAdopcionID", "PersonasID" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 11, 2 },
+                    { 2, 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 12, 3 },
+                    { 3, 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 13, 4 },
+                    { 4, 4, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 14, 5 },
+                    { 5, 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 15, 6 },
+                    { 6, 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 16, 7 },
+                    { 7, 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 17, 8 },
+                    { 8, 4, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 18, 9 },
+                    { 9, 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 19, 10 },
+                    { 10, 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 20, 11 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -1244,16 +1366,6 @@ namespace PawfectMatch.Migrations
                 column: "PersonasID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PresentacionesDiapositivas_DiapositivaId",
-                table: "PresentacionesDiapositivas",
-                column: "DiapositivaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PresentacionesDiapositivas_PresentacionId",
-                table: "PresentacionesDiapositivas",
-                column: "PresentacionId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Productos_CategoriasProductosID",
                 table: "Productos",
                 column: "CategoriasProductosID");
@@ -1262,6 +1374,16 @@ namespace PawfectMatch.Migrations
                 name: "IX_Productos_ProveedoresID",
                 table: "Productos",
                 column: "ProveedoresID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductosInTabs_ProductosID",
+                table: "ProductosInTabs",
+                column: "ProductosID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductosInTabs_VetasTabsID",
+                table: "ProductosInTabs",
+                column: "VetasTabsID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Razas_EspeciesID",
@@ -1347,19 +1469,13 @@ namespace PawfectMatch.Migrations
                 name: "PersonasRoles");
 
             migrationBuilder.DropTable(
-                name: "PresentacionesDiapositivas");
-
-            migrationBuilder.DropTable(
-                name: "Productos");
+                name: "ProductosInTabs");
 
             migrationBuilder.DropTable(
                 name: "SeguimientoMascotas");
 
             migrationBuilder.DropTable(
                 name: "Servicios");
-
-            migrationBuilder.DropTable(
-                name: "Sugerencias");
 
             migrationBuilder.DropTable(
                 name: "TipoViviendas");
@@ -1386,16 +1502,10 @@ namespace PawfectMatch.Migrations
                 name: "Facturas");
 
             migrationBuilder.DropTable(
-                name: "Diapositivas");
+                name: "Productos");
 
             migrationBuilder.DropTable(
-                name: "Presentaciones");
-
-            migrationBuilder.DropTable(
-                name: "CategoriasProductos");
-
-            migrationBuilder.DropTable(
-                name: "Proveedores");
+                name: "VetasTabs");
 
             migrationBuilder.DropTable(
                 name: "EstadoMascota");
@@ -1414,6 +1524,12 @@ namespace PawfectMatch.Migrations
 
             migrationBuilder.DropTable(
                 name: "Personas");
+
+            migrationBuilder.DropTable(
+                name: "CategoriasProductos");
+
+            migrationBuilder.DropTable(
+                name: "Proveedores");
 
             migrationBuilder.DropTable(
                 name: "Estados");
