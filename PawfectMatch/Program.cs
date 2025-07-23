@@ -8,6 +8,7 @@ using PawfectMatch.Components.Account;
 using PawfectMatch.Constants;
 using PawfectMatch.Data;
 using PawfectMatch.Services;
+using PawfectMatch.Extensions;
 // Nota: Microsoft.AspNet.Identity es un paquete obsoleto y no debería ser necesario.
 // Usamos Microsoft.AspNetCore.Identity.
 #endregion
@@ -70,19 +71,16 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 #region Authorization Policies Configuration
 /// <summary>
 /// Configuración de las políticas de autorización.
-/// Utiliza la clase estática 'Permissions' para registrar dinámicamente una política
-/// para cada permiso definido en la aplicación. Esto centraliza la gestión de permisos
-/// y hace que el sistema sea más mantenible.
+/// Utiliza las extensiones personalizadas para registrar dinámicamente todas las políticas
+/// basadas en permisos y roles definidos en la aplicación.
 /// </summary>
 builder.Services.AddAuthorization(options =>
 {
-    // Itera sobre todos los permisos definidos en la constante.
-    foreach (var permission in Permissions.GetAllPermissions())
-    {
-        // Crea una política que requiere que el usuario tenga un claim con el mismo nombre que el permiso.
-        options.AddPolicy(permission, policy =>
-            policy.RequireClaim(permission, "true"));
-    }
+    // Configurar políticas basadas en permisos
+    options.ConfigurePermissionPolicies();
+    
+    // Configurar políticas basadas en roles
+    options.ConfigureRolePolicies();
 });
 #endregion
 
@@ -125,6 +123,9 @@ builder.Services.AddScoped<ProductosInTabsService>();
 // Registra servicios de componentes de UI de terceros.
 builder.Services.AddBlazorBootstrap();
 builder.Services.AddBlazoredToast();
+
+// Registra helper personalizado para verificación de permisos
+builder.Services.AddScoped<PawfectMatch.Components.Shared.PermissionHelper>();
 #endregion
 
 var app = builder.Build();

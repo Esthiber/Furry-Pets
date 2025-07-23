@@ -6,11 +6,9 @@
 
 @inject MascotasAdopcionService MascotaService
 
-@attribute [Authorize(Roles = "Admin,User")]
+@attribute [Authorize(Policy = Permissions.Pets.View)]
 
 @* ------------------- ESTILOS ------------------- *@
-
-
 
 <div class="adopcion-bg px-4 py-3">
     <div class="adopcion-titulo">Mascotas en Adopción</div>
@@ -73,16 +71,15 @@
                 }
             </div>
             <div class="filter-actions">
-
                 <button class="btn btn-outline-secondary btn-sm" @onclick="LimpiarFiltros">
                     <i class="bi bi-x-circle"></i> Limpiar filtros
                 </button>
 
-                @* <AuthorizeView Roles="Admin">
+                <AuthorizeView Policy="@Permissions.Pets.Create">
                     <button class="btn btn-primary" @onclick="gotoCreate">
                         <i class="bi bi-plus-circle"></i> Crear Mascota
                     </button>
-                </AuthorizeView> *@
+                </AuthorizeView>
             </div>
         </div>
     </div>
@@ -108,9 +105,8 @@
         }
     </div>
 </div>
-@code {
-    // [Inject] public PawfectMatch.Services.MascotasAdopcionService MascotaService { get; set; } = default!;
 
+@code {
     string FiltroNombre = "";
     string FiltroEdad = "";
     string FiltroTamanio = "";
@@ -177,6 +173,4 @@
             _ => true
         };
     }
-
-
 }

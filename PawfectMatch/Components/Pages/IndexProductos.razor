@@ -1,10 +1,13 @@
 ﻿@page "/productos"
 @using PawfectMatch.Models.POS
+@using PawfectMatch.Constants
 @inject ProductosService ProductosService
 @inject NavigationManager NavigationManager
 @inject CategoriasProductosService CategoriasProductosService
 @inject ProveedoresService ProveedoresService
 @rendermode InteractiveServer
+
+@attribute [Authorize(Policy = Permissions.Products.View)]
 
 <div class="productos-admin-container">
     <div class="header-section">
@@ -25,9 +28,11 @@
                 </div>
             }
         </div>
-        <button class="btn btn-primary" @onclick="AbrirModalNuevoProducto">
-            <i class="bi bi-plus-circle"></i> Nuevo Producto
-        </button>
+        <AuthorizeView Policy="@Permissions.Products.Create">
+            <button class="btn btn-primary" @onclick="AbrirModalNuevoProducto">
+                <i class="bi bi-plus-circle"></i> Nuevo Producto
+            </button>
+        </AuthorizeView>
     </div>
 
     <div class="filters-section">

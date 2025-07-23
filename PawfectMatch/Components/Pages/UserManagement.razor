@@ -1,5 +1,5 @@
 ﻿@page "/user-management"
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Policy = Permissions.Users.ManageRoles)]
 @rendermode InteractiveServer
 
 @using Microsoft.AspNetCore.Identity
@@ -15,9 +15,11 @@
 <div class="usermanagement-container">
     <div class="um-header">
         <h1 class="um-title"><i class="bi bi-people-fill"></i> Gestión de Usuarios</h1>
-        <button class="um-btn-add" @onclick="StartCreateUser">
-            <i class="bi bi-person-plus"></i> Nuevo Usuario
-        </button>
+        <AuthorizeView Policy="@Permissions.Users.Create">
+            <button class="um-btn-add" @onclick="StartCreateUser">
+                <i class="bi bi-person-plus"></i> Nuevo Usuario
+            </button>
+        </AuthorizeView>
     </div>
 
     @if (userList == null)
@@ -41,7 +43,9 @@
                         <td>@user.Email</td>
                         <td><span class="um-badge-role">@user.Role</span></td>
                         <td>
-                            <button class="um-btn-edit" title="Editar usuario" @onclick="() => StartEditUser(user)"><i class="bi bi-pencil"></i> Editar</button>
+                            <AuthorizeView Policy="@Permissions.Users.Edit">
+                                <button class="um-btn-edit" title="Editar usuario" @onclick="() => StartEditUser(user)"><i class="bi bi-pencil"></i> Editar</button>
+                            </AuthorizeView>
                         </td>
                     </tr>
                 }
@@ -82,13 +86,20 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="role" class="form-label">Rol</label>
-                            <InputSelect id="role" class="form-select" @bind-Value="editUserModel.RoleId">
-                                <option value="">-- Sin Rol --</option>
-                                @foreach (var role in allRoles!)
-                                {
-                                    <option value="@role.Id">@role.Name</option>
-                                }
-                            </InputSelect>
+                            <AuthorizeView Policy="@Permissions.Users.ManageRoles" Context="roleAuthContext">
+                                <Authorized>
+                                    <InputSelect id="role" class="form-select" @bind-Value="editUserModel.RoleId">
+                                        <option value="">-- Sin Rol --</option>
+                                        @foreach (var role in allRoles!)
+                                        {
+                                            <option value="@role.Id">@role.Name</option>
+                                        }
+                                    </InputSelect>
+                                </Authorized>
+                                <NotAuthorized>
+                                    <span class="form-control-plaintext">@editUserModel.RoleId</span>
+                                </NotAuthorized>
+                            </AuthorizeView>
                         </div>
                     </div>
 
@@ -101,32 +112,34 @@
                         </div>
                     }
 
-                    <hr />
-                    <h5 class="mb-3"><i class="bi bi-shield-lock"></i> Gestión de Permisos</h5>
+                    <AuthorizeView Policy="@Permissions.Users.ManageClaims" Context="claimsAuthContext">
+                        <hr />
+                        <h5 class="mb-3"><i class="bi bi-shield-lock"></i> Gestión de Permisos</h5>
 
-                    <div class="row">
-                        @foreach (var moduleGroup in permissionsModel.GroupBy(p => p.Module))
-                        {
-                            <div class="col-md-4 mb-3">
-                                <div class="card h-100">
-                                    <div class="card-header bg-light text-primary fw-bold">
-                                        <i class="bi bi-folder2-open"></i> @moduleGroup.Key
-                                    </div>
-                                    <div class="card-body">
-                                        @foreach (var permission in moduleGroup)
-                                        {
-                                            <div class="form-check form-switch permission-switch">
-                                                <InputCheckbox id="@permission.Permission" class="form-check-input" @bind-Value="permission.IsEnabled" />
-                                                <label class="form-check-label" for="@permission.Permission">
-                                                    @permission.DisplayName
-                                                </label>
-                                            </div>
-                                        }
+                        <div class="row">
+                            @foreach (var moduleGroup in permissionsModel.GroupBy(p => p.Module))
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-light text-primary fw-bold">
+                                            <i class="bi bi-folder2-open"></i> @moduleGroup.Key
+                                        </div>
+                                        <div class="card-body">
+                                            @foreach (var permission in moduleGroup)
+                                            {
+                                                <div class="form-check form-switch permission-switch">
+                                                    <InputCheckbox id="@permission.Permission" class="form-check-input" @bind-Value="permission.IsEnabled" />
+                                                    <label class="form-check-label" for="@permission.Permission">
+                                                        @permission.DisplayName
+                                                    </label>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        }
-                    </div>
+                            }
+                        </div>
+                    </AuthorizeView>
 
                     <div class="um-modal-footer">
                         <button type="button" class="um-btn-cancel" @onclick="CloseModal">Cancelar</button>

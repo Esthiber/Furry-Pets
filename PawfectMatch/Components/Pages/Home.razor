@@ -22,30 +22,49 @@
     <!-- Opciones principales -->
     <div class="home-options-section">
         <div class="home-card-grid">
-            <div class="card text-center home-card" @onclick="gotoVeterinaria">
-                <div class="card-body">
-                    <i class="fas fa-stethoscope fa-2x mb-2 icon-style"></i>
-                    <h5 class="card-title">POS</h5>
-                    <p class="card-text">Venta de Productos de Calidad</p>
-                    <button class="btn btn-primary">Ver POS</button>
+            <AuthorizeView Policy="@Permissions.Sales.ManagePOS">
+                <div class="card text-center home-card" @onclick="gotoVeterinaria">
+                    <div class="card-body">
+                        <i class="fas fa-stethoscope fa-2x mb-2 icon-style"></i>
+                        <h5 class="card-title">POS</h5>
+                        <p class="card-text">Venta de Productos de Calidad</p>
+                        <button class="btn btn-primary">Ver POS</button>
+                    </div>
                 </div>
-            </div>
-            <div class="card text-center home-card" @onclick="gotoAdopciones">
-                <div class="card-body">
-                    <i class="fas fa-dog fa-2x mb-2 icon-style"></i>
-                    <h5 class="card-title">Mascotas para adopción</h5>
-                    <p class="card-text">Descubre nuestras adorables mascotas en adopción.</p>
-                    <button class="btn btn-primary">Ver Adopciones</button>
+            </AuthorizeView>
+            
+            <AuthorizeView Policy="@Permissions.Pets.View">
+                <div class="card text-center home-card" @onclick="gotoAdopciones">
+                    <div class="card-body">
+                        <i class="fas fa-dog fa-2x mb-2 icon-style"></i>
+                        <h5 class="card-title">Mascotas para adopción</h5>
+                        <p class="card-text">Descubre nuestras adorables mascotas en adopción.</p>
+                        <button class="btn btn-primary">Ver Adopciones</button>
+                    </div>
                 </div>
-            </div>
-            <div class="card text-center home-card" @onclick="gotoUserManagement">
-                <div class="card-body">
-                    <i class="fas fa-users fa-2x mb-2 icon-style"></i>
-                    <h5 class="card-title">Usuarios</h5>
-                    <p class="card-text">Consultar Usuarios, Roles y Permisos</p>
-                    <button class="btn btn-primary">Ver Usuarios</button>
+            </AuthorizeView>
+            
+            <AuthorizeView Policy="@Permissions.Users.ManageRoles">
+                <div class="card text-center home-card" @onclick="gotoUserManagement">
+                    <div class="card-body">
+                        <i class="fas fa-users fa-2x mb-2 icon-style"></i>
+                        <h5 class="card-title">Usuarios</h5>
+                        <p class="card-text">Consultar Usuarios, Roles y Permisos</p>
+                        <button class="btn btn-primary">Ver Usuarios</button>
+                    </div>
                 </div>
-            </div>
+            </AuthorizeView>
+            
+            <AuthorizeView Policy="@Permissions.Admin.AccessPanel">
+                <div class="card text-center home-card" @onclick="gotoAdmin">
+                    <div class="card-body">
+                        <i class="fas fa-cogs fa-2x mb-2 icon-style"></i>
+                        <h5 class="card-title">Administración</h5>
+                        <p class="card-text">Panel de administración del sistema</p>
+                        <button class="btn btn-primary">Ver Panel</button>
+                    </div>
+                </div>
+            </AuthorizeView>
         </div>
     </div>
 </div>
@@ -72,5 +91,10 @@
     void gotoUserManagement()
     {
         NavigationManager.NavigateTo(Urls.Account.UserManagement);
+    }
+
+    void gotoAdmin()
+    {
+        NavigationManager.NavigateTo("/admin");
     }
 }

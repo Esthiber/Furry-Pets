@@ -1,13 +1,12 @@
-﻿@using PawfectMatch.Constants
-@page "/admin"
-@attribute [Authorize(Roles = "Admin")]
+﻿@page "/admin"
+@attribute [Authorize(Policy = Permissions.Admin.AccessPanel)]
 @inject NavigationManager NavigationManager
 @inject ProductosService ProductosService
 @inject FacturasService FacturasService
 @inject VetasTabsService VetasTabsService
 @inject IJSRuntime JS
-@* @using PawfectMatch.Components.Layout
-@layout VentasLayout *@
+
+@using PawfectMatch.Constants
 
 @rendermode InteractiveServer
 
@@ -29,20 +28,26 @@
         <main class="main-column">
             <!-- KPI Stats Grid -->
             <section class="kpi-grid">
-                <div class="kpi-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Productos))">
-                    <div class="kpi-icon icon-products"><i class="bi bi-box-seam"></i></div>
-                    <div class="kpi-info">
-                        <span class="kpi-value">@productosCount</span>
-                        <span class="kpi-label">Productos</span>
+                <AuthorizeView Policy="@Permissions.Products.View">
+                    <div class="kpi-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Productos))">
+                        <div class="kpi-icon icon-products"><i class="bi bi-box-seam"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-value">@productosCount</span>
+                            <span class="kpi-label">Productos</span>
+                        </div>
                     </div>
-                </div>
-                <div class="kpi-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Index))">
-                    <div class="kpi-icon icon-sales"><i class="bi bi-receipt"></i></div>
-                    <div class="kpi-info">
-                        <span class="kpi-value">@ventasCount</span>
-                        <span class="kpi-label">Ventas</span>
+                </AuthorizeView>
+                
+                <AuthorizeView Policy="@Permissions.Sales.View">
+                    <div class="kpi-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Index))">
+                        <div class="kpi-icon icon-sales"><i class="bi bi-receipt"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-value">@ventasCount</span>
+                            <span class="kpi-label">Ventas</span>
+                        </div>
                     </div>
-                </div>
+                </AuthorizeView>
+                
                 <div class="kpi-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Tabs))">
                     <div class="kpi-icon icon-tabs"><i class="bi bi-ui-checks-grid"></i></div>
                     <div class="kpi-info">
@@ -50,13 +55,17 @@
                         <span class="kpi-label">Tabs</span>
                     </div>
                 </div>
-                <div class="kpi-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Sugerencias.Index))">
-                    <div class="kpi-icon icon-suggestions"><i class="bi bi-envelope-paper-heart"></i></div>
-                    <div class="kpi-info">
-                        <span class="kpi-value">@sugerenciasCount</span>
-                        <span class="kpi-label">Sugerencias</span>
+                
+                <AuthorizeView Policy="@Permissions.Sugerencias.View">
+                    <div class="kpi-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Sugerencias.Index))">
+                        <div class="kpi-icon icon-suggestions"><i class="bi bi-envelope-paper-heart"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-value">@sugerenciasCount</span>
+                            <span class="kpi-label">Sugerencias</span>
+                        </div>
                     </div>
-                </div>
+                </AuthorizeView>
+                
                 <div class="kpi-card" @onclick="@(() => { })">
                     <div class="kpi-icon icon-presentations"><i class="bi bi-display"></i></div>
                     <div class="kpi-info">
@@ -70,14 +79,12 @@
             <section class="charts-grid">
                 <div class="chart-container card">
                     <h5>Ventas por Mes</h5>
-                    <!-- 👇 Wrapper añadido aquí -->
                     <div class="chart-wrapper">
                         <canvas id="ventasChart"></canvas>
                     </div>
                 </div>
                 <div class="chart-container card">
                     <h5>Top 5 Productos por Stock</h5>
-                    <!-- 👇 Wrapper añadido aquí también -->
                     <div class="chart-wrapper">
                         <canvas id="stockChart"></canvas>
                     </div>
@@ -91,14 +98,17 @@
                     <p>Administra los catálogos y entidades principales.</p>
                 </div>
                 <div class="management-grid">
-                    <div class="management-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Productos))">
-                        <div class="card-icon"><i class="bi bi-box-seam"></i></div>
-                        <div class="card-info">
-                            <h5>Productos</h5>
-                            <p>Crear, ver y editar productos.</p>
+                    <AuthorizeView Policy="@Permissions.Products.View">
+                        <div class="management-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Productos))">
+                            <div class="card-icon"><i class="bi bi-box-seam"></i></div>
+                            <div class="card-info">
+                                <h5>Productos</h5>
+                                <p>Crear, ver y editar productos.</p>
+                            </div>
+                            <i class="bi bi-chevron-right"></i>
                         </div>
-                        <i class="bi bi-chevron-right"></i>
-                    </div>
+                    </AuthorizeView>
+                    
                     <div class="management-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Tabs))">
                         <div class="card-icon"><i class="bi bi-ui-checks-grid"></i></div>
                         <div class="card-info">
@@ -107,22 +117,29 @@
                         </div>
                         <i class="bi bi-chevron-right"></i>
                     </div>
-                    <div class="management-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Index))">
-                        <div class="card-icon"><i class="bi bi-receipt"></i></div>
-                        <div class="card-info">
-                            <h5>Ventas</h5>
-                            <p>Historial y gestión de ventas.</p>
+                    
+                    <AuthorizeView Policy="@Permissions.Sales.View">
+                        <div class="management-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Index))">
+                            <div class="card-icon"><i class="bi bi-receipt"></i></div>
+                            <div class="card-info">
+                                <h5>Ventas</h5>
+                                <p>Historial y gestión de ventas.</p>
+                            </div>
+                            <i class="bi bi-chevron-right"></i>
                         </div>
-                        <i class="bi bi-chevron-right"></i>
-                    </div>
-                    <div class="management-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Sugerencias.Index))">
-                        <div class="card-icon"><i class="bi bi-envelope-paper-heart"></i></div>
-                        <div class="card-info">
-                            <h5>Sugerencias</h5>
-                            <p>Revisar sugerencias de usuarios.</p>
+                    </AuthorizeView>
+                    
+                    <AuthorizeView Policy="@Permissions.Sugerencias.View">
+                        <div class="management-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Sugerencias.Index))">
+                            <div class="card-icon"><i class="bi bi-envelope-paper-heart"></i></div>
+                            <div class="card-info">
+                                <h5>Sugerencias</h5>
+                                <p>Revisar sugerencias de usuarios.</p>
+                            </div>
+                            <i class="bi bi-chevron-right"></i>
                         </div>
-                        <i class="bi bi-chevron-right"></i>
-                    </div>
+                    </AuthorizeView>
+                    
                     <div class="management-card" @onclick="@(() => { })">
                         <div class="card-icon"><i class="bi bi-display"></i></div>
                         <div class="card-info">
@@ -142,18 +159,24 @@
                     <h4>Acciones Rápidas</h4>
                 </div>
                 <div class="quick-actions">
-                    <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.CrearProducto))">
-                        <i class="bi bi-plus-circle"></i>
-                        <span>Nuevo Producto</span>
-                    </button>
+                    <AuthorizeView Policy="@Permissions.Products.Create">
+                        <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.CrearProducto))">
+                            <i class="bi bi-plus-circle"></i>
+                            <span>Nuevo Producto</span>
+                        </button>
+                    </AuthorizeView>
+                    
                     <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.CrearTab))">
                         <i class="bi bi-ui-checks"></i>
                         <span>Nuevo Tab</span>
                     </button>
-                    <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Configuracion.Backup))">
-                        <i class="bi bi-database-check"></i>
-                        <span>Respaldo</span>
-                    </button>
+                    
+                    <AuthorizeView Policy="@Permissions.Backups.Create">
+                        <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Configuracion.Backup))">
+                            <i class="bi bi-database-check"></i>
+                            <span>Respaldo</span>
+                        </button>
+                    </AuthorizeView>
                 </div>
             </section>
 

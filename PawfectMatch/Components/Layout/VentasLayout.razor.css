@@ -10,7 +10,7 @@
     max-height: 100vh; /* Asegura que el contenido principal no se desborde verticalmente */
     flex: 1; /* Hace que esta columna ocupe todo el espacio sobrante */
     padding: 0rem; /* Espacio interno para que el contenido no pegue a los bordes */
-    overflow-y: auto; /* Si el contenido es muy largo, solo esta columna tendrá scroll */
+    overflow-y: hidden; /* Si el contenido es muy largo, solo esta columna tendrá scroll */
     position: relative; /* Establecer contexto de posicionamiento */
     z-index: 1; /* Z-index bajo para el contenido principal */
 }
