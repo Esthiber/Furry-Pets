@@ -1,47 +1,138 @@
-.settings-title {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 2rem;
-    color: #333;
+/* Estilos para el componente Settings */
+
+.settings-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
 }
-.btn-primary {
-    min-width: 220px;
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
+
+.settings-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xxl);
 }
-.settings-modal {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    z-index: 1050;
+
+.settings-header h1 {
+    font-family: var(--titulo-2-font-family);
+    font-size: var(--titulo-2-font-size);
+    color: var(--text-color);
+    margin-bottom: var(--spacing-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0,0,0,0.15);
+    gap: var(--spacing-sm);
 }
-.modal-backdrop {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.3);
-    z-index: 1040;
+
+.settings-header p {
+    color: var(--text-muted);
+    font-size: var(--font-size-lg);
+    margin: 0;
 }
-.modal-content {
-    border-radius: 12px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
 }
-.modal-header {
-    border-bottom: 1px solid #eee;
-    padding: 1rem 1.5rem;
-}
-.modal-title {
-    font-size: 1.3rem;
-    font-weight: 500;
-}
-.btn-close {
-    background: none;
-    border: none;
-    font-size: 1.3rem;
+
+.settings-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
     cursor: pointer;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow);
 }
-.modal-body {
-    padding: 1.5rem;
+
+.settings-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+    text-decoration: none;
+    color: inherit;
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondcolor));
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.card-content {
+    flex: 1;
+}
+
+.card-content h3 {
+    font-family: var(--titulo-2-font-family);
+    font-size: var(--font-size-xl);
+    color: var(--text-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.card-content p {
+    color: var(--text-muted);
+    margin: 0;
+    font-size: var(--font-size-sm);
+}
+
+.card-action {
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    transition: color var(--transition-normal);
+}
+
+.settings-card:hover .card-action {
+    color: var(--primary-color);
+}
+
+/* Estilos para modales del Settings */
+.settings-modal .modal-content {
+    border-radius: var(--border-radius-lg);
+}
+
+.settings-modal .modal-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondcolor));
+    color: white;
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+.settings-modal .modal-title {
+    color: white;
+}
+
+.settings-modal .btn-close {
+    filter: invert(1);
+}
+
+@media (max-width: 768px) {
+    .settings-container {
+        padding: var(--spacing-md);
+    }
+    
+    .settings-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .settings-card {
+        padding: var(--spacing-md);
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .card-icon {
+        margin-bottom: var(--spacing-sm);
+    }
 }

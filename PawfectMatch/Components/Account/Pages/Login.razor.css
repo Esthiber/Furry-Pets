@@ -1,147 +1,167 @@
-﻿.login-page-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+﻿/* Estilos para el formulario de Login centralizado */
+
+.login-page-container {
     min-height: 100vh;
-    width: 100%;
-    background-color: #f0f2f5; /* Un color de fondo suave, similar al de muchas webs modernas */
-    padding: 20px;
-    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--firstcolor) 0%, var(--fifthcolor) 100%);
+    padding: var(--spacing-md);
 }
 
 .login-form-card {
-    background: #ffffff;
-    padding: 2.5rem 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: var(--card-bg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    padding: var(--spacing-xxl);
     width: 100%;
     max-width: 450px;
+    border: 1px solid var(--border-color);
 }
 
 .login-form-header {
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: var(--spacing-xl);
 }
 
 .login-title {
-    font-size: 2.2rem;
-    font-weight: 600;
-    color: #1c1c1e;
-    margin-bottom: 0.5rem;
+    font-family: var(--titulo-2-font-family);
+    font-size: var(--titulo-2-font-size);
+    color: var(--thirdcolor);
+    margin-bottom: var(--spacing-sm);
 }
 
 .login-subtitle {
-    font-size: 1rem;
-    font-weight: 400;
-    color: #6c757d;
+    font-family: var(--parrafo-1-font-family);
+    font-size: var(--font-size-base);
+    color: var(--text-muted);
+    margin: 0;
 }
 
 .login-divider {
-    border: 0;
+    border: none;
     height: 1px;
-    background-color: #e9ecef;
-    margin: 1.5rem 0;
+    background: var(--border-color);
+    margin: var(--spacing-xl) 0;
 }
 
 .login-form-group {
-    margin-bottom: 1.25rem;
+    margin-bottom: var(--spacing-lg);
 }
 
 .login-label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--spacing-sm);
     font-weight: 500;
-    font-size: 0.9rem;
-    color: #495057;
+    color: var(--text-color);
+    font-family: var(--font-family);
 }
 
 .login-input {
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ced4da;
-    border-radius: 8px;
-    font-size: 1rem;
-    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    padding: var(--input-padding-y) var(--input-padding-x);
+    border: var(--input-border-width) solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+    background-color: var(--card-bg);
 }
 
-    .login-input:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
-        outline: none;
-    }
+.login-input:focus {
+    outline: none;
+    border-color: var(--input-focus-border-color);
+    box-shadow: var(--input-focus-box-shadow);
+}
 
 .login-remember-me {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.login-label-checkbox {
-    font-size: 0.9rem;
-    color: #495057;
-    cursor: pointer;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
 }
 
 .login-checkbox {
-    width: 1em;
-    height: 1em;
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--primary-color);
+}
+
+.login-label-checkbox {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-color);
+    cursor: pointer;
 }
 
 .login-submit-button {
     width: 100%;
-    padding: 14px 20px;
-    background-color: #0d6efd;
+    background-color: var(--thirdcolor);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 500;
+    border-radius: var(--border-radius);
+    padding: var(--btn-padding-y) var(--btn-padding-x);
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all var(--transition-normal);
+    margin-bottom: var(--spacing-lg);
 }
 
-    .login-submit-button:hover {
-        background-color: #0b5ed7;
-    }
+.login-submit-button:hover {
+    background-color: var(--fourthcolor);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
 
 .login-links-section {
-    margin-top: 1.5rem;
     text-align: center;
-    font-size: 0.9rem;
 }
 
-    .login-links-section p {
-        margin-bottom: 0.5rem;
-    }
+.login-links-section p {
+    margin-bottom: var(--spacing-sm);
+}
 
-    .login-links-section a {
-        color: #0d6efd;
-        text-decoration: none;
-    }
+.login-links-section a {
+    color: var(--secondcolor);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    transition: color var(--transition-normal);
+}
 
-        .login-links-section a:hover {
-            text-decoration: underline;
-        }
+.login-links-section a:hover {
+    color: var(--thirdcolor);
+    text-decoration: underline;
+}
 
-/* Estilos para los mensajes de validación */
 .login-validation-summary {
-    color: #dc3545; /* Bootstrap's danger color */
-    background-color: #f8d7da;
-    border: 1px solid #f5c2c7;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
+    background-color: rgba(220, 53, 69, 0.1);
+    border: 1px solid var(--danger-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    color: var(--danger-color);
+    font-size: var(--font-size-sm);
 }
-
-    .login-validation-summary ul {
-        padding-left: 1.2rem;
-        margin-bottom: 0;
-    }
 
 .login-validation-message {
-    color: #dc3545;
-    font-size: 0.875em;
-    margin-top: 0.25rem;
+    color: var(--danger-color);
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-xs);
+    display: block;
+}
+
+@media (max-width: 576px) {
+    .login-page-container {
+        padding: var(--spacing-sm);
+    }
+    
+    .login-form-card {
+        padding: var(--spacing-xl);
+    }
+    
+    .login-title {
+        font-size: calc(var(--titulo-2-font-size) - 8px);
+    }
 }

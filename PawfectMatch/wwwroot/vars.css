@@ -1,24 +1,57 @@
 /* 
- * Archivo reorganizado: solo variables y custom properties globales.
+ * Variables CSS globales para PawfectMatch
+ * Centraliza todos los valores de diseño para mantener consistencia
  */
 :root {
-  /* Colors */
+  /* Colors - Paleta principal */
   --firstcolor: #f3e9dc;
   --secondcolor: #c08552;
   --thirdcolor: #5e3023;
   --fourthcolor: #895737;
   --fifthcolor: #dab49d;
-  /* Admin Dashboard */
+  
+  /* System Colors */
   --primary-color: #0052cc;
   --primary-hover: #0041a3;
+  --success-color: #28a745;
+  --success-hover: #218838;
+  --danger-color: #dc3545;
+  --danger-hover: #c82333;
+  --warning-color: #ffc107;
+  --warning-hover: #e0a800;
+  --info-color: #17a2b8;
+  --info-hover: #138496;
+  
+  /* Text Colors */
   --text-color: #343a40;
   --text-muted: #6c757d;
+  --text-light: #ffffff;
+  --text-dark: #212529;
+  
+  /* Background Colors */
   --bg-color: #f8f9fa;
   --card-bg: #ffffff;
+  --overlay-bg: rgba(0, 0, 0, 0.5);
+  
+  /* Border & Shadows */
   --border-color: #dee2e6;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   --border-radius: 8px;
-  /* Fonts */
+  --border-radius-sm: 4px;
+  --border-radius-lg: 12px;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.15);
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  
+  /* Typography */
   --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --titulo-1-font-family: Jaro-Regular, sans-serif;
   --titulo-1-font-size: 48px;
@@ -39,4 +72,72 @@
   --single-line-body-base-font-size: 16px;
   --single-line-body-base-line-height: 100%;
   --single-line-body-base-font-weight: 400;
+  
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-xxl: 1.5rem;
+  
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* Z-Index Scale */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
+  
+  /* Breakpoints (for reference in JS) */
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-xxl: 1400px;
+  
+  /* Component specific variables */
+  --header-height: 70px;
+  --footer-height: 200px;
+  --sidebar-width: 250px;
+  
+  /* Form elements */
+  --input-height: 2.5rem;
+  --input-padding-x: 0.75rem;
+  --input-padding-y: 0.5rem;
+  --input-border-width: 1px;
+  --input-focus-border-color: var(--primary-color);
+  --input-focus-box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+  
+  /* Button sizes */
+  --btn-padding-y: 0.75rem;
+  --btn-padding-x: 1.25rem;
+  --btn-padding-y-sm: 0.5rem;
+  --btn-padding-x-sm: 0.75rem;
+  --btn-padding-y-lg: 1rem;
+  --btn-padding-x-lg: 2rem;
+  
+  /* Card variables */
+  --card-padding: 1.5rem;
+  --card-header-padding: 1rem;
+  --card-footer-padding: 1rem;
+  
+  /* Modal variables */
+  --modal-content-padding: 1.5rem;
+  --modal-backdrop-opacity: 0.5;
+  --modal-max-width: 500px;
+  --modal-lg-max-width: 800px;
+  --modal-xl-max-width: 1200px;
 }

@@ -1,80 +1,112 @@
 ﻿.tabs {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    padding: 0.5rem;
-    border-bottom: 2px solid #e0e0e0;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    overflow-x: auto;
 }
 
 .tab-button {
-    padding: 0.5rem 1rem;
+    padding: var(--spacing-md) var(--spacing-lg);
     border: none;
-    background-color: transparent;
-    font-weight: bold;
-    color: #666;
+    background: var(--bg-color);
+    color: var(--text-muted);
+    border-radius: var(--border-radius);
     cursor: pointer;
-    border-bottom: 3px solid transparent;
-    transition: all 0.2s ease-in-out;
+    transition: all var(--transition-normal);
+    font-weight: 500;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    border: 1px solid var(--border-color);
 }
 
-    .tab-button:hover {
-        color: #000;
-    }
+.tab-button:hover {
+    background: var(--firstcolor);
+    color: var(--thirdcolor);
+    transform: translateY(-1px);
+}
 
-    .tab-button.active {
-        color: #007bff;
-        border-color: #007bff;
-    }
+.tab-button.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
 
+/* Layout principal de facturación */
 .facturacion-wrapper {
-    padding: 1rem;
+    height: calc(100vh - 80px); /* Ajustar según altura de tabs */
+    overflow: hidden;
 }
 
 .facturacion-layout {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    height: 100%;
+    gap: 0;
 }
 
 .facturacion-productos {
-    flex: 2;
+    background: var(--bg-color);
+    overflow-y: auto;
+    padding: var(--spacing-md);
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
-    padding-right: 1rem;
-    border-right: 1px solid #ddd;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    align-content: start;
 }
 
 .facturacion-lista {
-    flex: 1;
-    min-width: 300px;
-    height:670px;
-    position:relative;
-}
-
-/* MODALES GENERALES */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
+    background: var(--card-bg);
+    border-left: 1px solid var(--border-color);
+    overflow-y: auto;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+    flex-direction: column;
 }
 
-/* Animación para modales */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
+/* Estados de carga */
+.facturacion-productos > div {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--spacing-xxl);
+    color: var(--text-muted);
+    font-size: var(--font-size-lg);
+}
 
-    to {
-        opacity: 1;
-        transform: scale(1);
+/* Responsive */
+@media (max-width: 1024px) {
+    .facturacion-layout {
+        grid-template-columns: 1fr 350px;
+    }
+}
+
+@media (max-width: 768px) {
+    .facturacion-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+    }
+    
+    .facturacion-lista {
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        max-height: 50vh;
+    }
+    
+    .facturacion-productos {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm);
+    }
+    
+    .tabs {
+        padding: var(--spacing-sm);
+        gap: var(--spacing-xs);
+    }
+    
+    .tab-button {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
     }
 }

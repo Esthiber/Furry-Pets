@@ -1,0 +1,85 @@
+.tabs-productos-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+.tabs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+.tab-item {
+    background: #f7f7f7;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+.tab-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.tab-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    min-width: 180px;
+}
+.productos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 40px;
+    margin-bottom: 1rem;
+}
+.producto-item {
+    background: #e9ecef;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: grab;
+    transition: box-shadow 0.2s;
+}
+.producto-item:active {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+.btn {
+    font-size: 1rem;
+    padding: 0.4rem 1.2rem;
+    border-radius: 6px;
+    margin-right: 0.5rem;
+}
+.btn-primary {
+    background: #007bff;
+    color: #fff;
+    border: none;
+}
+.btn-secondary {
+    background: #6c757d;
+    color: #fff;
+    border: none;
+}
+.btn-danger {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+}
+.btn-success {
+    background: #28a745;
+    color: #fff;
+    border: none;
+}
+.alert-info {
+    background: #e3f2fd;
+    color: #31708f;
+    border-radius: 6px;
+    padding: 0.7rem 1.2rem;
+    margin-top: 1rem;
+}

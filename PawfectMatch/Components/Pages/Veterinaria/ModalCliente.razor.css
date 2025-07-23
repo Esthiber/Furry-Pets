@@ -129,3 +129,379 @@
         transform: scale(1);
     }
 }
+
+/* Estilos específicos para los modales del punto de venta */
+
+/* Modal Cliente */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--overlay-bg);
+    z-index: var(--z-modal-backdrop);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
+}
+
+.modal-content.modal-cliente,
+.modal-content.modal-buscar-cliente {
+    background: var(--card-bg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    z-index: var(--z-modal);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-color);
+}
+
+.modal-header h2 {
+    font-family: var(--titulo-2-font-family);
+    font-size: var(--font-size-xl);
+    color: var(--text-color);
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: var(--spacing-xs);
+    transition: color var(--transition-normal);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: var(--text-color);
+}
+
+.modal-body {
+    padding: var(--spacing-lg);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-color);
+}
+
+.btn-cancel,
+.btn-save,
+.btn-buscar-cliente {
+    padding: var(--btn-padding-y-sm) var(--btn-padding-x);
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.btn-cancel {
+    background-color: var(--text-muted);
+    color: white;
+}
+
+.btn-cancel:hover {
+    background-color: var(--text-color);
+}
+
+.btn-save,
+.btn-buscar-cliente {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-save:hover,
+.btn-buscar-cliente:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Lista de clientes */
+.clientes-lista {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: var(--spacing-md);
+}
+
+.list-group {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    background: var(--card-bg);
+}
+
+.list-group-item:first-child {
+    border-top: 1px solid var(--border-color);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.list-group-item:last-child {
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+.list-group-item:hover {
+    background-color: var(--bg-color);
+}
+
+/* Modal Pago */
+.modal-pago-content {
+    background: var(--card-bg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    z-index: var(--z-modal);
+}
+
+.modal-pago-body {
+    padding: var(--spacing-lg);
+}
+
+.pago-section {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pago-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.pago-section h3 {
+    font-family: var(--titulo-2-font-family);
+    font-size: var(--font-size-lg);
+    color: var(--text-color);
+    margin-bottom: var(--spacing-md);
+}
+
+.cliente-info {
+    font-size: var(--font-size-lg);
+    color: var(--text-color);
+    font-weight: 600;
+    margin: 0;
+}
+
+.productos-resumen {
+    background: var(--bg-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+}
+
+.producto-linea {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--border-color);
+    align-items: center;
+}
+
+.producto-linea:last-child {
+    border-bottom: none;
+}
+
+.producto-nombre {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.producto-cantidad {
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.producto-subtotal {
+    text-align: right;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.totales {
+    background: var(--bg-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+}
+
+.total-linea {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+}
+
+.total-final {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--primary-color);
+    border-top: 2px solid var(--border-color);
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-md);
+}
+
+.monto-input-group {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.monto-input {
+    flex: 1;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    text-align: center;
+}
+
+.btn-monto-exacto {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color var(--transition-normal);
+}
+
+.btn-monto-exacto:hover {
+    background-color: var(--success-hover);
+}
+
+.monto-rapido-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.monto-rapido-btn {
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    border: 1px solid var(--primary-color);
+    background: transparent;
+    color: var(--primary-color);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.monto-rapido-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.cambio-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: var(--bg-color);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+}
+
+.cambio-positivo {
+    color: var(--success-color);
+}
+
+.cambio-negativo {
+    color: var(--danger-color);
+}
+
+.btn-pay {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: var(--btn-padding-y) var(--btn-padding-x-lg);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.btn-pay:hover:not(:disabled) {
+    background-color: var(--success-hover);
+    transform: translateY(-1px);
+}
+
+.btn-pay:disabled {
+    background-color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-overlay {
+        padding: var(--spacing-sm);
+    }
+    
+    .modal-content.modal-cliente,
+    .modal-content.modal-buscar-cliente,
+    .modal-pago-content {
+        max-width: 100%;
+        margin: 0;
+    }
+    
+    .modal-header,
+    .modal-body,
+    .modal-footer,
+    .modal-pago-body {
+        padding: var(--spacing-md);
+    }
+    
+    .producto-linea {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+        text-align: center;
+    }
+    
+    .monto-rapido-group {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .monto-input-group {
+        flex-direction: column;
+    }
+}

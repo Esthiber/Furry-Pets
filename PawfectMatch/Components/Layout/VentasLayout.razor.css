@@ -3,12 +3,16 @@
     flex-direction: row; /* Columnas una al lado de la otra */
     min-height: 100vh; /* Ocupa al menos toda la altura de la pantalla */
     background-color: #f4f6f9; /* Un color de fondo base para toda la app */
+    position: relative; /* Establecer contexto de posicionamiento */
 }
 
 .main-content {
+    max-height: 100vh; /* Asegura que el contenido principal no se desborde verticalmente */
     flex: 1; /* Hace que esta columna ocupe todo el espacio sobrante */
     padding: 0rem; /* Espacio interno para que el contenido no pegue a los bordes */
     overflow-y: auto; /* Si el contenido es muy largo, solo esta columna tendrá scroll */
+    position: relative; /* Establecer contexto de posicionamiento */
+    z-index: 1; /* Z-index bajo para el contenido principal */
 }
 
 .quick-menu {
@@ -20,5 +24,5 @@
     background-color: #2c3e50; /* Un color oscuro para la barra lateral */
     box-shadow: -3px 0px 15px rgba(0, 0, 0, 0.1); /* Sombra sutil a la izquierda */
     color: white; /* Color de texto por defecto para los elementos dentro */
+    z-index: 100; /* Z-index medio para el menú lateral */
 }
-    
