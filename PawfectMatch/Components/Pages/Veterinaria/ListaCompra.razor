@@ -80,7 +80,7 @@
     // Helper class para representar un ítem agrupado en la lista.
     private class ItemAgrupado
     {
-        public Productos Producto { get; set; }
+        public Productos Producto { get; set; } = new();
         public int Cantidad { get; set; }
         public decimal Subtotal => Producto.Precio * Cantidad;
     }

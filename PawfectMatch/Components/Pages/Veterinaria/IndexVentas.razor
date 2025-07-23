@@ -13,7 +13,7 @@
 @* @attribute [Authorize(Roles = "Admin,User")] *@
 
 <div class="tabs">
-    @foreach (var tab in VetasTabsDisponibles)
+    @foreach (var tab in VetasTabsDisponibles.OrderBy(t => t.Orden))
     {
         <button class="tab-button @(tab.VetasTabsID == activeTabId ? "active" : "")" @onclick="@(() => cambiarTab(tab.VetasTabsID))">
             <i class="bi bi-@tab.Icono"></i> @tab.Nombre
@@ -76,7 +76,6 @@
     int activeTabId;
 
     Personas? Cliente { get; set; }
-    Personas clienteTemp = new();
     bool mostrarModalCliente = false;
     bool mostrarModalPago = false;
 
@@ -101,7 +100,9 @@
         VetasTabsDisponibles = await VetasTabsService.ListAsync(t => !t.IsDeleted);
         if (VetasTabsDisponibles.Count > 0)
         {
-            activeTabId = VetasTabsDisponibles.First().VetasTabsID;
+            // Seleccionar el primer tab según el orden
+            var primerTab = VetasTabsDisponibles.OrderBy(t => t.Orden).First();
+            activeTabId = primerTab.VetasTabsID;
             await CargarProductos();
         }
         clientes = await PersonasService.ListAsync(p => !p.IsDeleted);
@@ -119,6 +120,7 @@
         var productosInTabs = await ProductosInTabsService.ListAsync(p => p.VetasTabsID == activeTabId && !p.IsDeleted);
         ProductosDisponibles = productosInTabs
             .Where(p => p.Producto != null && !p.Producto.IsDeleted && p.Producto.Stock > 0)
+            .OrderBy(p => p.Orden) // Ordenar según el campo Orden
             .Select(p => p.Producto!)
             .ToList();
     }
@@ -141,17 +143,16 @@
         StateHasChanged();
     }
 
-    void OnIngresarCliente()
+    async Task OnIngresarCliente()
     {
-        if (Cliente.PersonasID == 1) Cliente = new Personas();
+        if (Cliente!.PersonasID == 1) Cliente = new Personas();
         busquedaCliente = "";
-        ReloadClientes();
+        await ReloadClientes();
         mostrarModalCliente = true;
     }
 
     void FiltrarClientes()
     {
-
         if (string.IsNullOrWhiteSpace(busquedaCliente))
         {
             clientesFiltrados = clientes.ToList();
@@ -169,23 +170,13 @@
     async Task SeleccionarCliente(Personas persona)
     {
         Cliente = persona;
-        // mostrarModalCliente = false;
         await ReloadClientes();
         StateHasChanged();
     }
 
     async Task GuardarCliente()
     {
-        // Si no se selecciona ni se llena nada, usar cliente default
-        // if (string.IsNullOrWhiteSpace(Cliente.Nombre) && string.IsNullOrWhiteSpace(Cliente.Telefono))
-        // {
-        //     Cliente = clientes.FirstOrDefault(c => c.PersonasID == 1) ?? new Personas();
-        // }
-        // else
-        // {
-        await PersonasService.SaveAsync(Cliente);
-        // }
-
+        await PersonasService.SaveAsync(Cliente!);
         mostrarModalCliente = false;
         await ReloadClientes();
         StateHasChanged();
@@ -195,14 +186,12 @@
     {
         if (Carrito.Count == 0) return;
 
-        if (string.IsNullOrWhiteSpace(Cliente.Nombre) && string.IsNullOrWhiteSpace(Cliente.Telefono))
+        if (string.IsNullOrWhiteSpace(Cliente?.Nombre) && string.IsNullOrWhiteSpace(Cliente?.Telefono))
         {
             Cliente = clientes.FirstOrDefault(c => c.PersonasID == 1) ?? new Personas();
         }
 
-
         montoPagado = 0;
-        metodoPago = "Efectivo";
         mostrarModalPago = true;
     }
 
