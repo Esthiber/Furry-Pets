@@ -1,0 +1,431 @@
+@page "/tabs-productos"
+@using PawfectMatch.Models.POS
+@using PawfectMatch.Constants
+@inject VetasTabsService VetasTabsService
+@inject ProductosInTabsService ProductosInTabsService
+@inject ProductosService ProductosService
+@rendermode InteractiveServer
+
+<div class="page-container">
+    <div class="page-header">
+        <h1><i class="bi bi-grid-3x3-gap"></i> Administración de Tabs y Productos</h1>
+        <div class="actions-bar">
+            <button class="btn btn-primary" @onclick="AgregarTab">
+                <i class="bi bi-plus-circle"></i> Nuevo Tab
+            </button>
+            <button class="btn btn-success" @onclick="GuardarCambios">
+                <i class="bi bi-check2-circle"></i> Guardar Cambios
+            </button>
+        </div>
+    </div>
+
+    @if (tabs.Any())
+    {
+        <div class="tabs-grid">
+            @foreach (var tab in tabs.OrderBy(t => t.Orden))
+            {
+                <div class="tab-card" @key="tab.VetasTabsID">
+                    <div class="tab-header">
+                        <div class="tab-config">
+                            <div class="tab-order">
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => MoverTab(tab, -1)" disabled="@(tab.Orden <= 1)">
+                                    <i class="bi bi-arrow-up"></i>
+                                </button>
+                                <span class="orden-number">@tab.Orden</span>
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => MoverTab(tab, 1)" disabled="@(tab.Orden >= tabs.Count)">
+                                    <i class="bi bi-arrow-down"></i>
+                                </button>
+                            </div>
+                            <div class="tab-icon" @onclick="() => AbrirSelectorIconos(tab)">
+                                <i class="bi bi-@tab.Icono"></i>
+                            </div>
+                        </div>
+                        <div class="tab-title">
+                            <input type="text" class="tab-name form-control" placeholder="Nombre del Tab" @bind="tab.Nombre" />
+                        </div>
+                        <div class="tab-actions">
+                            <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarTab(tab.VetasTabsID)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="productos-container">
+                        <div class="productos-list">
+                            @foreach (var pit in productosInTabs.Where(p => p.VetasTabsID == tab.VetasTabsID).OrderBy(p => p.Orden))
+                            {
+                                <div class="producto-item" @key="pit.ProductosInTabsID">
+                                    <div class="producto-info">
+                                        <span class="producto-nombre">@(pit.Producto?.Nombre ?? $"Producto {pit.ProductosID}")</span>
+                                        <input type="number" 
+                                               class="form-control orden-input" 
+                                               value="@pit.Orden" 
+                                               @onchange="@(e => ActualizarOrden(pit, int.Parse(e.Value?.ToString() ?? "0")))" />
+                                    </div>
+                                    <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarProducto(tab.VetasTabsID, pit.ProductosInTabsID)">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                        <button class="btn btn-outline-secondary btn-sm add-producto" @onclick="() => AbrirModalProductos(tab.VetasTabsID)">
+                            <i class="bi bi-plus-lg"></i> Agregar Producto
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+            <h3>No hay tabs configurados</h3>
+            <p>Comienza creando un nuevo tab para organizar tus productos</p>
+            <button class="btn btn-primary" @onclick="AgregarTab">
+                <i class="bi bi-plus-circle"></i> Crear Primer Tab
+            </button>
+        </div>
+    }
+
+    @if (mostrarModalIconos)
+    {
+        <div class="modal-backdrop"></div>
+        <div class="modal show" style="display: block;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Seleccionar Icono</h5>
+                        <button type="button" class="btn-close" @onclick="CerrarModalIconos"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="search-box mb-3">
+                            <input type="text" 
+                                   class="form-control" 
+                                   placeholder="Buscar icono..."
+                                   @bind="busquedaIcono"
+                                   @bind:event="oninput"
+                                   @onkeyup="FiltrarIconos" />
+                        </div>
+                        <div class="iconos-grid">
+                            @foreach (var categoria in iconosFiltrados)
+                            {
+                                <div class="categoria-iconos">
+                                    <h6>@categoria.Key</h6>
+                                    <div class="iconos-lista">
+                                        @foreach (var icono in categoria.Value)
+                                        {
+                                            <div class="icono-item @(tabSeleccionado?.Icono == icono ? "selected" : "")" 
+                                                 @onclick="() => SeleccionarIcono(icono)">
+                                                <i class="bi bi-@icono"></i>
+                                                <span>@icono</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (mostrarModalProductos)
+    {
+        <div class="modal-backdrop"></div>
+        <div class="modal show" style="display: block;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Agregar Producto</h5>
+                        <button type="button" class="btn-close" @onclick="CerrarModalProductos"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="search-box mb-3">
+                            <input type="text" 
+                                   class="form-control" 
+                                   placeholder="Buscar producto por nombre..."
+                                   @bind="busquedaProducto"
+                                   @bind:event="oninput"
+                                   @onkeyup="FiltrarProductos" />
+                        </div>
+                        <div class="productos-grid">
+                            @foreach (var producto in productosFiltrados)
+                            {
+                                <div class="producto-card" @onclick="() => SeleccionarProducto(producto)">
+                                    <img src="@(producto.ImagenUrl ?? "https://via.placeholder.com/100")" alt="@producto.Nombre" />
+                                    <div class="producto-info">
+                                        <h6>@producto.Nombre</h6>
+                                        <p>Stock: @producto.Stock</p>
+                                        <p>Precio: $@producto.Precio</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong class="me-auto">Información</strong>
+                    <button type="button" class="btn-close" @onclick="() => mensaje = string.Empty"></button>
+                </div>
+                <div class="toast-body">
+                    @mensaje
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<VetasTabs> tabs = new();
+    private List<ProductosInTabs> productosInTabs = new();
+    private List<Productos> productos = new();
+    private List<Productos> productosFiltrados = new();
+    private string mensaje = string.Empty;
+    private bool mostrarModalProductos = false;
+    private bool mostrarModalIconos = false;
+    private string busquedaProducto = string.Empty;
+    private string busquedaIcono = string.Empty;
+    private int tabSeleccionadoId;
+    private VetasTabs? tabSeleccionado;
+    private Dictionary<string, List<string>> todosLosIconos = new();
+    private Dictionary<string, List<string>> iconosFiltrados = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+        CargarIconos();
+    }
+
+    private void CargarIconos()
+    {
+        var iconosType = typeof(Icons);
+        var categorias = iconosType.GetNestedTypes();
+        
+        foreach (var categoria in categorias)
+        {
+            var iconos = categoria.GetFields()
+                .Where(f => f.IsStatic && f.IsPublic)
+                .Select(f => f.GetValue(null)?.ToString() ?? "")
+                .Where(v => !string.IsNullOrEmpty(v))
+                .ToList();
+            
+            todosLosIconos[categoria.Name] = iconos;
+        }
+        
+        iconosFiltrados = todosLosIconos;
+    }
+
+    private async Task CargarDatos()
+    {
+        tabs = await VetasTabsService.ListAsync(t => !t.IsDeleted);
+        productosInTabs = await ProductosInTabsService.ListAsync(p => !p.IsDeleted);
+        productos = await ProductosService.ListAsync(p => !p.IsDeleted);
+        
+        foreach (var pit in productosInTabs)
+        {
+            pit.Producto = productos.FirstOrDefault(p => p.ProductosID == pit.ProductosID);
+        }
+    }
+
+    private void MoverTab(VetasTabs tab, int direccion)
+    {
+        var nuevoOrden = tab.Orden + direccion;
+        if (nuevoOrden < 1 || nuevoOrden > tabs.Count) return;
+
+        var otroTab = tabs.FirstOrDefault(t => t.Orden == nuevoOrden);
+        if (otroTab != null)
+        {
+            otroTab.Orden = tab.Orden;
+            tab.Orden = nuevoOrden;
+        }
+    }
+
+    private void AbrirSelectorIconos(VetasTabs tab)
+    {
+        tabSeleccionado = tab;
+        busquedaIcono = string.Empty;
+        iconosFiltrados = todosLosIconos;
+        mostrarModalIconos = true;
+    }
+
+    private void CerrarModalIconos()
+    {
+        mostrarModalIconos = false;
+        tabSeleccionado = null;
+        busquedaIcono = string.Empty;
+    }
+
+    private void SeleccionarIcono(string icono)
+    {
+        if (tabSeleccionado != null)
+        {
+            tabSeleccionado.Icono = icono;
+            CerrarModalIconos();
+        }
+    }
+
+    private void FiltrarIconos()
+    {
+        if (string.IsNullOrWhiteSpace(busquedaIcono))
+        {
+            iconosFiltrados = todosLosIconos;
+        }
+        else
+        {
+            iconosFiltrados = todosLosIconos.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.Where(i => i.Contains(busquedaIcono, StringComparison.OrdinalIgnoreCase)).ToList()
+            ).Where(kvp => kvp.Value.Any())
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        }
+    }
+
+    private void ActualizarOrden(ProductosInTabs pit, int nuevoOrden)
+    {
+        if (nuevoOrden < 1) nuevoOrden = 1;
+        pit.Orden = nuevoOrden;
+        
+        var productosEnTab = productosInTabs
+            .Where(p => p.VetasTabsID == pit.VetasTabsID)
+            .OrderBy(p => p.Orden)
+            .ToList();
+
+        int orden = 1;
+        foreach (var p in productosEnTab)
+        {
+            if (p.ProductosInTabsID != pit.ProductosInTabsID)
+            {
+                if (orden == nuevoOrden) orden++;
+                p.Orden = orden++;
+            }
+        }
+    }
+
+    private void AbrirModalProductos(int tabId)
+    {
+        tabSeleccionadoId = tabId;
+        productosFiltrados = productos.ToList();
+        mostrarModalProductos = true;
+        busquedaProducto = string.Empty;
+    }
+
+    private void CerrarModalProductos()
+    {
+        mostrarModalProductos = false;
+        productosFiltrados.Clear();
+        busquedaProducto = string.Empty;
+    }
+
+    private void FiltrarProductos()
+    {
+        if (string.IsNullOrWhiteSpace(busquedaProducto))
+        {
+            productosFiltrados = productos.ToList();
+        }
+        else
+        {
+            productosFiltrados = productos
+                .Where(p => p.Nombre.Contains(busquedaProducto, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+    }
+
+    private async Task SeleccionarProducto(Productos producto)
+    {
+        var maxOrden = productosInTabs
+            .Where(p => p.VetasTabsID == tabSeleccionadoId)
+            .Select(p => p.Orden)
+            .DefaultIfEmpty(0)
+            .Max();
+
+        var nuevoPit = new ProductosInTabs
+        {
+            VetasTabsID = tabSeleccionadoId,
+            ProductosID = producto.ProductosID,
+            Orden = maxOrden + 1,
+            IsDeleted = false
+        };
+
+        await ProductosInTabsService.SaveAsync(nuevoPit);
+        await CargarDatos();
+        CerrarModalProductos();
+        mensaje = "Producto agregado correctamente.";
+    }
+
+    private void AgregarTab()
+    {
+        var nuevoTab = new VetasTabs 
+        { 
+            Nombre = "Nuevo Tab", 
+            Orden = tabs.Count + 1,
+            Color = "#007bff",
+            Icono = "grid" // Usando el string directamente
+        };
+        tabs.Add(nuevoTab);
+    }
+
+    private async Task EliminarTab(int tabId)
+    {
+        var tab = tabs.FirstOrDefault(t => t.VetasTabsID == tabId);
+        if (tab != null)
+        {
+            tab.IsDeleted = true;
+            await VetasTabsService.SaveAsync(tab);
+
+            var productosDePestaña = productosInTabs.Where(p => p.VetasTabsID == tabId).ToList();
+            foreach (var pit in productosDePestaña)
+            {
+                pit.IsDeleted = true;
+                await ProductosInTabsService.SaveAsync(pit);
+            }
+
+            await CargarDatos();
+            mensaje = "Tab eliminado correctamente.";
+        }
+    }
+
+    private async Task EliminarProducto(int tabId, int productoInTabsId)
+    {
+        var pit = productosInTabs.FirstOrDefault(p => p.VetasTabsID == tabId && p.ProductosInTabsID == productoInTabsId);
+        if (pit != null)
+        {
+            pit.IsDeleted = true;
+            await ProductosInTabsService.SaveAsync(pit);
+            await CargarDatos();
+            mensaje = "Producto eliminado del tab correctamente.";
+        }
+    }
+
+    private async Task GuardarCambios()
+    {
+        try
+        {
+            foreach (var tab in tabs)
+            {
+                await VetasTabsService.SaveAsync(tab);
+            }
+
+            foreach (var pit in productosInTabs)
+            {
+                await ProductosInTabsService.SaveAsync(pit);
+            }
+
+            await CargarDatos();
+            mensaje = "Cambios guardados correctamente.";
+        }
+        catch (Exception ex)
+        {
+            mensaje = $"Error al guardar los cambios: {ex.Message}";
+        }
+    }
+}
