@@ -48,8 +48,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var lista = await ConfiguracionEmpresaService.ListAsync(e => true);
-        empresa = lista.FirstOrDefault() ?? new PawfectMatch.Models.ConfiguracionEmpresa();
+        // var lista = await ConfiguracionEmpresaService.ListAsync(e => true);
+        empresa = await ConfiguracionEmpresaService.SearchByIdAsync(1);
         // Mostrar el logo actual
         previewUrl = NavigationManager.BaseUri + "img/logo/logo0.png";
     }
@@ -74,7 +74,8 @@
             using var stream = new FileStream(path, FileMode.Create);
             await logoFile.OpenReadStream().CopyToAsync(stream);
         }
-        // Actualizar la información de la empresa
+
+        // actualizar la información de la empresa
         var exito = await ConfiguracionEmpresaService.UpdateAsync(empresa);
         mensaje = exito ? "Información de la empresa actualizada correctamente." : "No se pudo actualizar la información.";
         // Si se guardó un nuevo logo, refrescar la previsualización
@@ -85,6 +86,5 @@
 
         // Redirigir a la página de configuración
         NavigationManager.NavigateTo("/", forceLoad: true);
-
     }
 }
