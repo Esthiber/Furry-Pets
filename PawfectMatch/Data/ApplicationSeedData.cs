@@ -8,6 +8,18 @@ namespace PawfectMatch.Data
 {
     public static class ApplicationSeedData
     {
+        public static readonly List<ConfiguracionEmpresa> seedConfiguracionEmpresa = new()
+        {
+            new ConfiguracionEmpresa
+            {
+                EmpresaID = 1,
+                Nombre = "Empresa",
+                RNC = "123456789",
+                Telefono = "809-555-1234",
+                Direccion = "Direccion de la Empresa",
+               }
+        };
+
         public static readonly List<Personas> seedPersonas = new()
         {
             new Personas
@@ -125,7 +137,7 @@ namespace PawfectMatch.Data
         Nombre = "Luna",
         FechaNacimiento = new DateOnly(2023, 5, 10),
         Descripcion = "Cachorrita juguetona y muy cariñosa con niños.",
-        FotoURL = "https://images.unsplash.com/photo-1583511655826-05700d52f4ae",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'f',
         IsDeleted = false
@@ -139,7 +151,7 @@ namespace PawfectMatch.Data
         Nombre = "Rocky",
         FechaNacimiento = new DateOnly(2022, 11, 15),
         Descripcion = "Perro guardián y muy leal. Ideal para casas grandes.",
-        FotoURL = "https://images.unsplash.com/photo-1601758123927-196f76f75097",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'm',
         IsDeleted = false
@@ -153,7 +165,7 @@ namespace PawfectMatch.Data
         Nombre = "Mia",
         FechaNacimiento = new DateOnly(2024, 2, 1),
         Descripcion = "Gatita rescatada muy tranquila y sociable.",
-        FotoURL = "https://images.unsplash.com/photo-1592194996308-7b43878e84a6",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'f',
         IsDeleted = false
@@ -167,7 +179,7 @@ namespace PawfectMatch.Data
         Nombre = "Zeus",
         FechaNacimiento = new DateOnly(2021, 8, 20),
         Descripcion = "Perro fuerte, entrenado y excelente para seguridad.",
-        FotoURL = "https://images.unsplash.com/photo-1583511655826-05700d52f4ae",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'm',
         IsDeleted = false
@@ -181,7 +193,7 @@ namespace PawfectMatch.Data
         Nombre = "Nala",
         FechaNacimiento = new DateOnly(2023, 1, 30),
         Descripcion = "Muy energética y necesita mucho ejercicio diario.",
-        FotoURL = "https://images.unsplash.com/photo-1601758003122-58eacb8e3ed1",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'f',
         IsDeleted = false
@@ -195,7 +207,7 @@ namespace PawfectMatch.Data
         Nombre = "Simba",
         FechaNacimiento = new DateOnly(2024, 4, 15),
         Descripcion = "Gatito curioso y muy juguetón.",
-        FotoURL = "https://images.unsplash.com/photo-1592194996308-7b43878e84a6",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'm',
         IsDeleted = false
@@ -209,7 +221,7 @@ namespace PawfectMatch.Data
         Nombre = "Thor",
         FechaNacimiento = new DateOnly(2022, 6, 18),
         Descripcion = "Gran danés amoroso y obediente.",
-        FotoURL = "https://images.unsplash.com/photo-1583511655826-05700d52f4ae",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'm',
         IsDeleted = false
@@ -223,7 +235,7 @@ namespace PawfectMatch.Data
         Nombre = "Lili",
         FechaNacimiento = new DateOnly(2023, 7, 9),
         Descripcion = "Gatita blanca, ideal para compañía.",
-        FotoURL = "https://images.unsplash.com/photo-1580377969203-4ec1eac6d5fe",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'f',
         IsDeleted = false
@@ -237,7 +249,7 @@ namespace PawfectMatch.Data
         Nombre = "Max",
         FechaNacimiento = new DateOnly(2021, 9, 12),
         Descripcion = "Obediente y perfecto para familias con niños.",
-        FotoURL = "https://images.unsplash.com/photo-1558788353-f76d92427f16",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'm',
         IsDeleted = false
@@ -251,7 +263,7 @@ namespace PawfectMatch.Data
         Nombre = "Cleo",
         FechaNacimiento = new DateOnly(2024, 3, 22),
         Descripcion = "Gatita siamesa muy elegante.",
-        FotoURL = "https://images.unsplash.com/photo-1574158622682-e40e69881006",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'f',
         IsDeleted = false
@@ -265,7 +277,7 @@ namespace PawfectMatch.Data
         Nombre = "Toby",
         FechaNacimiento = new DateOnly(2022, 1, 1),
         Descripcion = "Perro juguetón",
-        FotoURL = "",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'm',
         IsDeleted = false
@@ -279,7 +291,7 @@ namespace PawfectMatch.Data
         Nombre = "Bella",
         FechaNacimiento = new DateOnly(2021, 2, 2),
         Descripcion = "Perra tranquila",
-        FotoURL = "",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'f',
         IsDeleted = false
@@ -293,7 +305,7 @@ namespace PawfectMatch.Data
         Nombre = "Tom",
         FechaNacimiento = new DateOnly(2020, 3, 3),
         Descripcion = "Gato curioso",
-        FotoURL = "",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'm',
         IsDeleted = false
@@ -307,7 +319,7 @@ namespace PawfectMatch.Data
         Nombre = "Lola",
         FechaNacimiento = new DateOnly(2019, 4, 4),
         Descripcion = "Perra activa",
-        FotoURL = "",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'f',
         IsDeleted = false
@@ -321,7 +333,7 @@ namespace PawfectMatch.Data
         Nombre = "Rex",
         FechaNacimiento = new DateOnly(2018, 5, 5),
         Descripcion = "Perro guardián",
-        FotoURL = "",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'm',
         IsDeleted = false
@@ -335,7 +347,7 @@ namespace PawfectMatch.Data
         Nombre = "Nina",
         FechaNacimiento = new DateOnly(2017, 6, 6),
         Descripcion = "Gata cariñosa",
-        FotoURL = "",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'f',
         IsDeleted = false
@@ -349,7 +361,7 @@ namespace PawfectMatch.Data
         Nombre = "Leo",
         FechaNacimiento = new DateOnly(2016, 7, 7),
         Descripcion = "Perro inteligente",
-        FotoURL = "",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'm',
         IsDeleted = false
@@ -363,7 +375,7 @@ namespace PawfectMatch.Data
         Nombre = "Maya",
         FechaNacimiento = new DateOnly(2015, 8, 8),
         Descripcion = "Perra fiel",
-        FotoURL = "",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'f',
         IsDeleted = false
@@ -377,7 +389,7 @@ namespace PawfectMatch.Data
         Nombre = "Simón",
         FechaNacimiento = new DateOnly(2014, 9, 9),
         Descripcion = "Gato dormilón",
-        FotoURL = "",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'm',
         IsDeleted = false
@@ -391,7 +403,7 @@ namespace PawfectMatch.Data
         Nombre = "Daisy",
         FechaNacimiento = new DateOnly(2013, 10, 10),
         Descripcion = "Perra juguetona",
-        FotoURL = "",
+        FotoURL = "https://placehold.co/600x400?text=Furry+Pets",
         EstadoID = 2,
         Sexo = 'f',
         IsDeleted = false
@@ -415,7 +427,7 @@ namespace PawfectMatch.Data
         Costo = 10.00m,
         Precio = 18.99m,
         Stock = 50,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -428,7 +440,7 @@ namespace PawfectMatch.Data
         Costo = 2.50m,
         Precio = 4.99m,
         Stock = 100,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -441,7 +453,7 @@ namespace PawfectMatch.Data
         Costo = 15.00m,
         Precio = 29.99m,
         Stock = 25,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -454,7 +466,7 @@ namespace PawfectMatch.Data
         Costo = 12.00m,
         Precio = 24.99m,
         Stock = 30,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -467,7 +479,7 @@ namespace PawfectMatch.Data
         Costo = 3.00m,
         Precio = 6.50m,
         Stock = 80,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -480,7 +492,7 @@ namespace PawfectMatch.Data
         Costo = 1.80m,
         Precio = 4.00m,
         Stock = 60,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -493,7 +505,7 @@ namespace PawfectMatch.Data
         Costo = 5.00m,
         Precio = 9.99m,
         Stock = 45,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -506,7 +518,7 @@ namespace PawfectMatch.Data
         Costo = 6.00m,
         Precio = 12.99m,
         Stock = 40,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -519,7 +531,7 @@ namespace PawfectMatch.Data
         Costo = 8.00m,
         Precio = 15.50m,
         Stock = 20,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -532,7 +544,7 @@ namespace PawfectMatch.Data
         Costo = 4.00m,
         Precio = 8.50m,
         Stock = 70,
-        ImagenUrl = "https://images.rawpixel.com/image_800/cHJpbmF0ZS9zci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTExL3BmLXMxMDgtcG0tNDExMy1tb2NrdXAuanBn.jpg",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -545,7 +557,7 @@ namespace PawfectMatch.Data
         Costo = 12.00m,
         Precio = 22.50m,
         Stock = 40,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -558,7 +570,7 @@ namespace PawfectMatch.Data
         Costo = 3.00m,
         Precio = 6.00m,
         Stock = 90,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -571,7 +583,7 @@ namespace PawfectMatch.Data
         Costo = 15.00m,
         Precio = 28.50m,
         Stock = 35,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -584,7 +596,7 @@ namespace PawfectMatch.Data
         Costo = 5.00m,
         Precio = 10.99m,
         Stock = 25,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -597,7 +609,7 @@ namespace PawfectMatch.Data
         Costo = 2.50m,
         Precio = 5.50m,
         Stock = 100,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -610,7 +622,7 @@ namespace PawfectMatch.Data
         Costo = 8.00m,
         Precio = 15.00m,
         Stock = 60,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -623,7 +635,7 @@ namespace PawfectMatch.Data
         Costo = 25.00m,
         Precio = 40.00m,
         Stock = 20,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -636,7 +648,7 @@ namespace PawfectMatch.Data
         Costo = 10.00m,
         Precio = 18.00m,
         Stock = 15,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -649,7 +661,7 @@ namespace PawfectMatch.Data
         Costo = 30.00m,
         Precio = 50.00m,
         Stock = 10,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -662,7 +674,7 @@ namespace PawfectMatch.Data
         Costo = 7.50m,
         Precio = 15.00m,
         Stock = 55,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -675,7 +687,7 @@ namespace PawfectMatch.Data
         Costo = 20.00m,
         Precio = 35.00m,
         Stock = 25,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -688,7 +700,7 @@ namespace PawfectMatch.Data
         Costo = 5.00m,
         Precio = 10.00m,
         Stock = 75,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -701,7 +713,7 @@ namespace PawfectMatch.Data
         Costo = 35.00m,
         Precio = 55.00m,
         Stock = 5,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -714,7 +726,7 @@ namespace PawfectMatch.Data
         Costo = 15.00m,
         Precio = 25.00m,
         Stock = 30,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -727,7 +739,7 @@ namespace PawfectMatch.Data
         Costo = 18.00m,
         Precio = 32.00m,
         Stock = 20,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -740,7 +752,7 @@ namespace PawfectMatch.Data
         Costo = 4.00m,
         Precio = 8.50m,
         Stock = 100,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -753,7 +765,7 @@ namespace PawfectMatch.Data
         Costo = 7.00m,
         Precio = 15.00m,
         Stock = 45,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -766,7 +778,7 @@ namespace PawfectMatch.Data
         Costo = 6.00m,
         Precio = 12.00m,
         Stock = 55,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -779,7 +791,7 @@ namespace PawfectMatch.Data
         Costo = 11.00m,
         Precio = 22.00m,
         Stock = 35,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -792,7 +804,7 @@ namespace PawfectMatch.Data
         Costo = 20.00m,
         Precio = 35.00m,
         Stock = 15,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -805,7 +817,7 @@ namespace PawfectMatch.Data
         Costo = 28.00m,
         Precio = 48.00m,
         Stock = 10,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -818,7 +830,7 @@ namespace PawfectMatch.Data
         Costo = 4.00m,
         Precio = 7.50m,
         Stock = 85,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -831,7 +843,7 @@ namespace PawfectMatch.Data
         Costo = 50.00m,
         Precio = 85.00m,
         Stock = 8,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -844,7 +856,7 @@ namespace PawfectMatch.Data
         Costo = 15.00m,
         Precio = 25.00m,
         Stock = 40,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -857,7 +869,7 @@ namespace PawfectMatch.Data
         Costo = 14.00m,
         Precio = 28.00m,
         Stock = 20,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -870,7 +882,7 @@ namespace PawfectMatch.Data
         Costo = 6.50m,
         Precio = 14.00m,
         Stock = 50,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -883,7 +895,7 @@ namespace PawfectMatch.Data
         Costo = 5.50m,
         Precio = 11.00m,
         Stock = 75,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -896,7 +908,7 @@ namespace PawfectMatch.Data
         Costo = 10.00m,
         Precio = 18.00m,
         Stock = 30,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -909,7 +921,7 @@ namespace PawfectMatch.Data
         Costo = 20.00m,
         Precio = 35.00m,
         Stock = 15,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -922,7 +934,7 @@ namespace PawfectMatch.Data
         Costo = 3.00m,
         Precio = 7.00m,
         Stock = 95,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -935,7 +947,7 @@ namespace PawfectMatch.Data
         Costo = 8.00m,
         Precio = 15.00m,
         Stock = 40,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -948,7 +960,7 @@ namespace PawfectMatch.Data
         Costo = 55.00m,
         Precio = 95.00m,
         Stock = 12,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -961,7 +973,7 @@ namespace PawfectMatch.Data
         Costo = 4.00m,
         Precio = 8.00m,
         Stock = 85,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -974,7 +986,7 @@ namespace PawfectMatch.Data
         Costo = 45.00m,
         Precio = 75.00m,
         Stock = 20,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -987,7 +999,7 @@ namespace PawfectMatch.Data
         Costo = 18.00m,
         Precio = 30.00m,
         Stock = 15,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -1000,7 +1012,7 @@ namespace PawfectMatch.Data
         Costo = 12.00m,
         Precio = 22.00m,
         Stock = 30,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -1013,7 +1025,7 @@ namespace PawfectMatch.Data
         Costo = 5.00m,
         Precio = 10.00m,
         Stock = 100,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -1026,7 +1038,7 @@ namespace PawfectMatch.Data
         Costo = 10.50m,
         Precio = 19.99m,
         Stock = 25,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -1039,7 +1051,7 @@ namespace PawfectMatch.Data
         Costo = 8.00m,
         Precio = 15.00m,
         Stock = 60,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     },
     new Productos
@@ -1052,7 +1064,7 @@ namespace PawfectMatch.Data
         Costo = 9.00m,
         Precio = 17.00m,
         Stock = 35,
-        ImagenUrl = "https://via.placeholder.com/150",
+        ImagenUrl = "https://placehold.co/600x400?text=Producto",
         IsDeleted = false
     }
         };
@@ -1110,7 +1122,7 @@ namespace PawfectMatch.Data
             new ProductosInTabs { ProductosInTabsID = 49, ProductosID = 49, VetasTabsID = 5, Orden = 49, IsDeleted = false },
             new ProductosInTabs { ProductosInTabsID = 50, ProductosID = 50, VetasTabsID = 5, Orden = 50, IsDeleted = false }
         };
-        
+
         public static readonly List<VetasTabs> seedVetasTabs = new()
         {
             new VetasTabs { VetasTabsID = 1, Color = "#FF5733", Icono = "home", Nombre = "Inicio", Orden = 1, IsDeleted = false },
@@ -1120,7 +1132,7 @@ namespace PawfectMatch.Data
             new VetasTabs { VetasTabsID = 5, Color = "#FF33F3", Icono = "gift", Nombre = "Ofertas", Orden = 5, IsDeleted = false }
 
         };
-        
+
         public static readonly List<MascotasPersonas> seedMascotasPersonas = new()
         {
             new MascotasPersonas { MascotasPersonasID = 1, PersonasID = 2, RazasID = 1, Nombre = "Toby", Sexo = 'm', IsDeleted = false },
@@ -1135,7 +1147,7 @@ namespace PawfectMatch.Data
             new MascotasPersonas { MascotasPersonasID = 10, PersonasID = 11, RazasID = 1, Nombre = "Daisy", Sexo = 'f', IsDeleted = false }
 
         };
-       
+
         public static readonly List<SolicitudesAdopciones> seedSolicitudesAdopciones = new()
         {
             new SolicitudesAdopciones { SolicitudesAdopcionesID = 1, PersonasID = 2, MascotasAdopcionID = 11, EstadoSolicitudID = 1, IsDeleted = false },
