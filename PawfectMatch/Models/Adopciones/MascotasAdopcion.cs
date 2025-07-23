@@ -31,7 +31,7 @@ namespace PawfectMatch.Models.Adopciones
         [StringLength(255)]
         public string? Descripcion { get; set; }
 
-        public string? FotoURL { get; set; }
+        public string? FotoURL { get; set; } = "https://placehold.co/600x400?text=MascotaAdopcion";
 
         [Required]
         public int EstadoID { get; set; }
