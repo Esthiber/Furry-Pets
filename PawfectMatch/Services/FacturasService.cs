@@ -60,15 +60,15 @@ namespace PawfectMatch.Services
 
             // 2. Sincronizar las líneas de detalle
             // Eliminar detalles que ya no están en la nueva lista
-            var detallesAEliminar = existingFactura.Detalles
-                .Where(d => !elem.Detalles.Any(newD => newD.DetallesFacturasID == d.DetallesFacturasID))
+            var detallesAEliminar = existingFactura.Detalles!
+                .Where(d => !elem.Detalles!.Any(newD => newD.DetallesFacturasID == d.DetallesFacturasID))
                 .ToList();
             ctx.DetalleFacturas.RemoveRange(detallesAEliminar);
 
             // Actualizar o añadir nuevos detalles
-            foreach (var detalle in elem.Detalles)
+            foreach (var detalle in elem.Detalles!)
             {
-                var existingDetalle = existingFactura.Detalles
+                var existingDetalle = existingFactura.Detalles!
                     .FirstOrDefault(d => d.DetallesFacturasID == detalle.DetallesFacturasID);
 
                 if (existingDetalle != null)
@@ -79,7 +79,7 @@ namespace PawfectMatch.Services
                 else
                 {
                     // Es un nuevo detalle, así que lo añadimos a la factura existente
-                    existingFactura.Detalles.Add(detalle);
+                    existingFactura.Detalles!.Add(detalle);
                 }
             }
 
