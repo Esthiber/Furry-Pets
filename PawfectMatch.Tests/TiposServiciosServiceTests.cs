@@ -10,7 +10,7 @@ namespace PawfectMatch.Tests
     public class TiposServiciosServiceTests
     {
         private readonly TiposServiciosService _service;
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
 
         public TiposServiciosServiceTests()
         {

@@ -10,7 +10,7 @@ namespace PawfectMatch.Tests
     public class RazasServiceTests
     {
         private readonly RazasService _service;
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
 
         public RazasServiceTests()
         {

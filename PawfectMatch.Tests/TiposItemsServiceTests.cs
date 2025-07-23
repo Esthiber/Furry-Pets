@@ -10,7 +10,7 @@ namespace PawfectMatch.Tests
     public class TiposItemsServiceTests
     {
         private readonly TiposItemsService _service;
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
 
         public TiposItemsServiceTests()
         {
