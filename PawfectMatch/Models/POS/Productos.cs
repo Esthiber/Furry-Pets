@@ -37,7 +37,7 @@ namespace PawfectMatch.Models.POS
         public int Stock { get; set; }
 
         [StringLength(255)]
-        public string? ImagenUrl { get; set; }
+        public string? ImagenUrl { get; set; } = "https://placehold.co/600x400?text=Producto";
 
         public bool IsDeleted { get; set; } = false;
     }
