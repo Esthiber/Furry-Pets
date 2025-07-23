@@ -5,7 +5,7 @@
 <div class="card mascota-card">
     <div class="card-img-container">
         <img src="@Mascota.FotoURL" class="card-img-top" alt="@Mascota.Nombre">
-        <span class="badge @GetEstadoBadgeClass()">@Mascota.Estado.Nombre</span>
+        <span class="badge @GetEstadoBadgeClass()">@Mascota.Estado!.Nombre</span>
         <AuthorizeView Roles="Admin">
             <span class="edit-btn btn btn-primary" @onclick="GoToEdit"><i class="bi bi-pencil-square"></i></span>
         </AuthorizeView>
@@ -23,7 +23,7 @@
             </div>
             <div class="info-item">
                 <i class="bi bi-rulers"></i>
-                <span>@Mascota.Tamanio" (@Mascota.RelacionSize.Nombre)</span>
+                <span>@Mascota.Tamanio" (@Mascota.RelacionSize!.Nombre)</span>
             </div>
         </div>
         <p class="card-text text-truncate">@Mascota.Descripcion</p>
@@ -55,7 +55,7 @@
     private int CalcularEdad()
     {
         var hoy = DateOnly.FromDateTime(DateTime.Today);
-        int edad = hoy.Year - Mascota.FechaNacimiento.Value.Year;
+        int edad = hoy.Year - Mascota.FechaNacimiento!.Value.Year;
 
         if (Mascota.FechaNacimiento.Value.AddYears(edad) > hoy)
         {

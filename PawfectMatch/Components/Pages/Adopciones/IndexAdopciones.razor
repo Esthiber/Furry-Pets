@@ -1,5 +1,6 @@
 ﻿@page "/catalogo"
 @using PawfectMatch.Models.Adopciones
+@using PawfectMatch.Constants
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
@@ -117,7 +118,7 @@
     List<MascotasAdopcion>? TodasMascotas;
     List<MascotasAdopcion>? MascotasFiltradas;
     List<string> TamaniosDisponibles => TodasMascotas?
-    .Select(m => m.RelacionSize?.Nombre)
+    .Select(m => m.RelacionSize?.Nombre!)
     .Where(x => !string.IsNullOrWhiteSpace(x))
     .Distinct()
     .ToList() ?? new();
@@ -131,12 +132,12 @@
 
     void gotoCreate()
     {
-        NavigationManager.NavigateTo("/adopciones/crear");
+        NavigationManager.NavigateTo(Urls.Mascotas.Crear);
     }
 
     void VerDetalles(int id)
     {
-        NavigationManager.NavigateTo($"/mascotas/{id:int}");
+        NavigationManager.NavigateTo($"{Urls.Mascotas.Detalle}{id}");
     }
 
     void LimpiarFiltros()

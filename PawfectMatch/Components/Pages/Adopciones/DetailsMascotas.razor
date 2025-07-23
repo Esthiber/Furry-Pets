@@ -169,7 +169,7 @@
         var age = today.Year - birthDate?.Year;
 
         // Ajustar la edad si aún no ha pasado el cumpleaños este año
-        if (birthDate.Value.Month > today.Month || (birthDate.Value.Month == today.Month && birthDate.Value.Day > today.Day))
+        if (birthDate?.Month > today.Month || (birthDate?.Month == today.Month && birthDate?.Day > today.Day))
         {
             age--;
         }
@@ -177,8 +177,8 @@
         if (age < 1)
         {
             // Calcular meses
-            var months = (today.Month - birthDate.Value.Month) + 12 * (today.Year - birthDate.Value.Year);
-            if (today.Day < birthDate.Value.Day)
+            var months = (today.Month - birthDate?.Month) + 12 * (today.Year - birthDate?.Year);
+            if (today.Day < birthDate?.Day)
             {
                 months--;
             }
@@ -186,7 +186,7 @@
             if (months < 1)
             {
                 // Calcular días
-                var days = (today.DayNumber - birthDate.Value.DayNumber);
+                var days = (today.DayNumber - birthDate?.DayNumber);
                 return $"{days} {(days == 1 ? "día" : "días")}";
             }
 

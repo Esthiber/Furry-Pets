@@ -127,7 +127,7 @@
                                 </div>
                                 <div>
                                     <label>Raza</label>
-                                    <InputText class="form-control" @bind-Value="mascotaSeleccionada.Razas.Nombre" disabled />
+                                    <InputText class="form-control" @bind-Value="mascotaSeleccionada.Razas!.Nombre" disabled />
                                 </div>
                                 <div>
                                     <label>Sexo</label>
@@ -187,9 +187,9 @@
     {
         mascotas = await MascotasAdopcionService.ListAsync(m => true);
 
-        razas = mascotas.Select(m => m.Razas).Where(r => r != null).DistinctBy(r => r.RazasID).ToList()!;
-        estados = mascotas.Select(m => m.Estado).Where(e => e != null).DistinctBy(e => e.EstadoID).ToList()!;
-        categorias = mascotas.Select(m => m.Razas?.Especie).Where(e => e != null).DistinctBy(e => e.EspeciesID).ToList()!;
+        razas = mascotas.Select(m => m.Razas).Where(r => r != null).DistinctBy(r => r?.RazasID).ToList()!;
+        estados = mascotas.Select(m => m.Estado).Where(e => e != null).DistinctBy(e => e?.EstadoID).ToList()!;
+        categorias = mascotas.Select(m => m.Razas?.Especie).Where(e => e != null).DistinctBy(e => e?.EspeciesID).ToList()!;
         FiltrarMascotas();
     }
 
@@ -349,11 +349,11 @@
     }
 
     // Reactividad para filtros
-    private string _filtro;
-    private string _filtroSexo;
-    private string _filtroEstado;
-    private string _filtroEdad;
-    private string _categoriaSeleccionada;
+    private string _filtro = "";
+    private string _filtroSexo = "";
+    private string _filtroEstado = "";
+    private string _filtroEdad = "";
+    private string _categoriaSeleccionada = "";
 
     private string filtro
     {
