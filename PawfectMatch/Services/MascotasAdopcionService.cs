@@ -90,7 +90,7 @@ namespace PawfectMatch.Services
             await using var ctx = await _dbFactory.CreateDbContextAsync();
             return await ctx.MascotasAdopcion
                 .Include(m => m.Razas)
-                    .ThenInclude(r => r.Especie) // Carga la especie a través de la raza
+                    .ThenInclude(r => r!.Especie) // Carga la especie a través de la raza
                 .Include(m => m.Estado)
                 .Include(m => m.RelacionSize)
                 .AsNoTracking()
@@ -108,7 +108,7 @@ namespace PawfectMatch.Services
             await using var ctx = await _dbFactory.CreateDbContextAsync();
             return await ctx.MascotasAdopcion
                 .Include(m => m.Razas)
-                    .ThenInclude(r => r.Especie)
+                    .ThenInclude(r => r!.Especie)
                 .Include(m => m.Estado)
                 .Include(m => m.RelacionSize)
                 .FirstOrDefaultAsync(m => m.MascotasAdopcionID == id) ?? new();
