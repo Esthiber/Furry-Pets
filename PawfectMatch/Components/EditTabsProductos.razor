@@ -1,0 +1,130 @@
+@using PawfectMatch.Models.POS
+@inject VetasTabsService VetasTabsService
+@inject ProductosInTabsService ProductosInTabsService
+@inject ProductosService ProductosService
+@rendermode InteractiveServer
+
+<div class="tabs-productos-container">
+    <h3>Editar Tabs y Productos</h3>
+    <div class="tabs-list">
+        @foreach (var tab in tabs)
+        {
+            <div class="tab-item" @key="tab.VetasTabsID">
+                <div class="tab-header">
+                    <input type="text" class="tab-name" @bind="tab.Nombre" />
+                    <button class="btn btn-danger" @onclick="() => EliminarTab(tab.VetasTabsID)">Eliminar Tab</button>
+                </div>
+                <div class="productos-list" @ondrop="e => OnDropProducto(e, tab.VetasTabsID)" @ondragover="OnDragOver">
+                    @foreach (var pit in productosInTabs.Where(p => p.VetasTabsID == tab.VetasTabsID).OrderBy(p => p.Orden))
+                    {
+                        <div class="producto-item" draggable="true" @ondragstart="e => OnDragStartProducto(e, pit.ProductosInTabsID)" @key="pit.ProductosInTabsID">
+                            <span>@(pit.Producto?.Nombre ?? $"Producto {pit.ProductosID}")</span>
+                            <button class="btn btn-danger" @onclick="() => EliminarProducto(tab.VetasTabsID, pit.ProductosInTabsID)">Eliminar</button>
+                        </div>
+                    }
+                </div>
+                <button class="btn btn-secondary" @onclick="() => AgregarProducto(tab.VetasTabsID)">Agregar Producto</button>
+            </div>
+        }
+    </div>
+    <button class="btn btn-primary" @onclick="AgregarTab">Agregar Tab</button>
+    <button class="btn btn-success" @onclick="GuardarCambios">Guardar Cambios</button>
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <div class="alert alert-info mt-2">@mensaje</div>
+    }
+</div>
+
+@code {
+    private List<VetasTabs> tabs = new();
+    private List<ProductosInTabs> productosInTabs = new();
+    private List<Productos> productos = new();
+    private int? draggingProductoId;
+    private string mensaje = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tabs = await VetasTabsService.ListAsync(t => !t.IsDeleted);
+        productosInTabs = await ProductosInTabsService.ListAsync(p => !p.IsDeleted);
+        productos = await ProductosService.ListAsync(p => !p.IsDeleted);
+        // Asignar productos a ProductosInTabs
+        foreach (var pit in productosInTabs)
+        {
+            pit.Producto = productos.FirstOrDefault(p => p.ProductosID == pit.ProductosID);
+        }
+    }
+
+    private void OnDragStartProducto(DragEventArgs e, int productoInTabsId)
+    {
+        draggingProductoId = productoInTabsId;
+    }
+
+    private void OnDragOver(DragEventArgs e)
+    {
+        // No preventDefault, leave empty
+    }
+
+    private void OnDropProducto(DragEventArgs e, int tabId)
+    {
+        if (draggingProductoId.HasValue)
+        {
+            var pit = productosInTabs.FirstOrDefault(p => p.ProductosInTabsID == draggingProductoId.Value);
+            if (pit != null)
+            {
+                pit.VetasTabsID = tabId;
+                pit.Orden = productosInTabs.Where(p => p.VetasTabsID == tabId).Count() + 1;
+            }
+            draggingProductoId = null;
+        }
+    }
+
+    private void AgregarTab()
+    {
+        var nuevoTab = new VetasTabs { Nombre = "Nuevo Tab", Orden = tabs.Count + 1 };
+        tabs.Add(nuevoTab);
+    }
+
+    private void EliminarTab(int tabId)
+    {
+        tabs.RemoveAll(t => t.VetasTabsID == tabId);
+        productosInTabs.RemoveAll(p => p.VetasTabsID == tabId);
+    }
+
+    private void AgregarProducto(int tabId)
+    {
+        // Selección simple: agregar el primer producto disponible que no esté en el tab
+        var productosEnTab = productosInTabs.Where(p => p.VetasTabsID == tabId).Select(p => p.ProductosID).ToList();
+        var productoDisponible = productos.FirstOrDefault(p => !productosEnTab.Contains(p.ProductosID));
+        if (productoDisponible != null)
+        {
+            var nuevoPit = new ProductosInTabs
+            {
+                VetasTabsID = tabId,
+                ProductosID = productoDisponible.ProductosID,
+                Producto = productoDisponible,
+                Orden = productosInTabs.Where(p => p.VetasTabsID == tabId).Count() + 1
+            };
+            productosInTabs.Add(nuevoPit);
+        }
+    }
+
+    private void EliminarProducto(int tabId, int productoInTabsId)
+    {
+        productosInTabs.RemoveAll(p => p.VetasTabsID == tabId && p.ProductosInTabsID == productoInTabsId);
+    }
+
+    private async Task GuardarCambios()
+    {
+        // Guardar Tabs
+        foreach (var tab in tabs)
+        {
+            await VetasTabsService.SaveAsync(tab);
+        }
+        // Guardar ProductosInTabs
+        foreach (var pit in productosInTabs)
+        {
+            await ProductosInTabsService.SaveAsync(pit);
+        }
+        mensaje = "Cambios guardados correctamente.";
+    }
+}
