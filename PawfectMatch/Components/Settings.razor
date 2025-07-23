@@ -1,22 +1,67 @@
 @page "/settings"
 @using PawfectMatch.Components.Empresa
-
+@using PawfectMatch.Components
 @rendermode InteractiveServer
 
-<h2 class="settings-title">Configuraciones del Sistema</h2>
+<div class="settings-container">
+    <div class="settings-header">
+        <h1><i class="bi bi-gear"></i> Configuraciones del Sistema</h1>
+        <p>Administra la configuración general del sistema</p>
+    </div>
 
-<button class="btn btn-primary" @onclick="AbrirModalEmpresa">
-    <i class="bi bi-pencil-square"></i> Editar información de la empresa
-</button>
+    <div class="settings-grid">
+        <div class="settings-card" @onclick="AbrirModalEmpresa">
+            <div class="card-icon">
+                <i class="bi bi-building"></i>
+            </div>
+            <div class="card-content">
+                <h3>Información de la Empresa</h3>
+                <p>Configura los datos básicos de tu empresa</p>
+            </div>
+            <div class="card-action">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+        </div>
+
+        <div class="settings-card" @onclick="AbrirModalUsuarios">
+            <div class="card-icon">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="card-content">
+                <h3>Usuarios</h3>
+                <p>Administra los usuarios del sistema</p>
+            </div>
+            <div class="card-action">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+        </div>
+
+        <a href="/tabs-productos" class="settings-card">
+            <div class="card-icon">
+                <i class="bi bi-grid-3x3-gap"></i>
+            </div>
+            <div class="card-content">
+                <h3>Tabs y Productos</h3>
+                <p>Organiza los productos en pestañas</p>
+            </div>
+            <div class="card-action">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+        </a>
+    </div>
+</div>
 
 @if (mostrarModalEmpresa)
 {
-    <div class="modal-backdrop"></div>
+    <div class="modal-backdrop" @onclick="CerrarModalEmpresa"></div>
     <div class="modal settings-modal show" tabindex="-1" style="display:block;">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Editar Información de la Empresa</h5>
+                    <h5 class="modal-title">
+                        <i class="bi bi-building"></i>
+                        Información de la Empresa
+                    </h5>
                     <button type="button" class="btn-close" @onclick="CerrarModalEmpresa"></button>
                 </div>
                 <div class="modal-body">
@@ -27,9 +72,34 @@
     </div>
 }
 
+@if (mostrarModalUsuarios)
+{
+    <div class="modal-backdrop" @onclick="CerrarModalUsuarios"></div>
+    <div class="modal settings-modal show" tabindex="-1" style="display:block;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-people"></i>
+                        Administración de Usuarios
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModalUsuarios"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Funcionalidad de manejo de usuarios próximamente.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private bool mostrarModalEmpresa = false;
+    private bool mostrarModalUsuarios = false;
 
     private void AbrirModalEmpresa() => mostrarModalEmpresa = true;
     private void CerrarModalEmpresa() => mostrarModalEmpresa = false;
+
+    private void AbrirModalUsuarios() => mostrarModalUsuarios = true;
+    private void CerrarModalUsuarios() => mostrarModalUsuarios = false;
 }
