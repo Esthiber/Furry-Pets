@@ -1,0 +1,223 @@
+@page "/facturas"
+@using PawfectMatch.Models.POS
+@using PawfectMatch.Constants
+@inject FacturasService FacturasService
+@inject NavigationManager NavigationManager
+@inject EstadosPagosService EstadosPagosService
+@rendermode InteractiveServer
+
+@attribute [Authorize(Policy = Permissions.Sales.View)]
+
+<div class="facturas-container">
+    <div class="facturas-header">
+        <div class="header-content">
+            <h2>Facturas</h2>
+            <p class="subtitle">Gestión de facturas y ventas realizadas</p>
+        </div>
+        <div class="header-stats">
+            <div class="stat-card">
+                <span class="stat-label">Total Facturas</span>
+                <span class="stat-value">@facturas.Count</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Total Ventas</span>
+                <span class="stat-value">$@facturas.Sum(f => f.Total).ToString("N2")</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="facturas-filters">
+        <div class="filter-group">
+            <input type="text" class="filter-input" placeholder="Buscar por cliente o número de factura..." 
+                   @bind="filtroTexto" @bind:event="oninput" />
+            <button class="btn-clear-filter" @onclick="LimpiarFiltros" title="Limpiar filtros">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        </div>
+        <div class="filter-group">
+            <input type="date" class="filter-input" @bind="filtroFechaDesde" />
+            <span class="filter-separator">hasta</span>
+            <input type="date" class="filter-input" @bind="filtroFechaHasta" />
+        </div>
+        <div class="filter-group">
+            <select class="filter-select" @bind="filtroEstado">
+                <option value="">Todos los estados</option>
+                @foreach (var estado in estadosPago)
+                {
+                    <option value="@estado.EstadosPagosID">@estado.Nombre</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="facturas-list">
+        @if (facturasFiltradas == null)
+        {
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Cargando facturas...</p>
+            </div>
+        }
+        else if (!facturasFiltradas.Any())
+        {
+            <div class="empty-state">
+                <i class="bi bi-receipt"></i>
+                <h3>No se encontraron facturas</h3>
+                <p>No hay facturas que coincidan con los criterios de búsqueda.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var factura in facturasFiltradas)
+            {
+                <div class="factura-card" @onclick="() => VerDetalle(factura.FacturasID)">
+                    <div class="factura-header">
+                        <div class="factura-number">
+                            <span class="label">Factura</span>
+                            <span class="number">#@factura.FacturasID.ToString("D6")</span>
+                        </div>
+                        <div class="factura-status">
+                            <span class="status-badge @GetEstadoClass(factura.EstadoPagoID)">
+                                @factura.EstadoPago?.Nombre
+                            </span>
+                        </div>
+                    </div>
+                    <div class="factura-content">
+                        <div class="factura-info">
+                            <div class="info-item">
+                                <i class="bi bi-calendar3"></i>
+                                <span>@factura.Fecha.ToString("dd/MM/yyyy HH:mm")</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="bi bi-person"></i>
+                                <span>@(factura.Persona?.Nombre ?? "Cliente no especificado")</span>
+                            </div>
+                        </div>
+                        <div class="factura-total">
+                            <span class="total-label">Total</span>
+                            <span class="total-amount">$@factura.Total.ToString("N2")</span>
+                        </div>
+                    </div>
+                    <div class="factura-actions">
+                        <button class="btn-view" @onclick:stopPropagation="true" @onclick="() => VerDetalle(factura.FacturasID)">
+                            <i class="bi bi-eye"></i>
+                            Ver Detalle
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="facturas-pagination">
+        <div class="pagination-info">
+            Mostrando @facturasFiltradas.Count de @facturas.Count facturas
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Facturas> facturas = new();
+    private List<Facturas> facturasFiltradas = new();
+    private List<EstadosPagos> estadosPago = new();
+
+    // Filtros
+    private string _filtroTexto = "";
+    private DateTime? _filtroFechaDesde;
+    private DateTime? _filtroFechaHasta;
+    private string _filtroEstado = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        facturas = await FacturasService.ListAsync(f => !f.IsDeleted);
+        estadosPago = await EstadosPagosService.ListAsync(e => !e.IsDeleted);
+        FiltrarFacturas();
+    }
+
+    private void FiltrarFacturas()
+    {
+        IEnumerable<Facturas> query = facturas;
+
+        // Filtro por texto (cliente o número de factura)
+        if (!string.IsNullOrWhiteSpace(_filtroTexto))
+        {
+            query = query.Where(f =>
+                f.FacturasID.ToString().Contains(_filtroTexto, StringComparison.OrdinalIgnoreCase) ||
+                (f.Persona?.Nombre?.Contains(_filtroTexto, StringComparison.OrdinalIgnoreCase) ?? false));
+        }
+
+        // Filtro por fecha desde
+        if (_filtroFechaDesde.HasValue)
+        {
+            query = query.Where(f => f.Fecha.Date >= _filtroFechaDesde.Value.Date);
+        }
+
+        // Filtro por fecha hasta
+        if (_filtroFechaHasta.HasValue)
+        {
+            query = query.Where(f => f.Fecha.Date <= _filtroFechaHasta.Value.Date);
+        }
+
+        // Filtro por estado
+        if (!string.IsNullOrWhiteSpace(_filtroEstado) && int.TryParse(_filtroEstado, out var estadoId))
+        {
+            query = query.Where(f => f.EstadoPagoID == estadoId);
+        }
+
+        facturasFiltradas = query.OrderByDescending(f => f.Fecha).ToList();
+    }
+
+    private void LimpiarFiltros()
+    {
+        _filtroTexto = "";
+        _filtroFechaDesde = null;
+        _filtroFechaHasta = null;
+        _filtroEstado = "";
+        FiltrarFacturas();
+    }
+
+    private void VerDetalle(int facturaId)
+    {
+        NavigationManager.NavigateTo($"{Urls.Facturas.Detalle}{facturaId}");
+    }
+
+    private string GetEstadoClass(int estadoId)
+    {
+        return estadoId switch
+        {
+            1 => "status-paid",     // Pagado
+            2 => "status-pending",  // Pendiente
+            _ => "status-default"
+        };
+    }
+
+    // Propiedades reactivas para filtros
+    private string filtroTexto
+    {
+        get => _filtroTexto;
+        set { _filtroTexto = value; FiltrarFacturas(); }
+    }
+
+    private DateTime? filtroFechaDesde
+    {
+        get => _filtroFechaDesde;
+        set { _filtroFechaDesde = value; FiltrarFacturas(); }
+    }
+
+    private DateTime? filtroFechaHasta
+    {
+        get => _filtroFechaHasta;
+        set { _filtroFechaHasta = value; FiltrarFacturas(); }
+    }
+
+    private string filtroEstado
+    {
+        get => _filtroEstado;
+        set { _filtroEstado = value; FiltrarFacturas(); }
+    }
+}

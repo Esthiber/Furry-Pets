@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using PawfectMatch.Data
+@using PawfectMatch.Constants
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject NavigationManager NavigationManager
@@ -18,7 +19,9 @@
             @* --- 2. El resto de las funciones rápidas --- *@
             <QuickFunc IconName="house-door-fill" Text="Inicio" OnClick="@(() => NavigationManager.NavigateTo("/"))" />
 
-            <QuickFunc IconName="question-lg" Text="Funcion por Asignar" OnClick="@(() => { })" />
+            <AuthorizeView Policy="@Permissions.Sales.View" Context="facturas">
+                <QuickFunc IconName="receipt" Text="Facturas" OnClick="@(() => NavigationManager.NavigateTo(Urls.Facturas.Index))" />
+            </AuthorizeView>
             <QuickFunc IconName="database-fill-gear" Text="Administracion" OnClick="@(() => NavigationManager.NavigateTo("/admin"))" />
             <QuickFunc IconName="dribbble" Text="Productos" OnClick="@(() => NavigationManager.NavigateTo("/productos"))" />
             <QuickFunc IconName="gitlab" Text="Mascotas" OnClick="@(() => NavigationManager.NavigateTo("/mascotasadopcion"))" />
@@ -30,10 +33,6 @@
             <QuickFunc IconName="box-arrow-in-right" Text="Iniciar Sesión" OnClick="@(() => NavigationManager.NavigateTo("/Account/Login"))" />
         </NotAuthorized>
     </AuthorizeView>
-
-
-
-
 
     @* --- 3. El Modal del Usuario --- *@
     @if (isUserModalVisible)

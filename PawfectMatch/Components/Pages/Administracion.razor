@@ -7,6 +7,7 @@
 @inject IJSRuntime JS
 
 @using PawfectMatch.Constants
+@using FacturaEntity = PawfectMatch.Models.POS.Facturas
 
 @rendermode InteractiveServer
 
@@ -109,6 +110,17 @@
                         </div>
                     </AuthorizeView>
                     
+                    <AuthorizeView Policy="@Permissions.Sales.View">
+                        <div class="management-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Facturas.Index))">
+                            <div class="card-icon"><i class="bi bi-receipt"></i></div>
+                            <div class="card-info">
+                                <h5>Facturas</h5>
+                                <p>Gestión de facturas y ventas realizadas.</p>
+                            </div>
+                            <i class="bi bi-chevron-right"></i>
+                        </div>
+                    </AuthorizeView>
+                    
                     <div class="management-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Tabs))">
                         <div class="card-icon"><i class="bi bi-ui-checks-grid"></i></div>
                         <div class="card-info">
@@ -117,17 +129,6 @@
                         </div>
                         <i class="bi bi-chevron-right"></i>
                     </div>
-                    
-                    <AuthorizeView Policy="@Permissions.Sales.View">
-                        <div class="management-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Index))">
-                            <div class="card-icon"><i class="bi bi-receipt"></i></div>
-                            <div class="card-info">
-                                <h5>Ventas</h5>
-                                <p>Historial y gestión de ventas.</p>
-                            </div>
-                            <i class="bi bi-chevron-right"></i>
-                        </div>
-                    </AuthorizeView>
                     
                     <AuthorizeView Policy="@Permissions.Sugerencias.View">
                         <div class="management-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Sugerencias.Index))">
@@ -316,7 +317,7 @@
     private int presentacionesCount;
 
     // --- State for Recent Activity ---
-    private List<Facturas> ultimasVentas = new();
+    private List<FacturaEntity> ultimasVentas = new();
     private List<Productos> ultimosProductos = new();
 
     // --- State for Chart Data ---

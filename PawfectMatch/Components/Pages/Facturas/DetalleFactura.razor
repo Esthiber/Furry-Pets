@@ -1,0 +1,262 @@
+@page "/facturas/{id:int}"
+@using PawfectMatch.Models.POS
+@using PawfectMatch.Constants
+@inject FacturasService FacturasService
+@inject DetallesFacturasService DetallesFacturasService
+@inject ProductosService ProductosService
+@inject ServiciosService ServiciosService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+@attribute [Authorize(Policy = Permissions.Sales.View)]
+
+<div class="factura-detalle-container">
+    @if (isLoading)
+    {
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Cargando detalles de la factura...</p>
+        </div>
+    }
+    else if (factura == null || factura.FacturasID == 0)
+    {
+        <div class="not-found-container">
+            <div class="not-found-icon">
+                <i class="bi bi-receipt-cutoff"></i>
+            </div>
+            <h2>Factura No Encontrada</h2>
+            <p>La factura que estás buscando no existe o ha sido eliminada.</p>
+            <button class="btn-back" @onclick="Volver">Volver a Facturas</button>
+        </div>
+    }
+    else
+    {
+        <div class="factura-header">
+            <div class="header-left">
+                <button class="btn-back" @onclick="Volver">
+                    <i class="bi bi-arrow-left"></i>
+                    Volver
+                </button>
+                <div class="factura-title">
+                    <h1>Factura #@factura.FacturasID.ToString("D6")</h1>
+                    <div class="factura-badges">
+                        <span class="badge @GetEstadoClass(factura.EstadoPagoID)">
+                            @factura.EstadoPago?.Nombre
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="factura-date">
+                    <i class="bi bi-calendar3"></i>
+                    <span>@factura.Fecha.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="factura-content">
+            <!-- Información del cliente -->
+            <div class="factura-section cliente-section">
+                <h3 class="section-title">
+                    <i class="bi bi-person"></i>
+                    Información del Cliente
+                </h3>
+                <div class="cliente-card">
+                    <div class="cliente-avatar">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <div class="cliente-info">
+                        <h4>@(factura.Persona?.Nombre ?? "Cliente no especificado")</h4>
+                        @if (!string.IsNullOrEmpty(factura.Persona?.Telefono))
+                        {
+                            <div class="info-item">
+                                <i class="bi bi-telephone"></i>
+                                <span>@factura.Persona.Telefono</span>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(factura.Persona?.Email))
+                        {
+                            <div class="info-item">
+                                <i class="bi bi-envelope"></i>
+                                <span>@factura.Persona.Email</span>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(factura.Persona?.Direccion))
+                        {
+                            <div class="info-item">
+                                <i class="bi bi-geo-alt"></i>
+                                <span>@factura.Persona.Direccion</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detalles de la factura -->
+            <div class="factura-section detalles-section">
+                <h3 class="section-title">
+                    <i class="bi bi-list-ul"></i>
+                    Detalles de la Factura
+                </h3>
+                
+                @if (detallesFactura.Any())
+                {
+                    <div class="detalles-table">
+                        <div class="table-header">
+                            <span>Producto/Servicio</span>
+                            <span>Precio Unitario</span>
+                            <span>Cantidad</span>
+                            <span>Subtotal</span>
+                        </div>
+                        
+                        @foreach (var detalle in detallesFactura)
+                        {
+                            <div class="table-row">
+                                <div class="item-info">
+                                    <div class="item-name">@GetItemName(detalle)</div>
+                                    <div class="item-type">@GetItemType(detalle.TiposItemsID)</div>
+                                </div>
+                                <div class="item-price">$@detalle.PrecioUnitario.ToString("N2")</div>
+                                <div class="item-quantity">@detalle.Cantidad</div>
+                                <div class="item-subtotal">$@((detalle.PrecioUnitario * detalle.Cantidad).ToString("N2"))</div>
+                            </div>
+                        }
+                        
+                        <div class="table-footer">
+                            <div class="footer-content">
+                                <div class="total-calculations">
+                                    <div class="calc-row">
+                                        <span>Subtotal:</span>
+                                        <span>$@subtotal.ToString("N2")</span>
+                                    </div>
+                                    <div class="calc-row total-row">
+                                        <span>Total:</span>
+                                        <span>$@factura.Total.ToString("N2")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-details">
+                        <i class="bi bi-inbox"></i>
+                        <p>No hay detalles registrados para esta factura.</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Resumen de pago -->
+            <div class="factura-section pago-section">
+                <h3 class="section-title">
+                    <i class="bi bi-credit-card"></i>
+                    Resumen de Pago
+                </h3>
+                <div class="pago-card">
+                    <div class="pago-info">
+                        <div class="pago-row">
+                            <span class="pago-label">Estado del Pago:</span>
+                            <span class="badge @GetEstadoClass(factura.EstadoPagoID)">
+                                @factura.EstadoPago?.Nombre
+                            </span>
+                        </div>
+                        <div class="pago-row">
+                            <span class="pago-label">Fecha de Facturación:</span>
+                            <span>@factura.Fecha.ToString("dd MMMM yyyy, HH:mm")</span>
+                        </div>
+                        <div class="pago-row total-pago">
+                            <span class="pago-label">Total Pagado:</span>
+                            <span class="total-amount">$@factura.Total.ToString("N2")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private Facturas? factura;
+    private List<DetallesFacturas> detallesFactura = new();
+    private List<Productos> productos = new();
+    private List<Servicios> servicios = new();
+    private bool isLoading = true;
+
+    private decimal subtotal => detallesFactura.Sum(d => d.PrecioUnitario * d.Cantidad);
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await CargarDatos();
+        }
+        catch (Exception)
+        {
+            // Manejar error de carga
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task CargarDatos()
+    {
+        // Cargar factura
+        factura = await FacturasService.SearchByIdAsync(id);
+        
+        if (factura != null && factura.FacturasID > 0)
+        {
+            // Cargar detalles de la factura
+            detallesFactura = await DetallesFacturasService.ListAsync(d => d.FacturasID == id && !d.IsDeleted);
+            
+            // Cargar productos y servicios para mostrar nombres
+            productos = await ProductosService.ListAsync(p => !p.IsDeleted);
+            servicios = await ServiciosService.ListAsync(s => !s.IsDeleted);
+        }
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo(Urls.Facturas.Index);
+    }
+
+    private string GetEstadoClass(int estadoId)
+    {
+        return estadoId switch
+        {
+            1 => "status-paid",     // Pagado
+            2 => "status-pending",  // Pendiente
+            _ => "status-default"
+        };
+    }
+
+    private string GetItemName(DetallesFacturas detalle)
+    {
+        if (detalle.TiposItemsID == 1) // Producto
+        {
+            var producto = productos.FirstOrDefault(p => p.ProductosID == detalle.ItemID);
+            return producto?.Nombre ?? $"Producto ID: {detalle.ItemID}";
+        }
+        else if (detalle.TiposItemsID == 2) // Servicio
+        {
+            var servicio = servicios.FirstOrDefault(s => s.ServiciosID == detalle.ItemID);
+            return servicio?.Nombre ?? $"Servicio ID: {detalle.ItemID}";
+        }
+        return "Item desconocido";
+    }
+
+    private string GetItemType(int tipoId)
+    {
+        return tipoId switch
+        {
+            1 => "Producto",
+            2 => "Servicio",
+            _ => "Desconocido"
+        };
+    }
+}

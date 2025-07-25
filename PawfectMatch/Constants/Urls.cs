@@ -69,6 +69,15 @@
         }
 
         /// <summary>
+        /// Rutas para la gestión de facturas.
+        /// </summary>
+        public static class Facturas
+        {
+            public const string Index = "/facturas";
+            public const string Detalle = "/facturas/"; // Requiere ID al final
+        }
+
+        /// <summary>
         /// Rutas para sugerencias y feedback.
         /// </summary>
         public static class Sugerencias
