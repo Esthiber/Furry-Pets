@@ -1,0 +1,84 @@
+@* ModalBuscarCliente.razor: Implementing search functionality similar to IndexProductos.razor *@
+@using PawfectMatch.Models
+
+@if (MostrarBuscar)
+{
+    <div class="modal-overlay" @onclick="CerrarBuscarModal">
+        <div class="modal-content modal-buscar-cliente" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <h2>Buscar Cliente</h2>
+                <button class="modal-close" @onclick="CerrarBuscarModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="busquedaCliente" >Buscar por nombre o teléfono</label>
+                    <div class="search-group">
+                        <input type="text" id="busquedaCliente" class="form-control" @bind="Busqueda" @bind:event="oninput" />
+                        <button class="btn btn-outline-secondary" @onclick="FiltrarClientes" title="Forzar búsqueda">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="clientes-lista">
+                    @if (clientesFiltrados == null)
+                    {
+                        <div class="loading">Cargando clientes...</div>
+                    }
+                    else if (!clientesFiltrados.Any())
+                    {
+                        <div class="no-results">No se encontraron clientes.</div>
+                    }
+                    else
+                    {
+                        <ul class="list-group">
+                            @foreach (var persona in clientesFiltrados)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>@persona.Nombre (@persona.Telefono)</span>
+                                    <button class="btn btn-sm btn-success" @onclick="() => SeleccionarYCopiar(persona)">Seleccionar</button>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" @onclick="CerrarBuscarModal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool MostrarBuscar { get; set; }
+    [Parameter] public List<Personas> ClientesFiltrados { get; set; } = new();
+    [Parameter] public string Busqueda { get; set; } = "";
+    [Parameter] public EventCallback CerrarBuscarModal { get; set; }
+    [Parameter] public EventCallback<Personas> OnSeleccionar { get; set; }
+
+    private List<Personas> clientesFiltrados = new();
+
+    protected override void OnParametersSet()
+    {
+        Busqueda = string.Empty; // Clear default text
+        FiltrarClientes();
+    }
+
+    private void FiltrarClientes()
+    {
+        IEnumerable<Personas> query = ClientesFiltrados;
+
+        if (!string.IsNullOrWhiteSpace(Busqueda))
+        {
+            query = query.Where(c => c.Nombre.Contains(Busqueda, StringComparison.OrdinalIgnoreCase) ||
+                                     c.Telefono.Contains(Busqueda, StringComparison.OrdinalIgnoreCase));
+        }
+
+        clientesFiltrados = query.ToList();
+    }
+
+    async Task SeleccionarYCopiar(Personas persona)
+    {
+        await OnSeleccionar.InvokeAsync(persona);
+    }
+}

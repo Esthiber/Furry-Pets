@@ -1,4 +1,4 @@
-@* ModalCliente.razor: Modal para búsqueda y selección de cliente con submodal de lista y guardado en base de datos *@
+@* Updated ModalCliente.razor to improve logic and interaction with ModalBuscarCliente *@
 @using PawfectMatch.Models
 @inject PawfectMatch.Services.PersonasService PersonasService
 
@@ -35,48 +35,7 @@
     </div>
 }
 
-@if (MostrarBuscar)
-{
-    <div class="modal-overlay" @onclick="CerrarBuscarModal">
-        <div class="modal-content modal-buscar-cliente" @onclick:stopPropagation="true">
-            <div class="modal-header">
-                <h2>Buscar Cliente</h2>
-                <button class="modal-close" @onclick="CerrarBuscarModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="busquedaCliente" >Buscar por nombre o teléfono</label>
-                    <input type="text" id="busquedaCliente" class="form-control" @bind="Busqueda" @bind:event="oninput" placeholder="Nombre o teléfono..." />
-                </div>
-                <div class="clientes-lista">
-                    @if (ClientesFiltrados == null)
-                    {
-                        <div>Cargando clientes...</div>
-                    }
-                    else if (!ClientesFiltrados.Any())
-                    {
-                        <div>No se encontraron clientes.</div>
-                    }
-                    else
-                    {
-                        <ul class="list-group">
-                            @foreach (var persona in ClientesFiltrados)
-                            {
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>@persona.Nombre (@persona.Telefono)</span>
-                                    <button class="btn btn-sm btn-success" @onclick="() => SeleccionarYCopiar(persona)">Seleccionar</button>
-                                </li>
-                            }
-                        </ul>
-                    }
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" @onclick="CerrarBuscarModal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-}
+<ModalBuscarCliente MostrarBuscar="MostrarBuscar" ClientesFiltrados="ClientesFiltrados" Busqueda="Busqueda" CerrarBuscarModal="CerrarBuscarModal" OnSeleccionar="SeleccionarCliente" />
 
 @code {
     [Parameter] public bool Mostrar { get; set; }
@@ -90,8 +49,8 @@
     bool MostrarBuscar = false;
     Personas? ClienteOriginal;
 
-    void AbrirBuscarModal() => MostrarBuscar = true;
-    void CerrarBuscarModal() => MostrarBuscar = false;
+    void AbrirBuscarModal() { MostrarBuscar = true; Mostrar = false; }
+    void CerrarBuscarModal() { MostrarBuscar = false; Mostrar = true; }
 
     void CopiarCliente(Personas origen, Personas destino)
     {
@@ -105,15 +64,6 @@
         destino.Nacionalidad = origen.Nacionalidad;
         destino.EstadoCivil = origen.EstadoCivil;
         destino.FechaNacimiento = origen.FechaNacimiento;
-    }
-
-    async Task SeleccionarYCopiar(Personas persona)
-    {
-        CopiarCliente(persona, ClienteTemp);
-        ClienteOriginal = new Personas();
-        CopiarCliente(persona, ClienteOriginal);
-        await OnSeleccionar.InvokeAsync(persona);
-        MostrarBuscar = false;
     }
 
     async Task GuardarClienteAsync()
@@ -132,6 +82,16 @@
         }
         await OnGuardar.InvokeAsync();
         await Cerrar.InvokeAsync();
+    }
+
+    async Task SeleccionarCliente(Personas persona)
+    {
+        CopiarCliente(persona, ClienteTemp);
+        ClienteOriginal = new Personas();
+        CopiarCliente(persona, ClienteOriginal);
+        await OnSeleccionar.InvokeAsync(persona);
+        MostrarBuscar = false;
+        Mostrar = true;
     }
 
     bool EsIgual(Personas a, Personas b)
