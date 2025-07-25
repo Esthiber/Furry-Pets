@@ -1,0 +1,55 @@
+@typeparam T
+
+<div class="modal show" style="display: block;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro que desea eliminar el elemento <strong>@Elemento?.ToString()</strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" @onclick="ConfirmarEliminacion">Eliminar</button>
+                <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public T? Elemento { get; set; }
+
+    [Parameter]
+    public ICRUD<T>? Servicio { get; set; }
+
+    [Parameter]
+    public EventCallback OnConfirmCallback { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancelCallback { get; set; }
+
+    private async Task ConfirmarEliminacion()
+    {
+        if (Elemento != null && Servicio != null)
+        {
+            var idProperty = Elemento.GetType().GetProperty("ProductosID") ?? Elemento.GetType().GetProperty("Id");
+            if (idProperty != null)
+            {
+                var idValue = idProperty.GetValue(Elemento);
+                if (idValue is int id)
+                {
+                    await Servicio.DeleteAsync(id);
+                }
+            }
+        }
+        await OnConfirmCallback.InvokeAsync();
+    }
+
+    private async Task CerrarModal()
+    {
+        await OnCancelCallback.InvokeAsync();
+    }
+}

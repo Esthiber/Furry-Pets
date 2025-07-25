@@ -9,6 +9,8 @@
 
 @attribute [Authorize(Policy = Permissions.Products.View)]
 
+@using PawfectMatch.Components
+
 <div class="productos-admin-container">
     <div class="header-section">
         <div>
@@ -81,7 +83,7 @@
         {
             @foreach (var producto in productosFiltrados)
             {
-                <div class="producto-card" @onclick="() => AbrirModal(producto)">
+                <div class="producto-card">
                     <div class="producto-img">
                         <img src="@(producto.ImagenUrl ?? "https://via.placeholder.com/150")" alt="@producto.Nombre" />
                     </div>
@@ -98,6 +100,10 @@
                             <span><i class="bi bi-currency-dollar"></i> @producto.Precio.ToString("N2")</span>
                             <span><i class="bi bi-truck"></i> @proveedores.FirstOrDefault(p => p.ProveedoresID == producto.ProveedoresID)?.Nombre</span>
                         </div>
+                        <div class="producto-actions">
+                            <button class="btn btn-warning" @onclick="() => AbrirModal(producto)">Editar</button>
+                            <button class="btn btn-danger" @onclick="() => AbrirModalEliminar(producto)">Eliminar</button>
+                        </div>
                     </div>
                 </div>
             }
@@ -106,74 +112,19 @@
 
     @if (productoSeleccionado != null)
     {
-        <div class="modal-backdrop"></div>
-        <div class="modal show" style="display: block;">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">@(productoSeleccionado.ProductosID == 0 ? "Crear Nuevo Producto" : $"Editar Producto: {productoSeleccionado.Nombre}")</h5>
-                        <button type="button" class="btn-close" @onclick="CerrarModal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <EditForm Model="@productoSeleccionado" OnValidSubmit="GuardarCambios">
-                            <DataAnnotationsValidator />
-                            <div class="form-row">
-                                <div>
-                                    <label>Nombre</label>
-                                    <InputText class="form-control" @bind-Value="productoSeleccionado.Nombre" />
-                                    <ValidationMessage For="@(() => productoSeleccionado.Nombre)" />
-                                </div>
-                                <div>
-                                    <label>Categoría</label>
-                                    <InputSelect class="form-control" @bind-Value="productoSeleccionado.CategoriasProductosID">
-                                        @foreach (var cat in categorias)
-                                        {
-                                            <option value="@cat.CategoriasProductosID">@cat.Nombre</option>
-                                        }
-                                    </InputSelect>
-                                </div>
-                                <div>
-                                    <label>Proveedor</label>
-                                    <InputSelect class="form-control" @bind-Value="productoSeleccionado.ProveedoresID">
-                                        @foreach (var prov in proveedores)
-                                        {
-                                            <option value="@prov.ProveedoresID">@prov.Nombre</option>
-                                        }
-                                    </InputSelect>
-                                </div>
-                                <div>
-                                    <label>Precio</label>
-                                    <InputNumber class="form-control" @bind-Value="productoSeleccionado.Precio" />
-                                    <ValidationMessage For="@(() => productoSeleccionado.Precio)" />
-                                </div>
-                                <div>
-                                    <label>Costo</label>
-                                    <InputNumber class="form-control" @bind-Value="productoSeleccionado.Costo" />
-                                    <ValidationMessage For="@(() => productoSeleccionado.Costo)" />
-                                </div>
-                                <div>
-                                    <label>Stock</label>
-                                    <InputNumber class="form-control" @bind-Value="productoSeleccionado.Stock" />
-                                    <ValidationMessage For="@(() => productoSeleccionado.Stock)" />
-                                </div>
-                                <div>
-                                    <label>URL de Imagen</label>
-                                    <InputText class="form-control" @bind-Value="productoSeleccionado.ImagenUrl" />
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <label>Descripción</label>
-                                <InputTextArea class="form-control" @bind-Value="productoSeleccionado.Descripcion" />
-                            </div>
-                            <div class="modal-actions">
-                                <button type="submit" class="btn btn-primary">@(productoSeleccionado.ProductosID == 0 ? "Crear Producto" : "Guardar Cambios")</button>
-                                <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
-                            </div>
-                        </EditForm>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <ProductosForm Producto="productoSeleccionado"
+                       Categorias="categorias"
+                       Proveedores="proveedores"
+                       OnSaveCallback="GuardarCambios"
+                       OnCancelCallback="CerrarModal" />
+    }
+
+    @if (productoParaEliminar != null)
+    {
+        <ConfirmDeleteModal Elemento="productoParaEliminar"
+                            Servicio="(ICRUD<Productos>)ProductosService"
+                            OnConfirmCallback="EliminarProducto"
+                            OnCancelCallback="CerrarModalEliminar" />
     }
 </div>
 
@@ -181,6 +132,7 @@
     private List<Productos> productos = new();
     private List<Productos> productosFiltrados = new();
     private Productos? productoSeleccionado = null;
+    private Productos? productoParaEliminar = null;
     private List<CategoriasProductos> categorias = new();
     private List<Proveedores> proveedores = new();
 
@@ -196,7 +148,6 @@
     {
         IEnumerable<Productos> query = productos;
 
-        // Filtro por texto
         if (!string.IsNullOrWhiteSpace(filtro))
         {
             query = query.Where(p =>
@@ -204,15 +155,12 @@
                 p.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase));
         }
 
-        // Filtro por categoría
         if (!string.IsNullOrWhiteSpace(filtroCategoria) && int.TryParse(filtroCategoria, out var catId))
             query = query.Where(p => p.CategoriasProductosID == catId);
 
-        // Filtro por proveedor
         if (!string.IsNullOrWhiteSpace(filtroProveedor) && int.TryParse(filtroProveedor, out var provId))
             query = query.Where(p => p.ProveedoresID == provId);
 
-        // Filtro por stock
         if (!string.IsNullOrWhiteSpace(filtroStock))
         {
             query = filtroStock switch
@@ -276,37 +224,54 @@
         productoSeleccionado = null;
     }
 
-    private async Task GuardarCambios()
+    private async Task GuardarCambios(Productos producto)
     {
-        if (productoSeleccionado != null)
+        bool result;
+        if (producto.ProductosID == 0)
         {
-            bool result;
-            if (productoSeleccionado.ProductosID == 0)
+            result = await ProductosService.InsertAsync(producto);
+            if (result)
             {
-                result = await ProductosService.InsertAsync(productoSeleccionado);
-                if (result)
+                productos.Add(producto);
+            }
+        }
+        else
+        {
+            result = await ProductosService.SaveAsync(producto);
+            if (result)
+            {
+                var index = productos.FindIndex(p => p.ProductosID == producto.ProductosID);
+                if (index >= 0)
                 {
-                    productos.Add(productoSeleccionado);
+                    productos[index] = producto;
                 }
             }
-            else
-            {
-                result = await ProductosService.SaveAsync(productoSeleccionado);
-                if (result)
-                {
-                    var index = productos.FindIndex(p => p.ProductosID == productoSeleccionado.ProductosID);
-                    if (index >= 0)
-                    {
-                        productos[index] = productoSeleccionado;
-                    }
-                }
-            }
+        }
+        FiltrarProductos();
+        CerrarModal();
+    }
+
+    private void AbrirModalEliminar(Productos producto)
+    {
+        productoParaEliminar = producto;
+    }
+
+    private async Task EliminarProducto()
+    {
+        if (productoParaEliminar != null)
+        {
+            await ProductosService.DeleteAsync(productoParaEliminar.ProductosID);
+            productos.Remove(productoParaEliminar);
             FiltrarProductos();
-            CerrarModal();
+            CerrarModalEliminar();
         }
     }
 
-    // Reactividad para filtros
+    private void CerrarModalEliminar()
+    {
+        productoParaEliminar = null;
+    }
+
     private string _filtro = "";
     private string _filtroCategoria = "";
     private string _filtroProveedor = "";

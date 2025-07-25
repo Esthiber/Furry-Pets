@@ -1,0 +1,97 @@
+@using PawfectMatch.Models.POS
+@using Microsoft.AspNetCore.Components.Forms
+
+<div class="modal show" style="display: block;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@(Producto.ProductosID == 0 ? "Crear Nuevo Producto" : $"Editar Producto: {Producto.Nombre}")</h5>
+                <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="@Producto" OnValidSubmit="OnSave">
+                    <DataAnnotationsValidator />
+                    <div class="form-row">
+                        <div>
+                            <label>Nombre</label>
+                            <InputText class="form-control" @bind-Value="Producto.Nombre" />
+                            <ValidationMessage For="@(() => Producto.Nombre)" />
+                        </div>
+                        <div>
+                            <label>Categoría</label>
+                            <InputSelect class="form-control" @bind-Value="Producto.CategoriasProductosID">
+                                @foreach (var cat in Categorias)
+                                {
+                                    <option value="@cat.CategoriasProductosID">@cat.Nombre</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div>
+                            <label>Proveedor</label>
+                            <InputSelect class="form-control" @bind-Value="Producto.ProveedoresID">
+                                @foreach (var prov in Proveedores)
+                                {
+                                    <option value="@prov.ProveedoresID">@prov.Nombre</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div>
+                            <label>Precio</label>
+                            <InputNumber class="form-control" @bind-Value="Producto.Precio" />
+                            <ValidationMessage For="@(() => Producto.Precio)" />
+                        </div>
+                        <div>
+                            <label>Costo</label>
+                            <InputNumber class="form-control" @bind-Value="Producto.Costo" />
+                            <ValidationMessage For="@(() => Producto.Costo)" />
+                        </div>
+                        <div>
+                            <label>Stock</label>
+                            <InputNumber class="form-control" @bind-Value="Producto.Stock" />
+                            <ValidationMessage For="@(() => Producto.Stock)" />
+                        </div>
+                        <div>
+                            <label>URL de Imagen</label>
+                            <InputText class="form-control" @bind-Value="Producto.ImagenUrl" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label>Descripción</label>
+                        <InputTextArea class="form-control" @bind-Value="Producto.Descripcion" />
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="btn btn-primary">@(Producto.ProductosID == 0 ? "Crear Producto" : "Guardar Cambios")</button>
+                        <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Productos Producto { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<Productos> OnSaveCallback { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancelCallback { get; set; }
+
+    [Parameter]
+    public List<CategoriasProductos> Categorias { get; set; } = new();
+
+    [Parameter]
+    public List<Proveedores> Proveedores { get; set; } = new();
+
+    private async Task OnSave()
+    {
+        await OnSaveCallback.InvokeAsync(Producto);
+    }
+
+    private async Task CerrarModal()
+    {
+        await OnCancelCallback.InvokeAsync();
+    }
+}
