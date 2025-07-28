@@ -1,0 +1,218 @@
+@page "/proveedores"
+@using PawfectMatch.Models
+@using PawfectMatch.Constants
+@inject ProveedoresService ProveedoresService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+@attribute [Authorize(Policy = Permissions.Products.View)]
+
+<div class="proveedores-container">
+    <div class="proveedores-header">
+        <div class="header-content">
+            <h2>Proveedores</h2>
+            <p class="subtitle">Gestión de proveedores y suministradores</p>
+        </div>
+        <div class="header-stats">
+            <div class="stat-card">
+                <span class="stat-label">Total Proveedores</span>
+                <span class="stat-value">@proveedores.Count</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Activos</span>
+                <span class="stat-value">@proveedores.Count(p => !p.IsDeleted)</span>
+            </div>
+        </div>
+        <AuthorizeView Policy="@Permissions.Products.Create">
+            <button class="btn btn-primary" @onclick="CrearProveedor">
+                <i class="bi bi-plus-circle"></i> Nuevo Proveedor
+            </button>
+        </AuthorizeView>
+    </div>
+
+    <div class="proveedores-filters">
+        <div class="filter-group">
+            <input type="text" class="filter-input" placeholder="Buscar por nombre, RNC o teléfono..." 
+                   @bind="filtroTexto" @bind:event="oninput" />
+            <button class="btn-clear-filter" @onclick="LimpiarFiltros" title="Limpiar filtros">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="proveedores-grid">
+        @if (proveedoresFiltrados == null)
+        {
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Cargando proveedores...</p>
+            </div>
+        }
+        else if (!proveedoresFiltrados.Any())
+        {
+            <div class="empty-state">
+                <i class="bi bi-building"></i>
+                <h3>No se encontraron proveedores</h3>
+                <p>No hay proveedores que coincidan con los criterios de búsqueda.</p>
+                <AuthorizeView Policy="@Permissions.Products.Create">
+                    <button class="btn btn-primary" @onclick="CrearProveedor">
+                        <i class="bi bi-plus-circle"></i> Crear Primer Proveedor
+                    </button>
+                </AuthorizeView>
+            </div>
+        }
+        else
+        {
+            @foreach (var proveedor in proveedoresFiltrados)
+            {
+                <div class="proveedor-card">
+                    <div class="proveedor-header">
+                        <div class="proveedor-info">
+                            <h3 class="proveedor-nombre">@proveedor.Nombre</h3>
+                            <span class="proveedor-rnc">RNC: @proveedor.RNC</span>
+                        </div>
+                        <div class="proveedor-id">
+                            <span class="id-badge">#@proveedor.ProveedoresID.ToString("D3")</span>
+                        </div>
+                    </div>
+                    
+                    <div class="proveedor-content">
+                        @if (!string.IsNullOrEmpty(proveedor.Telefono))
+                        {
+                            <div class="info-item">
+                                <i class="bi bi-telephone"></i>
+                                <span>@proveedor.Telefono</span>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(proveedor.Email))
+                        {
+                            <div class="info-item">
+                                <i class="bi bi-envelope"></i>
+                                <span>@proveedor.Email</span>
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="proveedor-actions">
+                        <button class="btn-view" @onclick="() => VerDetalle(proveedor.ProveedoresID)">
+                            <i class="bi bi-eye"></i>
+                            Ver
+                        </button>
+                        <AuthorizeView Policy="@Permissions.Products.Edit">
+                            <button class="btn-edit" @onclick="() => EditarProveedor(proveedor.ProveedoresID)">
+                                <i class="bi bi-pencil"></i>
+                                Editar
+                            </button>
+                        </AuthorizeView>
+                        <AuthorizeView Policy="@Permissions.Products.Delete">
+                            <button class="btn-delete" @onclick="() => AbrirModalEliminar(proveedor)">
+                                <i class="bi bi-trash"></i>
+                                Eliminar
+                            </button>
+                        </AuthorizeView>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="proveedores-pagination">
+        <div class="pagination-info">
+            Mostrando @proveedoresFiltrados.Count de @proveedores.Count proveedores
+        </div>
+    </div>
+
+    @if (proveedorParaEliminar != null)
+    {
+        <ConfirmDeleteModal Elemento="proveedorParaEliminar"
+                            Servicio="(ICRUD<Proveedores>)ProveedoresService"
+                            OnConfirmCallback="EliminarProveedor"
+                            OnCancelCallback="CerrarModalEliminar" />
+    }
+</div>
+
+@code {
+    private List<Proveedores> proveedores = new();
+    private List<Proveedores> proveedoresFiltrados = new();
+    private Proveedores? proveedorParaEliminar = null;
+
+    // Filtros
+    private string _filtroTexto = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        proveedores = await ProveedoresService.ListAsync(p => !p.IsDeleted);
+        FiltrarProveedores();
+    }
+
+    private void FiltrarProveedores()
+    {
+        IEnumerable<Proveedores> query = proveedores;
+
+        // Filtro por texto (nombre, RNC o teléfono)
+        if (!string.IsNullOrWhiteSpace(_filtroTexto))
+        {
+            query = query.Where(p =>
+                p.Nombre.Contains(_filtroTexto, StringComparison.OrdinalIgnoreCase) ||
+                p.RNC.Contains(_filtroTexto, StringComparison.OrdinalIgnoreCase) ||
+                (p.Telefono?.Contains(_filtroTexto, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.Email?.Contains(_filtroTexto, StringComparison.OrdinalIgnoreCase) ?? false));
+        }
+
+        proveedoresFiltrados = query.OrderBy(p => p.Nombre).ToList();
+    }
+
+    private void LimpiarFiltros()
+    {
+        _filtroTexto = "";
+        FiltrarProveedores();
+    }
+
+    private void CrearProveedor()
+    {
+        NavigationManager.NavigateTo(Urls.Proveedores.Crear);
+    }
+
+    private void VerDetalle(int proveedorId)
+    {
+        NavigationManager.NavigateTo($"{Urls.Proveedores.Detalle}{proveedorId}");
+    }
+
+    private void EditarProveedor(int proveedorId)
+    {
+        NavigationManager.NavigateTo($"{Urls.Proveedores.Editar}{proveedorId}");
+    }
+
+    private void AbrirModalEliminar(Proveedores proveedor)
+    {
+        proveedorParaEliminar = proveedor;
+    }
+
+    private async Task EliminarProveedor()
+    {
+        if (proveedorParaEliminar != null)
+        {
+            await ProveedoresService.DeleteAsync(proveedorParaEliminar.ProveedoresID);
+            proveedores.Remove(proveedorParaEliminar);
+            FiltrarProveedores();
+            CerrarModalEliminar();
+        }
+    }
+
+    private void CerrarModalEliminar()
+    {
+        proveedorParaEliminar = null;
+    }
+
+    // Propiedades reactivas para filtros
+    private string filtroTexto
+    {
+        get => _filtroTexto;
+        set { _filtroTexto = value; FiltrarProveedores(); }
+    }
+}

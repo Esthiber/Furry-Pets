@@ -1,0 +1,196 @@
+@page "/proveedores/crear"
+@page "/proveedores/editar/{id:int}"
+@using PawfectMatch.Models
+@using PawfectMatch.Constants
+@inject ProveedoresService ProveedoresService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+@attribute [Authorize(Policy = Permissions.Products.Create)]
+
+<div class="proveedor-form-container">
+    @if (isLoading)
+    {
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Cargando datos del proveedor...</p>
+        </div>
+    }
+    else
+    {
+        <div class="form-header">
+            <button class="btn-back" @onclick="Volver">
+                <i class="bi bi-arrow-left"></i>
+                Volver
+            </button>
+            <div class="form-title">
+                <h1>@(Id == 0 ? "Crear Nuevo Proveedor" : $"Editar Proveedor: {proveedor.Nombre}")</h1>
+                <p class="form-subtitle">@(Id == 0 ? "Registra un nuevo proveedor en el sistema" : "Modifica la información del proveedor")</p>
+            </div>
+        </div>
+
+        <div class="form-content">
+            <EditForm Model="@proveedor" OnValidSubmit="GuardarProveedor">
+                <DataAnnotationsValidator />
+                
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-building"></i>
+                        Información General
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="nombre" class="form-label">Nombre del Proveedor <span class="required">*</span></label>
+                            <InputText id="nombre" class="form-control" @bind-Value="proveedor.Nombre" 
+                                       placeholder="Ej: Distribuidora ABC S.A." />
+                            <ValidationMessage For="@(() => proveedor.Nombre)" class="validation-message" />
+                        </div>
+                        
+                        <div class="form-field">
+                            <label for="rnc" class="form-label">RNC <span class="required">*</span></label>
+                            <InputText id="rnc" class="form-control" @bind-Value="proveedor.RNC" 
+                                       placeholder="Ej: 123456789" />
+                            <ValidationMessage For="@(() => proveedor.RNC)" class="validation-message" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-telephone"></i>
+                        Información de Contacto
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <InputText id="telefono" class="form-control" @bind-Value="proveedor.Telefono" 
+                                       placeholder="Ej: 809-123-4567" />
+                            <ValidationMessage For="@(() => proveedor.Telefono)" class="validation-message" />
+                        </div>
+                        
+                        <div class="form-field">
+                            <label for="email" class="form-label">Email</label>
+                            <InputText id="email" class="form-control" @bind-Value="proveedor.Email" 
+                                       placeholder="Ej: contacto@proveedor.com" type="email" />
+                            <ValidationMessage For="@(() => proveedor.Email)" class="validation-message" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" @onclick="Volver">
+                        <i class="bi bi-x-circle"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-primary" disabled="@isSubmitting">
+                        @if (isSubmitting)
+                        {
+                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                            <span>Guardando...</span>
+                        }
+                        else
+                        {
+                            <i class="bi bi-check-circle"></i>
+                            <span>@(Id == 0 ? "Crear Proveedor" : "Guardar Cambios")</span>
+                        }
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Proveedores proveedor = new();
+    private bool isLoading = true;
+    private bool isSubmitting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (Id > 0)
+            {
+                // Modo edición
+                proveedor = await ProveedoresService.SearchByIdAsync(Id);
+                if (proveedor.ProveedoresID == 0)
+                {
+                    // Proveedor no encontrado
+                    NavigationManager.NavigateTo(Urls.Proveedores.Index);
+                    return;
+                }
+            }
+            else
+            {
+                // Modo creación
+                proveedor = new Proveedores
+                {
+                    Nombre = string.Empty,
+                    RNC = string.Empty,
+                    Telefono = string.Empty,
+                    Email = string.Empty,
+                    IsDeleted = false
+                };
+            }
+        }
+        catch (Exception)
+        {
+            NavigationManager.NavigateTo(Urls.Proveedores.Index);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task GuardarProveedor()
+    {
+        isSubmitting = true;
+        try
+        {
+            bool resultado;
+            
+            if (Id == 0)
+            {
+                // Crear nuevo proveedor
+                resultado = await ProveedoresService.InsertAsync(proveedor);
+            }
+            else
+            {
+                // Actualizar proveedor existente
+                proveedor.ProveedoresID = Id;
+                resultado = await ProveedoresService.UpdateAsync(proveedor);
+            }
+
+            if (resultado)
+            {
+                // Redirigir a la lista de proveedores
+                NavigationManager.NavigateTo(Urls.Proveedores.Index);
+            }
+            else
+            {
+                // Manejar error
+                // Aquí podrías mostrar un mensaje de error
+            }
+        }
+        catch (Exception)
+        {
+            // Manejar excepción
+            // Aquí podrías mostrar un mensaje de error
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo(Urls.Proveedores.Index);
+    }
+}
