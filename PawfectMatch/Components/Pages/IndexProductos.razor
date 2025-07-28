@@ -1,6 +1,7 @@
 ﻿@page "/productos"
 @using PawfectMatch.Models.POS
 @using PawfectMatch.Constants
+@using ProveedorEntity = PawfectMatch.Models.Proveedores
 @inject ProductosService ProductosService
 @inject NavigationManager NavigationManager
 @inject CategoriasProductosService CategoriasProductosService
@@ -134,7 +135,7 @@
     private Productos? productoSeleccionado = null;
     private Productos? productoParaEliminar = null;
     private List<CategoriasProductos> categorias = new();
-    private List<Proveedores> proveedores = new();
+    private List<ProveedorEntity> proveedores = new();
 
     protected override async Task OnInitializedAsync()
     {

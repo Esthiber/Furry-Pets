@@ -1,0 +1,53 @@
+@page "/solicitud/{id:int}"
+@using PawfectMatch.Models
+@using PawfectMatch.Constants
+@attribute [Authorize(Policy = Permissions.AdoptionRequests.ViewDetails)]
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<PageTitle>Solicitud de Adopción #@id | Pawfect Match</PageTitle>
+
+<div class="container-fluid py-3">
+    <div class="row">
+        <div class="col-12">
+            <!-- Breadcrumb Navigation -->
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="@Urls.Administracion.Panel">Administración</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="@Urls.Solicitudes.Index">Solicitudes</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Solicitud #@id
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- Main Content -->
+            <ViewSolicitudAdopcion SolicitudId="@id" 
+                                   ShowActions="true" 
+                                   ShowBackButton="true"
+                                   OnSolicitudUpdated="HandleSolicitudUpdated"
+                                   OnGoBack="HandleGoBack" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private async Task HandleSolicitudUpdated(SolicitudesAdopciones solicitud)
+    {
+        // Aquí puedes manejar la actualización de la solicitud
+        // Por ejemplo, mostrar un mensaje de éxito, actualizar cache, etc.
+        StateHasChanged();
+    }
+
+    private async Task HandleGoBack()
+    {
+        NavigationManager.NavigateTo(Urls.Solicitudes.Index);
+    }
+}

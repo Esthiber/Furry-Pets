@@ -28,7 +28,7 @@
             public const string Index = "/solicitudes";
             public const string Crear = "/solicitudes/crear";
             public const string Editar = "/solicitudes/editar/"; // Requiere ID al final
-            public const string Detalle = "/solicitudes/id/"; // Requiere ID al final
+            public const string Detalle = "/solicitudes/detalle/"; // Requiere ID al final - NEW URL for page
         }
 
         /// <summary>
@@ -78,6 +78,17 @@
         }
 
         /// <summary>
+        /// Rutas para la gestión de proveedores.
+        /// </summary>
+        public static class Proveedores
+        {
+            public const string Index = "/proveedores";
+            public const string Crear = "/proveedores/crear";
+            public const string Editar = "/proveedores/editar/"; // Requiere ID al final
+            public const string Detalle = "/proveedores/"; // Requiere ID al final
+        }
+
+        /// <summary>
         /// Rutas para sugerencias y feedback.
         /// </summary>
         public static class Sugerencias
@@ -111,6 +122,7 @@
         {
             public const string Panel = "/admin";
             public const string Settings = "/settings";
+            public const string SolicitudesAdopcion = "/admin/solicitudes";
         }
 
         /// <summary>

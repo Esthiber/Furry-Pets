@@ -4,6 +4,7 @@
 @inject ProductosService ProductosService
 @inject FacturasService FacturasService
 @inject VetasTabsService VetasTabsService
+@inject SolicitudesAdopcionesService SolicitudesAdopcionesService
 @inject IJSRuntime JS
 
 @using PawfectMatch.Constants
@@ -48,6 +49,16 @@
                         </div>
                     </div>
                 </AuthorizeView>
+
+                <AuthorizeView Policy="@Permissions.AdoptionRequests.View">
+                    <div class="kpi-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Administracion.SolicitudesAdopcion))">
+                        <div class="kpi-icon icon-adoptions"><i class="bi bi-heart-fill"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-value">@solicitudesCount</span>
+                            <span class="kpi-label">Solicitudes</span>
+                        </div>
+                    </div>
+                </AuthorizeView>
                 
                 <div class="kpi-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.Tabs))">
                     <div class="kpi-icon icon-tabs"><i class="bi bi-ui-checks-grid"></i></div>
@@ -85,9 +96,9 @@
                     </div>
                 </div>
                 <div class="chart-container card">
-                    <h5>Top 5 Productos por Stock</h5>
+                    <h5>Solicitudes de Adopción por Estado</h5>
                     <div class="chart-wrapper">
-                        <canvas id="stockChart"></canvas>
+                        <canvas id="solicitudesChart"></canvas>
                     </div>
                 </div>
             </section>
@@ -105,6 +116,17 @@
                             <div class="card-info">
                                 <h5>Productos</h5>
                                 <p>Crear, ver y editar productos.</p>
+                            </div>
+                            <i class="bi bi-chevron-right"></i>
+                        </div>
+                    </AuthorizeView>
+                    
+                    <AuthorizeView Policy="@Permissions.AdoptionRequests.View">
+                        <div class="management-card" @onclick="@(() => NavigationManager.NavigateTo(Urls.Administracion.SolicitudesAdopcion))">
+                            <div class="card-icon"><i class="bi bi-heart-fill"></i></div>
+                            <div class="card-info">
+                                <h5>Solicitudes de Adopción</h5>
+                                <p>Gestionar solicitudes de adopción de mascotas.</p>
                             </div>
                             <i class="bi bi-chevron-right"></i>
                         </div>
@@ -166,6 +188,13 @@
                             <span>Nuevo Producto</span>
                         </button>
                     </AuthorizeView>
+
+                    <AuthorizeView Policy="@Permissions.AdoptionRequests.View">
+                        <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Administracion.SolicitudesAdopcion))">
+                            <i class="bi bi-heart"></i>
+                            <span>Ver Solicitudes</span>
+                        </button>
+                    </AuthorizeView>
                     
                     <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.CrearTab))">
                         <i class="bi bi-ui-checks"></i>
@@ -187,6 +216,16 @@
                     <h4>Actividad Reciente</h4>
                 </div>
                 <ul class="activity-list">
+                    @foreach (var solicitud in ultimasSolicitudes)
+                    {
+                        <li class="activity-item">
+                            <div class="activity-icon adoption"><i class="bi bi-heart"></i></div>
+                            <div class="activity-details">
+                                <span>Solicitud para <strong>@solicitud.MascotaAdopcion?.Nombre</strong></span>
+                                <small>@solicitud.Fecha.ToString("dd MMM yyyy, hh:mm tt") - @GetEstadoNombre(solicitud.EstadoSolicitudID)</small>
+                            </div>
+                        </li>
+                    }
                     @foreach (var venta in ultimasVentas)
                     {
                         <li class="activity-item">
@@ -207,7 +246,7 @@
                             </div>
                         </li>
                     }
-                    @if (!ultimasVentas.Any() && !ultimosProductos.Any())
+                    @if (!ultimasSolicitudes.Any() && !ultimasVentas.Any() && !ultimosProductos.Any())
                     {
                         <li class="activity-item-empty">No hay actividad reciente.</li>
                     }
@@ -219,7 +258,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    window.renderAdminCharts = (meses, totales, nombresProd, stocks) => {
+    window.renderAdminCharts = (meses, totales, estadosSolicitudes, cantidadesSolicitudes) => {
         const fontFamily = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
         const textColor = '#6c757d';
         const gridColor = '#dee2e6';
@@ -266,18 +305,18 @@
             }
         });
 
-        // Stock de productos (Doughnut Chart)
-        if (window.stockChartInstance) window.stockChartInstance.destroy();
-        const ctx2 = document.getElementById('stockChart');
+        // Solicitudes por estado (Doughnut Chart)
+        if (window.solicitudesChartInstance) window.solicitudesChartInstance.destroy();
+        const ctx2 = document.getElementById('solicitudesChart');
         if (!ctx2) return;
-        window.stockChartInstance = new Chart(ctx2.getContext('2d'), {
+        window.solicitudesChartInstance = new Chart(ctx2.getContext('2d'), {
             type: 'doughnut',
             data: {
-                labels: nombresProd,
+                labels: estadosSolicitudes,
                 datasets: [{
-                    label: 'Stock',
-                    data: stocks,
-                    backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#17a2b8'],
+                    label: 'Solicitudes',
+                    data: cantidadesSolicitudes,
+                    backgroundColor: ['#ffc107', '#28a745', '#dc3545', '#007bff'],
                     borderColor: '#ffffff',
                     borderWidth: 2
                 }]
@@ -307,6 +346,7 @@
     // [Inject] private ProductosService ProductosService { get; set; } // Already in the template
     // [Inject] private FacturasService FacturasService { get; set; } // Already in the template
     // [Inject] private VetasTabsService VetasTabsService { get; set; } // Already in the template
+    // [Inject] private SolicitudesAdopcionesService SolicitudesAdopcionesService { get; set; } // Added
     // [Inject] private IJSRuntime JS { get; set; } // Already in the template
 
     // --- State for KPI Cards ---
@@ -315,16 +355,18 @@
     private int tabsCount;
     private int sugerenciasCount;
     private int presentacionesCount;
+    private int solicitudesCount;
 
     // --- State for Recent Activity ---
     private List<FacturaEntity> ultimasVentas = new();
     private List<Productos> ultimosProductos = new();
+    private List<SolicitudesAdopciones> ultimasSolicitudes = new();
 
     // --- State for Chart Data ---
     private string[] meses = Array.Empty<string>();
     private decimal[] totales = Array.Empty<decimal>();
-    private string[] nombresProd = Array.Empty<string>();
-    private int[] stocks = Array.Empty<int>();
+    private string[] estadosSolicitudes = Array.Empty<string>();
+    private int[] cantidadesSolicitudes = Array.Empty<int>();
 
     // --- Control Flow ---
     private bool chartsRendered = false;
@@ -344,20 +386,23 @@
     private async Task CargarDatos()
     {
         // Fetch data from services concurrently for better performance
-        var productosTask = ProductosService.ListAsync(p => true);
+        var productosTask = ProductosService.ListAsync(p => !p.IsDeleted);
         var ventasTask = FacturasService.ListAsync(f => true);
         var tabsTask = VetasTabsService.ListAsync(t => true);
+        var solicitudesTask = SolicitudesAdopcionesService.ListAsync(s => !s.IsDeleted);
 
-        await Task.WhenAll(productosTask, ventasTask, tabsTask);
+        await Task.WhenAll(productosTask, ventasTask, tabsTask, solicitudesTask);
 
         var productos = await productosTask;
         var ventas = await ventasTask;
         var tabs = await tabsTask;
+        var solicitudes = await solicitudesTask;
 
         // Populate KPI card counts
         productosCount = productos.Count;
         ventasCount = ventas.Count;
         tabsCount = tabs.Count;
+        solicitudesCount = solicitudes.Count;
 
         // --- Placeholder Data ---
         // Replace with actual service calls when available
@@ -365,23 +410,29 @@
         presentacionesCount = 0; // e.g., (await PresentacionesService.ListAsync()).Count;
 
         // Populate Recent Activity lists
-        ultimosProductos = productos.OrderByDescending(p => p.ProductosID).Take(3).ToList();
-        ultimasVentas = ventas.OrderByDescending(f => f.Fecha).Take(3).ToList();
+        ultimosProductos = productos.OrderByDescending(p => p.ProductosID).Take(2).ToList();
+        ultimasVentas = ventas.OrderByDescending(f => f.Fecha).Take(2).ToList();
+        ultimasSolicitudes = solicitudes.OrderByDescending(s => s.Fecha).Take(3).ToList();
 
         // Prepare data for the Sales Chart
         var ventasPorMes = ventas
             .GroupBy(v => v.Fecha.ToString("MMM yyyy")) // e.g., "Jan 2023"
-            .OrderBy(g => DateTime.Parse(g.Key))
+            .OrderBy(g => DateTime.Parse($"01 {g.Key}"))
             .Select(g => new { Mes = g.Key, Total = g.Sum(f => f.Total) })
             .ToList();
 
         meses = ventasPorMes.Select(v => v.Mes).ToArray();
         totales = ventasPorMes.Select(v => v.Total).ToArray();
 
-        // Prepare data for the Stock Chart
-        var topProductosStock = productos.OrderByDescending(p => p.Stock).Take(5).ToList();
-        nombresProd = topProductosStock.Select(p => p.Nombre).ToArray();
-        stocks = topProductosStock.Select(p => p.Stock).ToArray();
+        // Prepare data for the Adoption Requests Chart
+        var solicitudesPorEstado = solicitudes
+            .Where(s => s.EstadoSolicitud != null)
+            .GroupBy(s => s.EstadoSolicitud!.Nombre)
+            .Select(g => new { Estado = g.Key, Cantidad = g.Count() })
+            .ToList();
+
+        estadosSolicitudes = solicitudesPorEstado.Select(s => s.Estado).ToArray();
+        cantidadesSolicitudes = solicitudesPorEstado.Select(s => s.Cantidad).ToArray();
 
         // Reset the flag to allow chart re-rendering after data update
         chartsRendered = false;
@@ -398,10 +449,24 @@
     {
         // Render charts only after data is ready and only once per data load.
         // This prevents unnecessary JS calls on every re-render.
-        if (!chartsRendered && meses.Length > 0 && nombresProd.Length > 0)
+        if (!chartsRendered && meses.Length > 0)
         {
-            await JS.InvokeVoidAsync("renderAdminCharts", meses, totales, nombresProd, stocks);
+            await JS.InvokeVoidAsync("renderAdminCharts", meses, totales, estadosSolicitudes, cantidadesSolicitudes);
             chartsRendered = true; // Mark charts as rendered
         }
+    }
+
+    /// <summary>
+    /// Gets the name of the adoption request status for display purposes.
+    /// </summary>
+    private string GetEstadoNombre(int estadoId)
+    {
+        return estadoId switch
+        {
+            1 => "Pendiente",
+            2 => "Aprobada",
+            3 => "Rechazada",
+            _ => "Desconocido"
+        };
     }
 }
