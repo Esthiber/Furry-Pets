@@ -1,0 +1,114 @@
+/* Mobile responsiveness for adoption administration */
+@media (max-width: 768px) {
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .mascota-cell, .adoptante-cell {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .solicitudes-admin-container {
+        padding: 1rem;
+    }
+
+    .results-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .actions-cell {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mascota-avatar, .adoptante-avatar {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .actions-cell .btn {
+        width: 1.75rem;
+        height: 1.75rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* Animation improvements */
+.stat-card {
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.solicitud-row {
+    transition: background-color 0.2s ease;
+}
+
+.solicitud-row:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Enhanced loading state */
+.loading-container .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+}
+
+/* Better accessibility */
+.btn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Print styles */
+@media print {
+    .header-actions,
+    .filters-section,
+    .actions-cell {
+        display: none !important;
+    }
+    
+    .solicitudes-admin-container {
+        background: white !important;
+        box-shadow: none !important;
+    }
+    
+    .stat-card {
+        box-shadow: none !important;
+        border: 1px solid #dee2e6;
+    }
+}

@@ -1,0 +1,847 @@
+@page "/admin/solicitudes"
+@attribute [Authorize(Policy = Permissions.AdoptionRequests.View)]
+@inject SolicitudesAdopcionesService SolicitudesService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+@using PawfectMatch.Constants
+@using System.Security.Claims
+
+@rendermode InteractiveServer
+
+<PageTitle>Gestión de Solicitudes de Adopción | Pawfect Match</PageTitle>
+
+<div class="solicitudes-admin-container">
+    <header class="page-header">
+        <div class="header-content">
+            <div class="title-section">
+                <h3>Gestión de Solicitudes de Adopción</h3>
+                <p>Administra todas las solicitudes de adopción de mascotas del sistema.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline-secondary" @onclick="@(() => NavigationManager.NavigateTo(Urls.Administracion.Panel))">
+                    <i class="bi bi-arrow-left"></i> Volver al Panel
+                </button>
+                <button class="btn btn-primary" @onclick="CargarDatos">
+                    <i class="bi bi-arrow-clockwise"></i> Actualizar
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card stat-pending">
+                <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
+                <div class="stat-content">
+                    <h4>@solicitudesPendientes</h4>
+                    <p>Pendientes</p>
+                </div>
+            </div>
+            <div class="stat-card stat-approved">
+                <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+                <div class="stat-content">
+                    <h4>@solicitudesAprobadas</h4>
+                    <p>Aprobadas</p>
+                </div>
+            </div>
+            <div class="stat-card stat-rejected">
+                <div class="stat-icon"><i class="bi bi-x-circle"></i></div>
+                <div class="stat-content">
+                    <h4>@solicitudesRechazadas</h4>
+                    <p>Rechazadas</p>
+                </div>
+            </div>
+            <div class="stat-card stat-total">
+                <div class="stat-icon"><i class="bi bi-collection"></i></div>
+                <div class="stat-content">
+                    <h4>@solicitudesTotal</h4>
+                    <p>Total</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-section card">
+        <div class="filters-header">
+            <h5><i class="bi bi-funnel"></i> Filtros y Búsqueda</h5>
+            @if (HasActiveFilters)
+            {
+                <button class="btn btn-outline-danger btn-sm" @onclick="LimpiarFiltros">
+                    <i class="bi bi-x-circle"></i> Limpiar Filtros
+                </button>
+            }
+        </div>
+        
+        <div class="filters-content">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Buscar</label>
+                    <div class="search-input-wrapper">
+                        <i class="bi bi-search"></i>
+                        <input type="text" 
+                               class="form-control" 
+                               placeholder="Buscar por nombre de mascota, adoptante o email..."
+                               @bind="busqueda" 
+                               @bind:event="oninput"
+                               @onkeyup="AplicarFiltros" />
+                        @if (!string.IsNullOrEmpty(busqueda))
+                        {
+                            <button class="clear-search-btn" @onclick="LimpiarBusqueda">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        }
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Estado</label>
+                    <select class="form-select" @bind="filtroEstado" @bind:after="AplicarFiltros">
+                        <option value="0">Todos los estados</option>
+                        <option value="1">Pendientes</option>
+                        <option value="2">Aprobadas</option>
+                        <option value="3">Rechazadas</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Fecha desde</label>
+                    <input type="date" class="form-control" @bind="fechaDesde" @bind:after="AplicarFiltros" />
+                </div>
+                
+                <div class="filter-group">
+                    <label>Fecha hasta</label>
+                    <input type="date" class="form-control" @bind="fechaHasta" @bind:after="AplicarFiltros" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section">
+        @if (isLoading)
+        {
+            <div class="loading-container">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p>Cargando solicitudes...</p>
+            </div>
+        }
+        else
+        {
+            <div class="results-header">
+                <div class="results-info">
+                    <span class="results-count">
+                        Mostrando @solicitudesFiltradas.Count de @todasLasSolicitudes.Count solicitudes
+                    </span>
+                </div>
+                <div class="results-actions">
+                    <div class="sort-dropdown">
+                        <select class="form-select form-select-sm" @bind="ordenamiento" @bind:after="AplicarFiltros">
+                            <option value="fecha-desc">Fecha ?</option>
+                            <option value="fecha-asc">Fecha ?</option>
+                            <option value="estado">Estado</option>
+                            <option value="mascota">Mascota</option>
+                            <option value="adoptante">Adoptante</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            @if (!solicitudesFiltradas.Any())
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h4>No se encontraron solicitudes</h4>
+                    <p>
+                        @if (HasActiveFilters)
+                        {
+                            <span>No hay solicitudes que coincidan con los filtros seleccionados.</span>
+                        }
+                        else
+                        {
+                            <span>Aún no se han registrado solicitudes de adopción en el sistema.</span>
+                        }
+                    </p>
+                </div>
+            }
+            else
+            {
+                <div class="solicitudes-table-container">
+                    <div class="table-responsive">
+                        <table class="table table-hover solicitudes-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Mascota</th>
+                                    <th>Adoptante</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var solicitud in solicitudesFiltradas)
+                                {
+                                    <tr class="solicitud-row @GetRowClass(solicitud.EstadoSolicitudID)">
+                                        <td>
+                                            <span class="solicitud-id">#@solicitud.SolicitudesAdopcionesID</span>
+                                        </td>
+                                        <td>
+                                            <div class="mascota-cell">
+                                                @if (!string.IsNullOrEmpty(solicitud.MascotaAdopcion?.FotoURL))
+                                                {
+                                                    <img src="@solicitud.MascotaAdopcion.FotoURL" alt="@solicitud.MascotaAdopcion.Nombre" class="mascota-avatar" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="mascota-avatar-placeholder">
+                                                        <i class="bi bi-heart"></i>
+                                                    </div>
+                                                }
+                                                <div class="mascota-info">
+                                                    <span class="mascota-nombre">@solicitud.MascotaAdopcion?.Nombre</span>
+                                                    <small class="mascota-raza">@solicitud.MascotaAdopcion?.Razas?.Nombre</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="adoptante-cell">
+                                                <div class="adoptante-avatar">
+                                                    @GetInitials(solicitud.Persona?.Nombre)
+                                                </div>
+                                                <div class="adoptante-info">
+                                                    <span class="adoptante-nombre">@solicitud.Persona?.Nombre</span>
+                                                    <small class="adoptante-email">@solicitud.Persona?.Email</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fecha-cell">
+                                                <span class="fecha-principal">@solicitud.Fecha.ToString("dd/MM/yyyy")</span>
+                                                <small class="fecha-hora">@solicitud.Fecha.ToString("HH:mm")</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="estado-badge @GetEstadoBadgeClass(solicitud.EstadoSolicitudID)">
+                                                @GetEstadoNombre(solicitud.EstadoSolicitudID)
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="actions-cell">
+                                                <AuthorizeView Policy="@Permissions.AdoptionRequests.ViewDetails">
+                                                    <button class="btn btn-sm btn-outline-primary" 
+                                                            @onclick="@(() => VerDetalles(solicitud.SolicitudesAdopcionesID))"
+                                                            title="Ver detalles">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </AuthorizeView>
+
+                                                @if (solicitud.EstadoSolicitudID == 1) // Solo para pendientes
+                                                {
+                                                    <AuthorizeView Policy="@Permissions.AdoptionRequests.Approve">
+                                                        <button class="btn btn-sm btn-outline-success" 
+                                                                @onclick="@(() => AprobarSolicitud(solicitud.SolicitudesAdopcionesID))"
+                                                                title="Aprobar">
+                                                            <i class="bi bi-check-lg"></i>
+                                                        </button>
+                                                    </AuthorizeView>
+
+                                                    <AuthorizeView Policy="@Permissions.AdoptionRequests.Reject">
+                                                        <button class="btn btn-sm btn-outline-danger" 
+                                                                @onclick="@(() => RechazarSolicitud(solicitud.SolicitudesAdopcionesID))"
+                                                                title="Rechazar">
+                                                            <i class="bi bi-x-lg"></i>
+                                                        </button>
+                                                    </AuthorizeView>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        }
+    </section>
+</div>
+
+<style>
+    .solicitudes-admin-container {
+        padding: 1.5rem;
+        background: #f8f9fa;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .title-section h3 {
+        margin: 0;
+        color: #2c3e50;
+    }
+
+    .title-section p {
+        margin: 0.5rem 0 0 0;
+        color: #6c757d;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .stats-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .stat-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .stat-pending .stat-icon { background: #ffc107; }
+    .stat-approved .stat-icon { background: #28a745; }
+    .stat-rejected .stat-icon { background: #dc3545; }
+    .stat-total .stat-icon { background: #007bff; }
+
+    .stat-content h4 {
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 0;
+        color: #2c3e50;
+    }
+
+    .stat-content p {
+        margin: 0;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .filters-section {
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .filters-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .filters-header h5 {
+        margin: 0;
+        color: #2c3e50;
+    }
+
+    .filter-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .filter-group label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #495057;
+    }
+
+    .search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-input-wrapper .bi-search {
+        position: absolute;
+        left: 0.75rem;
+        color: #6c757d;
+        z-index: 2;
+    }
+
+    .search-input-wrapper input {
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
+    }
+
+    .clear-search-btn {
+        position: absolute;
+        right: 0.5rem;
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 50%;
+        z-index: 2;
+    }
+
+    .clear-search-btn:hover {
+        background: #f8f9fa;
+        color: #dc3545;
+    }
+
+    .results-section {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .results-count {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .results-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .loading-container {
+        text-align: center;
+        padding: 3rem;
+        color: #6c757d;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #6c757d;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .solicitudes-table {
+        margin: 0;
+    }
+
+    .solicitud-row.pending { border-left: 4px solid #ffc107; }
+    .solicitud-row.approved { border-left: 4px solid #28a745; }
+    .solicitud-row.rejected { border-left: 4px solid #dc3545; }
+
+    .solicitud-id {
+        font-family: monospace;
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .mascota-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .mascota-avatar {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .mascota-avatar-placeholder {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+    }
+
+    .mascota-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mascota-nombre {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .mascota-raza {
+        color: #6c757d;
+    }
+
+    .adoptante-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .adoptante-avatar {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.875rem;
+    }
+
+    .adoptante-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .adoptante-nombre {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .adoptante-email {
+        color: #6c757d;
+    }
+
+    .fecha-cell {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .fecha-principal {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .fecha-hora {
+        color: #6c757d;
+    }
+
+    .estado-badge {
+        padding: 0.375rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .estado-badge.pendiente {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .estado-badge.aprobada {
+        background: #d1eddd;
+        color: #155724;
+    }
+
+    .estado-badge.rechazada {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .actions-cell {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    .actions-cell .btn {
+        border-radius: 50%;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+@code {
+    // State variables
+    private List<SolicitudesAdopciones> todasLasSolicitudes = new();
+    private List<SolicitudesAdopciones> solicitudesFiltradas = new();
+    private bool isLoading = true;
+
+    // Filter variables
+    private string busqueda = string.Empty;
+    private int filtroEstado = 0;
+    private DateTime? fechaDesde = null;
+    private DateTime? fechaHasta = null;
+    private string ordenamiento = "fecha-desc";
+
+    // Stats
+    private int solicitudesPendientes = 0;
+    private int solicitudesAprobadas = 0;
+    private int solicitudesRechazadas = 0;
+    private int solicitudesTotal = 0;
+
+    private bool HasActiveFilters => 
+        !string.IsNullOrEmpty(busqueda) || 
+        filtroEstado != 0 || 
+        fechaDesde != null || 
+        fechaHasta != null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            todasLasSolicitudes = await SolicitudesService.ListAsync(s => !s.IsDeleted);
+            CalcularEstadisticas();
+            AplicarFiltros();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading adoption requests: {ex.Message}");
+            todasLasSolicitudes = new List<SolicitudesAdopciones>();
+            solicitudesFiltradas = new List<SolicitudesAdopciones>();
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void CalcularEstadisticas()
+    {
+        solicitudesTotal = todasLasSolicitudes.Count;
+        solicitudesPendientes = todasLasSolicitudes.Count(s => s.EstadoSolicitudID == 1);
+        solicitudesAprobadas = todasLasSolicitudes.Count(s => s.EstadoSolicitudID == 2);
+        solicitudesRechazadas = todasLasSolicitudes.Count(s => s.EstadoSolicitudID == 3);
+    }
+
+    private void AplicarFiltros()
+    {
+        solicitudesFiltradas = todasLasSolicitudes.ToList();
+
+        // Filtro de búsqueda
+        if (!string.IsNullOrEmpty(busqueda))
+        {
+            var searchLower = busqueda.ToLower();
+            solicitudesFiltradas = solicitudesFiltradas.Where(s =>
+                (s.MascotaAdopcion?.Nombre?.ToLower().Contains(searchLower) ?? false) ||
+                (s.Persona?.Nombre?.ToLower().Contains(searchLower) ?? false) ||
+                (s.Persona?.Email?.ToLower().Contains(searchLower) ?? false)
+            ).ToList();
+        }
+
+        // Filtro de estado
+        if (filtroEstado != 0)
+        {
+            solicitudesFiltradas = solicitudesFiltradas.Where(s => s.EstadoSolicitudID == filtroEstado).ToList();
+        }
+
+        // Filtro de fecha desde
+        if (fechaDesde != null)
+        {
+            solicitudesFiltradas = solicitudesFiltradas.Where(s => s.Fecha.Date >= fechaDesde.Value.Date).ToList();
+        }
+
+        // Filtro de fecha hasta
+        if (fechaHasta != null)
+        {
+            solicitudesFiltradas = solicitudesFiltradas.Where(s => s.Fecha.Date <= fechaHasta.Value.Date).ToList();
+        }
+
+        // Aplicar ordenamiento
+        solicitudesFiltradas = ordenamiento switch
+        {
+            "fecha-asc" => solicitudesFiltradas.OrderBy(s => s.Fecha).ToList(),
+            "fecha-desc" => solicitudesFiltradas.OrderByDescending(s => s.Fecha).ToList(),
+            "estado" => solicitudesFiltradas.OrderBy(s => s.EstadoSolicitudID).ThenByDescending(s => s.Fecha).ToList(),
+            "mascota" => solicitudesFiltradas.OrderBy(s => s.MascotaAdopcion?.Nombre).ToList(),
+            "adoptante" => solicitudesFiltradas.OrderBy(s => s.Persona?.Nombre).ToList(),
+            _ => solicitudesFiltradas.OrderByDescending(s => s.Fecha).ToList()
+        };
+
+        StateHasChanged();
+    }
+
+    private void LimpiarFiltros()
+    {
+        busqueda = string.Empty;
+        filtroEstado = 0;
+        fechaDesde = null;
+        fechaHasta = null;
+        ordenamiento = "fecha-desc";
+        AplicarFiltros();
+    }
+
+    private void LimpiarBusqueda()
+    {
+        busqueda = string.Empty;
+        AplicarFiltros();
+    }
+
+    private async Task AprobarSolicitud(int solicitudId)
+    {
+        try
+        {
+            var solicitud = await SolicitudesService.SearchByIdAsync(solicitudId);
+            if (solicitud != null && solicitud.SolicitudesAdopcionesID > 0)
+            {
+                solicitud.EstadoSolicitudID = 2; // Aprobada
+                bool resultado = await SolicitudesService.UpdateAsync(solicitud);
+                
+                if (resultado)
+                {
+                    await CargarDatos(); // Recargar datos
+                    await JS.InvokeVoidAsync("alert", "Solicitud aprobada exitosamente.");
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("alert", "Error al aprobar la solicitud.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error approving request: {ex.Message}");
+            await JS.InvokeVoidAsync("alert", "Error al aprobar la solicitud.");
+        }
+    }
+
+    private async Task RechazarSolicitud(int solicitudId)
+    {
+        try
+        {
+            var solicitud = await SolicitudesService.SearchByIdAsync(solicitudId);
+            if (solicitud != null && solicitud.SolicitudesAdopcionesID > 0)
+            {
+                solicitud.EstadoSolicitudID = 3; // Rechazada
+                bool resultado = await SolicitudesService.UpdateAsync(solicitud);
+                
+                if (resultado)
+                {
+                    await CargarDatos(); // Recargar datos
+                    await JS.InvokeVoidAsync("alert", "Solicitud rechazada exitosamente.");
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("alert", "Error al rechazar la solicitud.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error rejecting request: {ex.Message}");
+            await JS.InvokeVoidAsync("alert", "Error al rechazar la solicitud.");
+        }
+    }
+
+    private void VerDetalles(int solicitudId)
+    {
+        NavigationManager.NavigateTo($"{Urls.Solicitudes.Detalle}{solicitudId}");
+    }
+
+    private string GetRowClass(int estadoId)
+    {
+        return estadoId switch
+        {
+            1 => "pending",
+            2 => "approved",
+            3 => "rejected",
+            _ => ""
+        };
+    }
+
+    private string GetEstadoBadgeClass(int estadoId)
+    {
+        return estadoId switch
+        {
+            1 => "pendiente",
+            2 => "aprobada",
+            3 => "rechazada",
+            _ => ""
+        };
+    }
+
+    private string GetEstadoNombre(int estadoId)
+    {
+        return estadoId switch
+        {
+            1 => "Pendiente",
+            2 => "Aprobada",
+            3 => "Rechazada",
+            _ => "Desconocido"
+        };
+    }
+
+    private string GetInitials(string? nombre)
+    {
+        if (string.IsNullOrEmpty(nombre)) return "?";
+        
+        var parts = nombre.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2)
+        {
+            return $"{parts[0][0]}{parts[1][0]}".ToUpper();
+        }
+        return nombre[0].ToString().ToUpper();
+    }
+}
