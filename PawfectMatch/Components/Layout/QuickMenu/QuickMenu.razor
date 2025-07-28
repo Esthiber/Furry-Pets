@@ -13,24 +13,39 @@
     <AuthorizeView>
         <Authorized>
             @* --- 1. Botón especial para el Usuario --- *@
-
             <QuickFunc IconName="person-circle" Text="@context.User.Identity?.Name" OnClick="ToggleUserModal"></QuickFunc>
 
-            @* --- 2. El resto de las funciones rápidas --- *@
+            @* --- 2. Navegación principal (máximo 6 botones más) --- *@
             <QuickFunc IconName="house-door-fill" Text="Inicio" OnClick="@(() => NavigationManager.NavigateTo("/"))" />
 
-            <AuthorizeView Policy="@Permissions.Sales.View" Context="facturas">
-                <QuickFunc IconName="receipt" Text="Facturas" OnClick="@(() => NavigationManager.NavigateTo(Urls.Facturas.Index))" />
+            @* Agrupamos funcionalidades relacionadas con ventas/productos en un solo botón que lleva al POS *@
+            <AuthorizeView Policy="@Permissions.Sales.View" Context="ventas">
+                <QuickFunc IconName="cart3" Text="Punto de Venta" OnClick="@(() => NavigationManager.NavigateTo(Urls.Ventas.POS))" />
             </AuthorizeView>
-            <QuickFunc IconName="database-fill-gear" Text="Administracion" OnClick="@(() => NavigationManager.NavigateTo("/admin"))" />
-            <QuickFunc IconName="dribbble" Text="Productos" OnClick="@(() => NavigationManager.NavigateTo("/productos"))" />
-            <QuickFunc IconName="gitlab" Text="Mascotas" OnClick="@(() => NavigationManager.NavigateTo("/mascotasadopcion"))" />
-            <QuickFunc IconName="gear-fill" Text="Ajustes" OnClick="@(() => NavigationManager.NavigateTo("/settings"))" />
+
+            @* Mascotas - funcionalidad principal de la aplicación *@
+            <QuickFunc IconName="heart-fill" Text="Mascotas" OnClick="@(() => NavigationManager.NavigateTo(Urls.Mascotas.IndexAdopcion))" />
+
+            @* Administración - acceso a todas las funciones administrativas *@
+            <AuthorizeView Policy="@Permissions.Admin.AccessPanel" Context="admin">
+                <QuickFunc IconName="gear-fill" Text="Administración" OnClick="@(() => NavigationManager.NavigateTo("/admin"))" />
+            </AuthorizeView>
+
+            @* Gestión de inventario y productos (para usuarios con permisos) *@
+            <AuthorizeView Policy="@Permissions.Products.View" Context="productos">
+                <QuickFunc IconName="box-seam" Text="Inventario" OnClick="@(() => NavigationManager.NavigateTo("/productos"))" />
+            </AuthorizeView>
+
+            @* Configuración personal del usuario *@
+            <QuickFunc IconName="person-gear" Text="Mi Cuenta" OnClick="@(() => NavigationManager.NavigateTo(Urls.Account.Manage))" />
 
         </Authorized>
         <NotAuthorized>
-            @* Si el usuario no está logueado, mostramos un botón para ir al Login *@
-            <QuickFunc IconName="box-arrow-in-right" Text="Iniciar Sesión" OnClick="@(() => NavigationManager.NavigateTo("/Account/Login"))" />
+            @* Si el usuario no está logueado, mostramos botones específicos para visitantes *@
+            <QuickFunc IconName="house-door-fill" Text="Inicio" OnClick="@(() => NavigationManager.NavigateTo("/"))" />
+            <QuickFunc IconName="heart-fill" Text="Adoptar" OnClick="@(() => NavigationManager.NavigateTo(Urls.Mascotas.IndexAdopcion))" />
+            <QuickFunc IconName="info-circle" Text="Nosotros" OnClick="@(() => NavigationManager.NavigateTo(Urls.Informacion.Nosotros))" />
+            <QuickFunc IconName="box-arrow-in-right" Text="Iniciar Sesión" OnClick="@(() => NavigationManager.NavigateTo(Urls.Account.Login))" />
         </NotAuthorized>
     </AuthorizeView>
 
@@ -52,6 +67,26 @@
                     <i class="bi bi-person-check-fill user-modal-icon"></i>
                     <p>Sesión iniciada como:</p>
                     <strong>@UserName</strong>
+                    
+                    @* Accesos rápidos desde el modal del usuario *@
+                    <div class="user-quick-links">
+                        <AuthorizeView Policy="@Permissions.Sales.View">
+                            <a href="@Urls.Facturas.Index" class="quick-link" @onclick="ToggleUserModal">
+                                <i class="bi bi-receipt"></i>
+                                <span>Facturas</span>
+                            </a>
+                        </AuthorizeView>
+                        <AuthorizeView Policy="@Permissions.Products.View">
+                            <a href="@Urls.Proveedores.Index" class="quick-link" @onclick="ToggleUserModal">
+                                <i class="bi bi-building"></i>
+                                <span>Proveedores</span>
+                            </a>
+                        </AuthorizeView>
+                        <a href="@Urls.Account.Manage" class="quick-link" @onclick="ToggleUserModal">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Configurar Perfil</span>
+                        </a>
+                    </div>
                 </div>
 
                 <div class="user-modal-footer">

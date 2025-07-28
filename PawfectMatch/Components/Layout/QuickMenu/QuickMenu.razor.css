@@ -39,7 +39,7 @@
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     width: 90%;
-    max-width: 380px;
+    max-width: 400px;
     animation: modal-fade-in 0.3s ease-out;
 }
 
@@ -76,6 +76,11 @@
     line-height: 1;
     cursor: pointer;
     color: #888;
+    transition: color 0.2s ease;
+}
+
+.user-modal-close-btn:hover {
+    color: #dc3545;
 }
 
 .user-modal-body {
@@ -96,6 +101,46 @@
 
 .user-modal-body strong {
     font-size: 1.1rem;
+}
+
+/* Enlaces rápidos en el modal */
+.user-quick-links {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.quick-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #495057;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.quick-link:hover {
+    background: #e9ecef;
+    color: #2c3e50;
+    transform: translateX(4px);
+    text-decoration: none;
+}
+
+.quick-link i {
+    font-size: 1.1rem;
+    color: #6c757d;
+    width: 1.25rem;
+    text-align: center;
+}
+
+.quick-link:hover i {
+    color: #2c3e50;
 }
 
 .user-modal-footer {
@@ -124,3 +169,16 @@
     .user-modal-logout-btn:hover {
         background-color: #c82333;
     }
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 480px) {
+    .user-modal-content {
+        width: 95%;
+        padding: 1rem;
+    }
+    
+    .quick-link {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+}
