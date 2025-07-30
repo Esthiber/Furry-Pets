@@ -182,12 +182,6 @@
                     <h4>Acciones Rápidas</h4>
                 </div>
                 <div class="quick-actions">
-                    <AuthorizeView Policy="@Permissions.Products.Create">
-                        <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.CrearProducto))">
-                            <i class="bi bi-plus-circle"></i>
-                            <span>Nuevo Producto</span>
-                        </button>
-                    </AuthorizeView>
 
                     <AuthorizeView Policy="@Permissions.AdoptionRequests.View">
                         <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Administracion.SolicitudesAdopcion))">
@@ -196,9 +190,9 @@
                         </button>
                     </AuthorizeView>
                     
-                    <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Ventas.CrearTab))">
+                    <button class="action-btn" @onclick="@(() => NavigationManager.NavigateTo(Urls.Administracion.Settings))">
                         <i class="bi bi-ui-checks"></i>
-                        <span>Nuevo Tab</span>
+                        <span>Configuracion</span>
                     </button>
                     
                     <AuthorizeView Policy="@Permissions.Backups.Create">
