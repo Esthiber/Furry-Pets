@@ -3,174 +3,127 @@
 @attribute [Authorize(Policy = Permissions.Backups.View)]
 @inject IToastService ToastService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 
 @rendermode InteractiveServer
 
 <div class="backup-container">
-    <div class="backup-header">
-        <div class="header-content">
-            <div class="icon-wrapper">
-                <i class="bi bi-database-gear"></i>
+    <div class="backup-card">
+        <div class="success-icon">
+            <i class="bi bi-database-gear"></i>
+        </div>
+        <h2 class="backup-title">Respaldo de Base de Datos</h2>
+        <div class="backup-details">
+            <div class="backup-message">
+                Gestiona y protege la información de tu sistema con copias de seguridad.
             </div>
-            <div class="title-section">
-                <h2 class="backup-title">Respaldo de Base de Datos</h2>
-                <p class="backup-subtitle">Gestiona la copia de seguridad de todos los datos del sistema</p>
+            <div class="backup-info">
+                <div class="info-item">
+                    <span class="info-label"><i class="bi bi-check-circle"></i> Estado</span>
+                    <span class="info-value">Conexión activa</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label"><i class="bi bi-clock"></i> Último respaldo</span>
+                    <span class="info-value">Hace 2 días</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label"><i class="bi bi-hdd"></i> Espacio disponible</span>
+                    <span class="info-value">@GetRandomFileSize() GB</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label"><i class="bi bi-exclamation-triangle"></i> Recomendación</span>
+                    <span class="info-value">Crear un nuevo respaldo</span>
+                </div>
             </div>
         </div>
-        <div class="header-actions">
+        <div class="backup-actions">
+            <AuthorizeView Policy="@Permissions.Backups.Create">
+                <select class="form-select" style="width:90px;margin-right:0.5rem;" @bind="selectedFormat">
+                    <option value="csv">CSV</option>
+                    <option value="excel">Excel</option>
+                </select>
+                <button class="btn-primary" @onclick="DescargarBackup">
+                    <i class="bi bi-download"></i> Crear
+                </button>
+            </AuthorizeView>
+            <AuthorizeView Policy="@Permissions.Backups.Restore">
+                <button class="btn-secondary" disabled>
+                    <i class="bi bi-upload"></i> Restaurar
+                </button>
+            </AuthorizeView>
+            <button class="btn-secondary" disabled>
+                <i class="bi bi-gear"></i> Programar
+            </button>
             <button class="btn-secondary" @onclick="VolverAConfiguracion">
-                <i class="bi bi-arrow-left"></i>
-                Volver
+                <i class="bi bi-arrow-left"></i> Volver
             </button>
         </div>
-    </div>
-
-    <div class="backup-content">
-        <div class="backup-section">
-            <div class="section-header">
-                <h3>Estado del Sistema</h3>
-            </div>
-            <div class="status-grid">
-                <div class="status-card">
-                    <div class="status-icon success">
-                        <i class="bi bi-check-circle"></i>
-                    </div>
-                    <div class="status-info">
-                        <h4>Base de Datos</h4>
-                        <p>Conexión activa y estable</p>
-                    </div>
-                </div>
-                <div class="status-card">
-                    <div class="status-icon warning">
-                        <i class="bi bi-exclamation-triangle"></i>
-                    </div>
-                    <div class="status-info">
-                        <h4>Último Respaldo</h4>
-                        <p>Hace 2 días - Recomendado crear uno nuevo</p>
-                    </div>
-                </div>
-                <div class="status-card">
-                    <div class="status-icon info">
-                        <i class="bi bi-hdd"></i>
-                    </div>
-                    <div class="status-info">
-                        <h4>Espacio Disponible</h4>
-                        <p>85% libre - @GetRandomFileSize() GB disponibles</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="backup-section">
-            <div class="section-header">
-                <h3>Acciones de Respaldo</h3>
-                <p>Selecciona la acción que deseas realizar</p>
-            </div>
-            <div class="actions-grid">
-                <AuthorizeView Policy="@Permissions.Backups.Create">
-                    <div class="action-card primary">
-                        <div class="action-icon">
-                            <i class="bi bi-download"></i>
-                        </div>
-                        <div class="action-content">
-                            <h4>Crear Respaldo Completo</h4>
-                            <p>Genera una copia completa de toda la base de datos incluyendo estructuras y datos</p>
-                            <button class="action-btn" @onclick="DescargarBackup">
+        <div style="margin-top:1rem;">
+            <h4 style="margin-bottom:0.5rem;font-size:1.1rem;">Historial de Respaldos</h4>
+            <table class="table table-striped" style="width:100%;margin-bottom:0;">
+                <thead>
+                    <tr>
+                        <th style="font-size:0.95rem;">Fecha</th>
+                        <th style="font-size:0.95rem;">Tamaño</th>
+                        <th style="font-size:0.95rem;">Estado</th>
+                        <th style="font-size:0.95rem;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@DateTime.Now.AddDays(-2).ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@GetRandomFileSize() MB</td>
+                        <td><span class="status-badge success">Completado</span></td>
+                        <td>
+                            <button class="btn-icon" title="Descargar" style="padding:0.2rem 0.5rem;font-size:1rem;">
                                 <i class="bi bi-download"></i>
-                                Crear Respaldo
                             </button>
-                        </div>
-                    </div>
-                </AuthorizeView>
-
-                <AuthorizeView Policy="@Permissions.Backups.Restore">
-                    <div class="action-card secondary">
-                        <div class="action-icon">
-                            <i class="bi bi-upload"></i>
-                        </div>
-                        <div class="action-content">
-                            <h4>Restaurar desde Archivo</h4>
-                            <p>Restaura la base de datos desde un archivo de respaldo previamente creado</p>
-                            <button class="action-btn" disabled>
-                                <i class="bi bi-upload"></i>
-                                Próximamente
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>@DateTime.Now.AddDays(-7).ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@GetRandomFileSize() MB</td>
+                        <td><span class="status-badge success">Completado</span></td>
+                        <td>
+                            <button class="btn-icon" title="Descargar" style="padding:0.2rem 0.5rem;font-size:1rem;">
+                                <i class="bi bi-download"></i>
                             </button>
-                        </div>
-                    </div>
-                </AuthorizeView>
-
-                <div class="action-card tertiary">
-                    <div class="action-icon">
-                        <i class="bi bi-clock-history"></i>
-                    </div>
-                    <div class="action-content">
-                        <h4>Programar Respaldos</h4>
-                        <p>Configura respaldos automáticos en horarios específicos</p>
-                        <button class="action-btn" disabled>
-                            <i class="bi bi-gear"></i>
-                            Próximamente
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="backup-section">
-            <div class="section-header">
-                <h3>Historial de Respaldos</h3>
-                <p>Archivos de respaldo anteriores</p>
-            </div>
-            <div class="history-table">
-                <div class="table-header">
-                    <span>Fecha</span>
-                    <span>Tamaño</span>
-                    <span>Estado</span>
-                    <span>Acciones</span>
-                </div>
-                <div class="table-row">
-                    <span>@DateTime.Now.AddDays(-2).ToString("dd/MM/yyyy HH:mm")</span>
-                    <span>@GetRandomFileSize() MB</span>
-                    <span class="status-badge success">Completado</span>
-                    <span>
-                        <button class="btn-icon" title="Descargar">
-                            <i class="bi bi-download"></i>
-                        </button>
-                    </span>
-                </div>
-                <div class="table-row">
-                    <span>@DateTime.Now.AddDays(-7).ToString("dd/MM/yyyy HH:mm")</span>
-                    <span>@GetRandomFileSize() MB</span>
-                    <span class="status-badge success">Completado</span>
-                    <span>
-                        <button class="btn-icon" title="Descargar">
-                            <i class="bi bi-download"></i>
-                        </button>
-                    </span>
-                </div>
-                <div class="table-row">
-                    <span>@DateTime.Now.AddDays(-14).ToString("dd/MM/yyyy HH:mm")</span>
-                    <span>@GetRandomFileSize() MB</span>
-                    <span class="status-badge success">Completado</span>
-                    <span>
-                        <button class="btn-icon" title="Descargar">
-                            <i class="bi bi-download"></i>
-                        </button>
-                    </span>
-                </div>
-            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>@DateTime.Now.AddDays(-14).ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@GetRandomFileSize() MB</td>
+                        <td><span class="status-badge success">Completado</span></td>
+                        <td>
+                            <button class="btn-icon" title="Descargar" style="padding:0.2rem 0.5rem;font-size:1rem;">
+                                <i class="bi bi-download"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 @code {
+    private string selectedFormat = "csv";
+
     protected override void OnInitialized()
     {
         ToastService.ShowSuccess("Backup guardado exitosamente");
     }
 
-    private void DescargarBackup()
+    private async Task DescargarBackup()
     {
-        ToastService.ShowInfo("Iniciando descarga del archivo de backup...");
+        // Llama al endpoint del servidor para crear y descargar el respaldo
+        var endpoint = selectedFormat == "excel"
+            ? "/api/Backup/excel"
+            : "/api/Backup/csv";
+
+        // Usar JS interop para descargar el archivo generado en el servidor
+        await JS.InvokeVoidAsync("open", endpoint, "_blank");
+        ToastService.ShowSuccess($"Respaldo generado en formato {selectedFormat.ToUpper()}.");
     }
 
     private void VolverAConfiguracion()
